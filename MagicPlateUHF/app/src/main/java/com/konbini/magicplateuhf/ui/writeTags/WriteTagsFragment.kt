@@ -100,7 +100,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener, AdapterVie
         val listPlatesModel = AppContainer.InitData.listPlatesModel
         val listPlatesCode: MutableList<String> = mutableListOf()
         listPlatesModel.forEach { _plateModelEntity ->
-            listPlatesCode.add(_plateModelEntity.plateModelCode)
+            listPlatesCode.add("${_plateModelEntity.plateModelCode} - ${_plateModelEntity.plateModelTitle}")
         }
         binding.spinnerPlateModelCode.setLabel(getString(R.string.title_plate_code))
 

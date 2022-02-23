@@ -220,6 +220,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun setupActions() {
         binding.rfidItemCount.setOnClickListener {
+            binding.rfidItemCount.blink(Color.RED, 1, 50L)
             clickedTitleModel += 1
             Log.e(TAG, "Clicked Title Model-$clickedTitleModel")
             if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
@@ -233,6 +234,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
 
         binding.rfidTotalCount.setOnClickListener {
+            binding.rfidTotalCount.blink(Color.RED, 1, 50L)
             clickedTitleTotal += 1
             Log.e(TAG, "Clicked Title Total-$clickedTitleTotal")
             if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
