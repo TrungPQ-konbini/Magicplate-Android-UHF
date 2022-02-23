@@ -112,10 +112,12 @@
     <string name="message_select_from_date">Select from date</string>
     <string name="message_put_plate_on_the_tray">Place tray down, select payment method</string>
     <string name="message_enter_pin_code">Enter Pin Code</string>
+    <string name="message_enter_new_custom_price">Enter new custom price !!!</string>
     <string name="message_please_tap_card">Please tap card !!!</string>
     <string name="message_please_tap_card_again">Please tap card again !!!</string>
 
     <string name="message_success_save">Save Success !!!</string>
+    <string name="message_success_write_tags">Write Tags Success !!!</string>
     <string name="message_success_sync">Sync Success !!!</string>
     <string name="message_success_login">Login Success !!!</string>
     <string name="message_success_payment_balance">Payment Success !!! \n Balance: %s</string>
@@ -129,6 +131,7 @@
     <string name="message_error_sync_item">Sync %s Error !!!</string>
     <string name="message_error_login">Login Error !!!</string>
     <string name="message_error_get_token">The client credentials are invalid !!!</string>
-    <string name="message_enter_new_custom_price">Enter new custom price !!!</string>
+    <string name="message_error_write_data_format">Write Data format error !!!</string>
+    <string name="message_error_param_unknown_error">Parameter Unknown Error</string>
 
 </resources>

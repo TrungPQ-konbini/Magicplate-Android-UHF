@@ -31,12 +31,11 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "MainActivity"
+        var mReader: RFIDReaderHelper? = null
+        var connector: ModuleConnector = ReaderConnector()
     }
 
     private var listEPC: MutableList<String> = mutableListOf()
-
-    var connector: ModuleConnector = ReaderConnector()
-    lateinit var mReader: RFIDReaderHelper
 
     private var rxObserver: RXObserver = object : RXObserver() {
         override fun onInventoryTag(tag: RXInventoryTag) {
@@ -57,8 +56,10 @@ class MainActivity : AppCompatActivity() {
             intent.action = "REFRESH_TAGS"
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-            // Start reading UHF
-            mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            if (!AppContainer.InitData.allowWriteTags && mReader != null) {
+                // Start reading UHF
+                mReader?.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            }
 
             listEPC.clear()
         }
@@ -144,8 +145,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        if (this::mReader.isInitialized && mReader != null) {
-            mReader.unRegisterObserver(rxObserver)
+        if (mReader != null) {
+            mReader?.unRegisterObserver(rxObserver)
         }
         if (connector != null) {
             connector.disConnect()
@@ -167,9 +168,9 @@ class MainActivity : AppCompatActivity() {
                 ModuleManager.newInstance().uhfStatus = true
                 try {
                     mReader = RFIDReaderHelper.getDefaultHelper()
-                    mReader.registerObserver(rxObserver)
+                    mReader?.registerObserver(rxObserver)
                     Thread.sleep(500)
-                    mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                    mReader?.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 } catch (ex: Exception) {
                     Log.e(SalesActivity.TAG, ex.toString())
                     LogUtils.logError(ex)

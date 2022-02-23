@@ -5,13 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -21,15 +23,14 @@ import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.databinding.FragmentWriteTagsBinding
-import com.konbini.magicplateuhf.utils.AlertDialogUtil
-import com.konbini.magicplateuhf.utils.LogUtils
-import com.konbini.magicplateuhf.utils.SafeClickListener
-import com.konbini.magicplateuhf.utils.autoCleared
+import com.konbini.magicplateuhf.ui.MainActivity
+import com.konbini.magicplateuhf.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener, AdapterView.OnItemSelectedListener {
+class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
+    AdapterView.OnItemSelectedListener {
 
     companion object {
         const val TAG = "WriteTagsFragment"
@@ -48,11 +49,13 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener, AdapterVie
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "REFRESH_TAGS" -> {
-                    // Refresh tags
-                    dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
-                    dataTags.sortBy { tagEntity -> tagEntity.strEPC }
-                    adapter.setItems(ArrayList(dataTags))
-                    setTitleButtonWrite()
+                    if (!AppContainer.InitData.allowWriteTags) {
+                        // Refresh tags
+                        dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
+                        dataTags.sortBy { tagEntity -> tagEntity.strEPC }
+                        adapter.setItems(ArrayList(dataTags))
+                        setTitleButtonWrite()
+                    }
                 }
             }
         }
@@ -104,9 +107,12 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener, AdapterVie
         }
         binding.spinnerPlateModelCode.setLabel(getString(R.string.title_plate_code))
 
-        val adapterSpinner = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listPlatesCode)
+        val adapterSpinner =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listPlatesCode)
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerPlateModelCode.setAdapter(adapterSpinner)
+
+        binding.spinnerPlateModelCode.getSpinner().onItemSelectedListener = this
     }
 
     private fun setupRecyclerView() {
@@ -140,7 +146,8 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener, AdapterVie
             if (dataTags.isNotEmpty()) {
                 showHideLoading(true)
                 try {
-
+                    AppContainer.InitData.allowWriteTags = true
+                    writeTags(0)
                 } catch (ex: Exception) {
                     showHideLoading(false)
                     AlertDialogUtil.showError(
@@ -197,4 +204,124 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener, AdapterVie
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {}
+
+    private fun setNewEPC(oldEPC: String): String {
+        val newPlateModel = selectedPlateModel
+        var newCustomPrice = "000000"
+        if (binding.newCustomPrice.text.toString().isNotEmpty()) {
+            newCustomPrice =
+                "%06d".format((binding.newCustomPrice.text.toString().toDouble() * 100).toInt())
+        }
+        return oldEPC.replace(oldEPC.substring(0, 4), newPlateModel)
+            .replace(oldEPC.substring(18), newCustomPrice)
+    }
+
+    private fun writeTags(position: Int) {
+        try {
+            if (position < dataTags.size) {
+                val tag = dataTags[position]
+                val epcValue = tag.strEPC ?: ""
+                if (epcValue.isEmpty()) return
+
+                // Select tag
+                setAccessEpcMatch(epcValue)
+
+                val newEPC = setNewEPC(epcValue)
+                writeTag(newEPC)
+
+                object : CountDownTimer(200, 50) {
+                    override fun onTick(millisUntilFinished: Long) {}
+
+                    override fun onFinish() {
+                        writeTags(position + 1)
+                        cancel()
+                    }
+                }.start()
+            } else {
+                showHideLoading(false)
+                AlertDialogUtil.showSuccess(
+                    getString(R.string.message_success_write_tags),
+                    requireContext()
+                )
+
+                AppContainer.InitData.allowWriteTags = false
+                // Start reading UHF
+                MainActivity.mReader?.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            }
+
+        } catch (ex: Exception) {
+            LogUtils.logError(ex)
+        }
+    }
+
+    private fun setAccessEpcMatch(tag: String) {
+        var btAryEpc: ByteArray? = null
+        btAryEpc = try {
+            val result = StringTool.stringToStringArray(tag.uppercase(), 2)
+            StringTool.stringArrayToByteArray(result, result.size)
+        } catch (ex: Exception) {
+            AlertDialogUtil.showError(
+                getString(R.string.message_error_param_unknown_error),
+                requireContext()
+            )
+            LogUtils.logError(ex)
+            return
+        }
+        if (btAryEpc == null) {
+            AlertDialogUtil.showError(
+                getString(R.string.message_error_param_unknown_error),
+                requireContext()
+            )
+            return
+        }
+        MainActivity.mReader?.setAccessEpcMatch(
+            0x01,
+            (btAryEpc.size and 0xFF).toByte(), btAryEpc
+        )
+    }
+
+    private fun writeTag(tag: String) {
+        /*
+         * 0x00: area password
+         * 0x01: area epc
+         * 0x02: area tid
+         * 0x03: area user
+         */
+        val btMemBank: Byte = 0x01 // Fix access area EPC
+        val btWordAdd: Byte = 0x02
+        var btWordCnt: Byte = 0x00
+        val btAryPassWord: ByteArray =
+            byteArrayOf(0x00, 0x00, 0x00, 0x00) // Fix password is 00000000
+
+        var btAryData: ByteArray? = null
+        var result: Array<String>? = null
+        try {
+            result = StringTool.stringToStringArray(tag.uppercase(), 2)
+            btAryData = StringTool.stringArrayToByteArray(result, result.size)
+            btWordCnt = (result.size / 2 + result.size % 2 and 0xFF).toByte()
+        } catch (ex: Exception) {
+            AlertDialogUtil.showError(
+                getString(R.string.message_error_write_data_format),
+                requireContext()
+            )
+            LogUtils.logError(ex)
+            return
+        }
+
+        if (btAryData == null || btAryData.isEmpty()) {
+            AlertDialogUtil.showError(
+                getString(R.string.message_error_write_data_format),
+                requireContext()
+            )
+            return
+        }
+        MainActivity.mReader?.writeTag(
+            0x01,
+            btAryPassWord,
+            btMemBank,
+            btWordAdd,
+            btWordCnt,
+            btAryData
+        )
+    }
 }

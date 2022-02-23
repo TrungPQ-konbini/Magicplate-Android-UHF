@@ -58,8 +58,11 @@ class SalesActivity : AppCompatActivity() {
                 val intent = Intent()
                 intent.action = "REFRESH_TAGS"
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-                // Start reading UHF
-                mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+
+                if (!AppContainer.InitData.allowWriteTags) {
+                    // Start reading UHF
+                    mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                }
             }
             listEPC.clear()
         }

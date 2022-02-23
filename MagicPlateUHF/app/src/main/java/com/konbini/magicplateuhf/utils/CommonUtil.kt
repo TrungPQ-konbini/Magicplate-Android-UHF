@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import androidx.core.text.isDigitsOnly
 import com.google.gson.Gson
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
@@ -237,13 +238,15 @@ class CommonUtil {
 
         fun convertEpcToTagEntity(strEPC: String): TagEntity? {
             if (strEPC.length != AppSettings.Machine.LengthEPC) return null
+            var customPrice = "000000"
+            if (strEPC.substring(18).isDigitsOnly()) {
+                customPrice = strEPC.substring(18)
+            }
             return TagEntity(
                 strEPC = strEPC,
                 uuid = strEPC.substring(4, 10),
-                //modelNumber = strEPC.substring(0, 4),
-                // TODO: TRUNGPQ add to test
-                modelNumber = "4000",
-                customPrice = strEPC.substring(18)
+                modelNumber = strEPC.substring(0, 4),
+                customPrice = customPrice
             )
         }
 

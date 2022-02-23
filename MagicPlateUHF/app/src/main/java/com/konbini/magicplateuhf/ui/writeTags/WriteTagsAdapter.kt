@@ -59,7 +59,7 @@ class WriteTagsViewHolder(
         itemBinding.tvIndex.text = "${position + 1}"
         itemBinding.tvEPC.text = item.strEPC
         itemBinding.tvPlateCode.text = item.modelNumber
-        itemBinding.tvPlateName.text = item.modelName
+        itemBinding.tvPlateName.text = item.modelName ?: "N/A"
         itemBinding.tvCustomPrice.text = (item.customPrice?.toInt()
             ?.div(100))?.let { CommonUtil.formatCurrency(it.toFloat()) }
 
