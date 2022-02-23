@@ -107,6 +107,9 @@ dependencies {
     // Spin Loading
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
+    // Spinner
+    implementation'com.github.devdhar04:MaterialSpinner:v0.1.2'
+
     // RFID UHF
     implementation files('src/main/libs/RFID.jar')
     implementation files('src/main/libs/Serialport-module.jar')

@@ -4,11 +4,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
+import com.konbini.magicplateuhf.data.entities.PlateModelEntity
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.databinding.ActivitySalesBinding
+import com.konbini.magicplateuhf.ui.plateModel.PlateModelViewModel
 import com.konbini.magicplateuhf.utils.CommonUtil
 import com.konbini.magicplateuhf.utils.LogUtils
 import com.module.interaction.ModuleConnector
@@ -18,6 +23,8 @@ import com.rfid.ReaderConnector
 import com.rfid.rxobserver.RXObserver
 import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 
 @AndroidEntryPoint
@@ -42,14 +49,14 @@ class SalesActivity : AppCompatActivity() {
             AppContainer.CurrentTransaction.listEPC.clear()
             AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
             // Get list tags
-            val listTagEntity = getListTagEntity()
+            val listTagEntity = AppContainer.InitData.getListTagEntity(listEPC)
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
             // Add items to cart
             val refresh = AppContainer.CurrentTransaction.refreshCart()
             if (refresh) {
                 // Send Broadcast to update UI
                 val intent = Intent()
-                intent.action = "REFRESH_CART"
+                intent.action = "REFRESH_TAGS"
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
                 // Start reading UHF
                 mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
@@ -59,6 +66,7 @@ class SalesActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivitySalesBinding
+    private val viewModelPlateModel: PlateModelViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +75,11 @@ class SalesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initRFIDReader()
+
+        // Get all plate model
+        lifecycleScope.launch {
+            AppContainer.InitData.listPlatesModel = viewModelPlateModel.getAll().toMutableList()
+        }
 
 //        // TODO: TrungPQ add to test
 //        Timer().schedule(object : TimerTask() {
@@ -82,14 +95,14 @@ class SalesActivity : AppCompatActivity() {
         AppContainer.CurrentTransaction.listEPC.clear()
         AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
         // Get list tags
-        val listTagEntity = getListTagEntity()
+        val listTagEntity = AppContainer.InitData.getListTagEntity(listEPC)
         AppContainer.CurrentTransaction.listTagEntity = listTagEntity
         // Add items to cart
         val refresh = AppContainer.CurrentTransaction.refreshCart()
         if (refresh) {
             // Send Broadcast to update UI
             val intent = Intent()
-            intent.action = "REFRESH_CART"
+            intent.action = "REFRESH_TAGS"
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
             if (this::mReader.isInitialized && mReader != null) {
                 // Start reading UHF
@@ -134,16 +147,5 @@ class SalesActivity : AppCompatActivity() {
             Log.e(TAG, ex.toString())
             LogUtils.logError(ex)
         }
-    }
-
-    private fun getListTagEntity(): MutableList<TagEntity> {
-        val listTagEntity: MutableList<TagEntity> = mutableListOf()
-        listEPC.forEach { _epc ->
-            val tagEntity: TagEntity? = CommonUtil.convertEpcToTagEntity(_epc)
-            if (tagEntity != null) {
-                listTagEntity.add(tagEntity)
-            }
-        }
-        return listTagEntity
     }
 }

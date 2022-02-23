@@ -2,6 +2,7 @@ package com.konbini.magicplateuhf.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
@@ -9,10 +10,20 @@ import androidx.navigation.findNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.ui.*
+import com.konbini.magicplateuhf.AppContainer
+import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.databinding.ActivityMainBinding
+import com.konbini.magicplateuhf.utils.LogUtils
+import com.module.interaction.ModuleConnector
+import com.nativec.tools.ModuleManager
+import com.rfid.RFIDReaderHelper
+import com.rfid.ReaderConnector
+import com.rfid.rxobserver.RXObserver
+import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,6 +31,37 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "MainActivity"
+    }
+
+    private var listEPC: MutableList<String> = mutableListOf()
+
+    var connector: ModuleConnector = ReaderConnector()
+    lateinit var mReader: RFIDReaderHelper
+
+    private var rxObserver: RXObserver = object : RXObserver() {
+        override fun onInventoryTag(tag: RXInventoryTag) {
+            Log.d(SalesActivity.TAG, tag.strEPC)
+            listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
+        }
+
+        override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
+            AppContainer.CurrentTransaction.listEPC.clear()
+            AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
+
+            // Get list tags
+            val listTagEntity = AppContainer.InitData.getListTagEntity(listEPC)
+            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+
+            // Send Broadcast to update UI
+            val intent = Intent()
+            intent.action = "REFRESH_TAGS"
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+
+            // Start reading UHF
+            mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+
+            listEPC.clear()
+        }
     }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -30,6 +72,8 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        initRFIDReader()
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -61,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_transactions,
                 R.id.nav_options_setting,
                 R.id.nav_settings,
+                R.id.nav_write_tags,
                 R.id.nav_logout
             ), drawerLayout
         )
@@ -96,5 +141,43 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onDestroy() {
+        if (this::mReader.isInitialized && mReader != null) {
+            mReader.unRegisterObserver(rxObserver)
+        }
+        if (connector != null) {
+            connector.disConnect()
+        }
+
+        ModuleManager.newInstance().uhfStatus = false
+        ModuleManager.newInstance().release()
+
+        super.onDestroy()
+    }
+
+    private fun initRFIDReader() {
+        try {
+            if (connector.connectCom(
+                    AppSettings.Machine.ReaderUHF,
+                    AppSettings.Machine.ReaderUHFBaudRate
+                )
+            ) {
+                ModuleManager.newInstance().uhfStatus = true
+                try {
+                    mReader = RFIDReaderHelper.getDefaultHelper()
+                    mReader.registerObserver(rxObserver)
+                    Thread.sleep(500)
+                    mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                } catch (ex: Exception) {
+                    Log.e(SalesActivity.TAG, ex.toString())
+                    LogUtils.logError(ex)
+                }
+            }
+        } catch (ex: Exception) {
+            Log.e(SalesActivity.TAG, ex.toString())
+            LogUtils.logError(ex)
+        }
     }
 }

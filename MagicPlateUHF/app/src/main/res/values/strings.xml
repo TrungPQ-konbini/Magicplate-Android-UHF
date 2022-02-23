@@ -19,6 +19,7 @@
     <string name="menu_transactions">Transactions</string>
     <string name="menu_options">Options</string>
     <string name="menu_logout">Logout</string>
+    <string name="menu_write_tags">Write Tags</string>
 
     <string name="title_company">Company</string>
     <string name="title_company_logo">Logo</string>
@@ -85,8 +86,9 @@
     <string name="title_category">Category</string>
     <string name="title_price">Price</string>
     <string name="title_barcode">Barcode</string>
-    <string name="title_plate_code">Plate Model Code</string>
-    <string name="title_plate_name">Plate Model Name</string>
+    <string name="title_epc">EPC</string>
+    <string name="title_plate_code">Plate Code</string>
+    <string name="title_plate_name">Plate Name</string>
     <string name="title_time_block">Time Block</string>
     <string name="title_to_hour">To Hour</string>
     <string name="title_from_hour">From Hour</string>
@@ -97,6 +99,8 @@
     <string name="title_clear">Clear</string>
     <string name="title_enter">Enter</string>
     <string name="title_accept">Accept</string>
+    <string name="title_write_tags">Write %s Tags</string>
+    <string name="title_custom_price">Custom Price</string>
     <string name="title_not_allow_wallet_non_rfid">Do not allow wallet payments with non-RFID</string>
 
     <!--Category-->
@@ -120,8 +124,11 @@
     <string name="message_warning_date_is_required">Please select from date to date!!!</string>
     <string name="message_warning_date_wrong_format">Date is wrong format!!!</string>
     <string name="message_warning_cart_is_empty">Cart is empty !!!</string>
+    <string name="message_warning_new_plate_code_required">New Plate Model Code is required !!!</string>
 
     <string name="message_error_sync_item">Sync %s Error !!!</string>
     <string name="message_error_login">Login Error !!!</string>
     <string name="message_error_get_token">The client credentials are invalid !!!</string>
+    <string name="message_enter_new_custom_price">Enter new custom price !!!</string>
+
 </resources>

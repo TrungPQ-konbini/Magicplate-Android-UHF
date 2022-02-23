@@ -17,6 +17,23 @@ object AppContainer {
         var listMenusToday: MutableList<MenuEntity> = mutableListOf()
         var listProducts: MutableList<ProductEntity> = mutableListOf()
         var listTimeBlocks: MutableList<TimeBlockEntity> = mutableListOf()
+        var listPlatesModel: MutableList<PlateModelEntity> = mutableListOf()
+
+        fun getListTagEntity(listEPC: List<String>): MutableList<TagEntity> {
+            val listPlatesModel = AppContainer.InitData.listPlatesModel
+            val listTagEntity: MutableList<TagEntity> = mutableListOf()
+            listEPC.forEach { _epc ->
+                val tagEntity: TagEntity? = CommonUtil.convertEpcToTagEntity(_epc)
+                if (tagEntity != null) {
+                    val plateModelEntity = listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode == tagEntity.modelNumber }
+                    if (plateModelEntity != null) {
+                        tagEntity.modelName = plateModelEntity.plateModelTitle
+                    }
+                    listTagEntity.add(tagEntity)
+                }
+            }
+            return listTagEntity
+        }
     }
 
     object CurrentTransaction {

@@ -44,4 +44,9 @@
         android:name="com.konbini.magicplateuhf.ui.options.OptionsFragment"
         android:label="@string/menu_options"
         tools:layout="@layout/fragment_options" />
+    <fragment
+        android:id="@+id/nav_write_tags"
+        android:name="com.konbini.magicplateuhf.ui.writeTags.WriteTagsFragment"
+        android:label="@string/menu_write_tags"
+        tools:layout="@layout/fragment_write_tags" />
 </navigation>

@@ -52,7 +52,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     private val changeTagReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                "REFRESH_CART" -> {
+                "REFRESH_TAGS" -> {
                     // Refresh cart
                     refreshCart()
                 }
@@ -95,7 +95,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     override fun onStart() {
         super.onStart()
         val filterIntent = IntentFilter()
-        filterIntent.addAction("REFRESH_CART")
+        filterIntent.addAction("REFRESH_TAGS")
         filterIntent.addAction("ACCEPT_OPTIONS")
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(changeTagReceiver, IntentFilter(filterIntent))

@@ -37,6 +37,10 @@
             android:icon="@drawable/ic_settings"
             android:title="@string/menu_settings" />
         <item
+            android:id="@+id/nav_write_tags"
+            android:icon="@drawable/ic_notes"
+            android:title="@string/menu_write_tags" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="@string/menu_logout" />
