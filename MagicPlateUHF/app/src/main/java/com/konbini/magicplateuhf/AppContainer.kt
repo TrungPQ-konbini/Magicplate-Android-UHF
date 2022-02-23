@@ -47,35 +47,39 @@ object AppContainer {
 
         fun refreshCart(): Boolean {
             cart.removeAll { _cartEntity ->
-                listEPC.contains(_cartEntity.uuid)
+                listEPC.contains(_cartEntity.strEPC)
             }
-            listTagEntity.forEach { _tagEntity ->
-                val menuEntity = InitData.listMenusToday.find { _menuEntity ->
-                    _menuEntity.plateModelCode == _tagEntity.modelNumber
+            if (listTagEntity.isNotEmpty()) {
+                listTagEntity.forEach { _tagEntity ->
+                    val menuEntity = InitData.listMenusToday.find { _menuEntity ->
+                        _menuEntity.plateModelCode == _tagEntity.modelNumber
+                    }
+                    if (menuEntity != null) {
+                        val customPrice = _tagEntity.customPrice
+                        val cartEntity = CartEntity(
+                            uuid = UUID.randomUUID().toString(),
+                            strEPC = _tagEntity.strEPC ?: "",
+                            menuDate = menuEntity.menuDate,
+                            timeBlockId = menuEntity.timeBlockId,
+                            productId = menuEntity.productId,
+                            plateModelId = menuEntity.plateModelId,
+                            price = if (!CommonUtil.isNumber(customPrice) || customPrice.isNullOrEmpty()) menuEntity.price else (customPrice.toFloat() / 100).toString(),
+                            productName = menuEntity.productName,
+                            plateModelName = menuEntity.plateModelName,
+                            plateModelCode = menuEntity.plateModelCode,
+                            timeBlockTitle = menuEntity.timeBlockTitle,
+                            quantity = menuEntity.quantity,
+                            options = menuEntity.options
+                        )
+                        cart.add(cartEntity)
+                    }
                 }
-                if (menuEntity != null) {
-                    val customPrice = _tagEntity.customPrice
-                    val cartEntity = CartEntity(
-                        uuid = UUID.randomUUID().toString(),
-                        strEPC = _tagEntity.strEPC ?: "",
-                        menuDate = menuEntity.menuDate,
-                        timeBlockId = menuEntity.timeBlockId,
-                        productId = menuEntity.productId,
-                        plateModelId = menuEntity.plateModelId,
-                        price = if (!CommonUtil.isNumber(customPrice) || customPrice.isNullOrEmpty()) menuEntity.price else (customPrice.toFloat() / 100).toString(),
-                        productName = menuEntity.productName,
-                        plateModelName = menuEntity.plateModelName,
-                        plateModelCode = menuEntity.plateModelCode,
-                        timeBlockTitle = menuEntity.timeBlockTitle,
-                        quantity = menuEntity.quantity,
-                        options = menuEntity.options
-                    )
-                    cart.add(cartEntity)
-                }
+                countItems = cart.size
+                getTotalCartCustomerUI()
+                return true
+            } else {
+                return false
             }
-            countItems = cart.size
-            getTotalCartCustomerUI()
-            return true
         }
 
         private fun getTotalCartCustomerUI() {

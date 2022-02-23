@@ -81,7 +81,7 @@ object AppSettings {
         var Source = "Magic Plate"
         var Terminal = "Magic Plate Office Test"
         var Store = "Konbini"
-        var ReaderUHF = "dev/ttyS4"
+        var ReaderUHF = "dev/ttyS1"
         var ReaderUHFBaudRate = 115200
         var LengthEPC = 24 //12 Bytes
     }

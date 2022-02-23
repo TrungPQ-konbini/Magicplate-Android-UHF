@@ -240,7 +240,9 @@ class CommonUtil {
             return TagEntity(
                 strEPC = strEPC,
                 uuid = strEPC.substring(4, 10),
-                modelNumber = strEPC.substring(0, 4),
+                //modelNumber = strEPC.substring(0, 4),
+                // TODO: TRUNGPQ add to test
+                modelNumber = "4000",
                 customPrice = strEPC.substring(18)
             )
         }

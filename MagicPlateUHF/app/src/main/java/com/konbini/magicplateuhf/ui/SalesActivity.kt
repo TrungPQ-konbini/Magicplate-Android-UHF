@@ -54,6 +54,7 @@ class SalesActivity : AppCompatActivity() {
                 // Start reading UHF
                 mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
             }
+            listEPC.clear()
         }
     }
 
@@ -67,12 +68,12 @@ class SalesActivity : AppCompatActivity() {
 
         initRFIDReader()
 
-        // TODO: TrungPQ add to test
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                trungpqTest()
-            }
-        }, 5000)
+//        // TODO: TrungPQ add to test
+//        Timer().schedule(object : TimerTask() {
+//            override fun run() {
+//                trungpqTest()
+//            }
+//        }, 5000)
     }
 
     private fun trungpqTest() {
