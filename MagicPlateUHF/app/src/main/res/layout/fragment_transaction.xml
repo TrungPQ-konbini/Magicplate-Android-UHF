@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dimen_16"
+    tools:context=".ui.transaction.TransactionFragment">
+
+    <SearchView
+        android:id="@+id/searchTransactions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/title_searching"
+        app:layout_constraintBottom_toTopOf="@id/linearSearchByDate"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearSearchByDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:orientation="horizontal"
+        android:weightSum="7"
+        app:layout_constraintBottom_toTopOf="@id/rv_transactions"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchTransactions">
+
+        <EditText
+            android:id="@+id/dateFrom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:hint="@string/message_select_from_date"
+            android:textColorHint="@color/grey"
+            android:textStyle="italic" />
+
+        <EditText
+            android:id="@+id/dateTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:hint="@string/message_select_to_date"
+            android:textColorHint="@color/grey"
+            android:textStyle="italic" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearchByDate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@drawable/custom_button_mysterious_black_10"
+            android:gravity="center"
+            android:padding="1dp"
+            android:text="@string/title_searching"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_transactions"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearSearchByDate" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

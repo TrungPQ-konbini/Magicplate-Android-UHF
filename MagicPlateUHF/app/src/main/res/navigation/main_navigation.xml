@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_settings">
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.konbini.magicplateuhf.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/nav_menus"
+        android:name="com.konbini.magicplateuhf.ui.menu.MenuFragment"
+        android:label="@string/menu_menus"
+        tools:layout="@layout/fragment_menu" />
+    <fragment
+        android:id="@+id/nav_categories"
+        android:name="com.konbini.magicplateuhf.ui.category.CategoryFragment"
+        android:label="@string/menu_categories"
+        tools:layout="@layout/fragment_category" />
+    <fragment
+        android:id="@+id/nav_plate_models"
+        android:name="com.konbini.magicplateuhf.ui.plateModel.PlateModelFragment"
+        android:label="@string/menu_plate_models"
+        tools:layout="@layout/fragment_plate_model" />
+    <fragment
+        android:id="@+id/nav_products"
+        android:name="com.konbini.magicplateuhf.ui.product.ProductFragment"
+        android:label="@string/menu_products"
+        tools:layout="@layout/fragment_product" />
+    <fragment
+        android:id="@+id/nav_time_blocks"
+        android:name="com.konbini.magicplateuhf.ui.timeBlock.TimeBlockFragment"
+        android:label="@string/menu_time_blocks"
+        tools:layout="@layout/fragment_time_block" />
+    <fragment
+        android:id="@+id/nav_transactions"
+        android:name="com.konbini.magicplateuhf.ui.transaction.TransactionFragment"
+        android:label="@string/menu_transactions"
+        tools:layout="@layout/fragment_transaction" />
+    <fragment
+        android:id="@+id/nav_options_setting"
+        android:name="com.konbini.magicplateuhf.ui.options.OptionsFragment"
+        android:label="@string/menu_options"
+        tools:layout="@layout/fragment_options" />
+</navigation>

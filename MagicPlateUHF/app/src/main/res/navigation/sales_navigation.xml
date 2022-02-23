@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sales_navigation"
+    app:startDestination="@id/nav_magic_plate">
+
+    <fragment
+        android:id="@+id/nav_login"
+        android:name="com.konbini.magicplateuhf.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_magicPlateFragment"
+            app:destination="@+id/nav_magic_plate" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_magic_plate"
+        android:name="com.konbini.magicplateuhf.ui.sales.magicPlate.MagicPlateFragment"
+        android:label="fragment_magic_plate"
+        tools:layout="@layout/fragment_magic_plate" >
+        <action
+            android:id="@+id/action_magicPlateFragment_to_loginFragment"
+            app:destination="@+id/nav_login" />
+    </fragment>
+</navigation>

@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/dimen_16"
+    tools:context=".ui.settings.SettingsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spin_kit"
+            style="@style/SpinKitView.Large.Circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/india_green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/spin_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/message_loading"
+            android:textColor="@color/india_green"
+            android:textSize="@dimen/dimen_24"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spin_kit" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:id="@+id/scrollViewPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contentPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <!--Company-->
+            <LinearLayout
+                android:id="@+id/companyPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_company"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--Logo-->
+                <LinearLayout
+                    android:id="@+id/companyLogoPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_company_logo" />
+
+                    <EditText
+                        android:id="@+id/companyLogo"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_company_logo"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Company Name-->
+                <LinearLayout
+                    android:id="@+id/companyNamePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_company_name" />
+
+                    <EditText
+                        android:id="@+id/companyName"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_company_name"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Company Tel-->
+                <LinearLayout
+                    android:id="@+id/companyTelPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_company_tel" />
+
+                    <EditText
+                        android:id="@+id/companyTel"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_company_tel"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Company Email-->
+                <LinearLayout
+                    android:id="@+id/companyEmailPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_company_email" />
+
+                    <EditText
+                        android:id="@+id/companyEmail"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_company_email"
+                        android:inputType="textEmailAddress|textNoSuggestions" />
+                </LinearLayout>
+                <!--Company Address-->
+                <LinearLayout
+                    android:id="@+id/companyAddressPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_company_address" />
+
+                    <EditText
+                        android:id="@+id/companyAddress"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_company_address"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--Machine-->
+            <LinearLayout
+                android:id="@+id/machinePanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/companyPanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_machine"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--PinCode-->
+                <LinearLayout
+                    android:id="@+id/machinePinCodePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_machine_pin_code" />
+
+                    <EditText
+                        android:id="@+id/machinePinCode"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_machine_pin_code"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--MacAddress-->
+                <LinearLayout
+                    android:id="@+id/machineMacAddressPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_machine_mac_address" />
+
+                    <EditText
+                        android:id="@+id/machineMacAddress"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_machine_mac_address"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Source-->
+                <LinearLayout
+                    android:id="@+id/machineSourcePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_machine_source" />
+
+                    <EditText
+                        android:id="@+id/machineSource"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_machine_source"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Terminal-->
+                <LinearLayout
+                    android:id="@+id/machineTerminalPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_machine_terminal" />
+
+                    <EditText
+                        android:id="@+id/machineTerminal"
+                        style="@style/customEditTextSettings"
+                        android:layout_height="62dp"
+                        android:layout_weight="1"
+                        android:hint="@string/title_machine_terminal"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Store-->
+                <LinearLayout
+                    android:id="@+id/machineStorePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_machine_store" />
+
+                    <EditText
+                        android:id="@+id/machineStore"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_machine_store"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--Cloud-->
+            <LinearLayout
+                android:id="@+id/cloudPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/machinePanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_cloud"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--Host-->
+                <LinearLayout
+                    android:id="@+id/cloudHostPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_cloud_host" />
+
+                    <EditText
+                        android:id="@+id/cloudHost"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_cloud_host"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--ConsumerKey-->
+                <LinearLayout
+                    android:id="@+id/cloudConsumerKeyPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_cloud_consumer_key" />
+
+                    <EditText
+                        android:id="@+id/cloudConsumerKey"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_cloud_consumer_key"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--ConsumerSecret-->
+                <LinearLayout
+                    android:id="@+id/cloudConsumerSecretPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_cloud_consumer_secret" />
+
+                    <EditText
+                        android:id="@+id/cloudConsumerSecret"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_cloud_consumer_secret"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+
+                <!--ClientId-->
+                <LinearLayout
+                    android:id="@+id/cloudClientIdPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_cloud_client_id" />
+
+                    <EditText
+                        android:id="@+id/cloudClientId"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_cloud_client_id"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--ClientSecret-->
+                <LinearLayout
+                    android:id="@+id/cloudClientSecretPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_cloud_client_secret" />
+
+                    <EditText
+                        android:id="@+id/cloudClientSecret"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_cloud_client_secret"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--OrderStatus-->
+                <LinearLayout
+                    android:id="@+id/cloudOrderStatusPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_cloud_order_status" />
+
+                    <Spinner
+                        android:id="@+id/cloudOrderStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:hint="@string/title_cloud_order_status"
+                        android:spinnerMode="dialog" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--Wallet-->
+            <LinearLayout
+                android:id="@+id/walletPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cloudPanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_wallet"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--Host-->
+                <LinearLayout
+                    android:id="@+id/walletHostPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_wallet_host" />
+
+                    <EditText
+                        android:id="@+id/walletHost"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_wallet_host"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--ClientId-->
+                <LinearLayout
+                    android:id="@+id/walletClientIdPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_wallet_client_id" />
+
+                    <EditText
+                        android:id="@+id/walletClientId"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_wallet_client_id"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--ClientSecret-->
+                <LinearLayout
+                    android:id="@+id/walletClientSecretPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_wallet_client_secret" />
+
+                    <EditText
+                        android:id="@+id/walletClientSecret"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_wallet_client_secret"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--MQTT-->
+            <LinearLayout
+                android:id="@+id/mqttPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/walletPanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_mqtt"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--Host-->
+                <LinearLayout
+                    android:id="@+id/mqttHostPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_mqtt_host" />
+
+                    <EditText
+                        android:id="@+id/mqttHost"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_mqtt_host"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--UserName-->
+                <LinearLayout
+                    android:id="@+id/mqttUserNamePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_mqtt_user_name" />
+
+                    <EditText
+                        android:id="@+id/mqttUserName"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_mqtt_user_name"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Password-->
+                <LinearLayout
+                    android:id="@+id/mqttPasswordPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_mqtt_password" />
+
+                    <EditText
+                        android:id="@+id/mqttPassword"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_mqtt_password"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Topic-->
+                <LinearLayout
+                    android:id="@+id/mqttTopicPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_mqtt_topic" />
+
+                    <EditText
+                        android:id="@+id/mqttTopic"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_mqtt_topic"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--Alert-->
+            <LinearLayout
+                android:id="@+id/alertPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mqttPanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_alert_telegram"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--UserName-->
+                <LinearLayout
+                    android:id="@+id/alertTelegramUserNamePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_alert_telegram_user_name" />
+
+                    <EditText
+                        android:id="@+id/alertTelegramUserName"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_alert_telegram_user_name"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Token-->
+                <LinearLayout
+                    android:id="@+id/alertTelegramTokenPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_alert_telegram_token" />
+
+                    <EditText
+                        android:id="@+id/alertTelegramToken"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_alert_telegram_token"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--Group-->
+                <LinearLayout
+                    android:id="@+id/alertTelegramGroupPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_alert_telegram_group" />
+
+                    <EditText
+                        android:id="@+id/alertTelegramGroup"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_alert_telegram_group"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_alert_slack"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--Webhook-->
+                <LinearLayout
+                    android:id="@+id/alertSlackWebhookPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_alert_slack_webhook" />
+
+                    <EditText
+                        android:id="@+id/alertSlackWebhook"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_alert_slack_webhook"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
