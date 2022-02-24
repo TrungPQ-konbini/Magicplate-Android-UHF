@@ -53,8 +53,25 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "REFRESH_TAGS" -> {
-                    // Refresh cart
-                    refreshCart()
+                    when (AppContainer.CurrentTransaction.paymentState) {
+                        PaymentState.ReadyToPay,
+                        PaymentState.InProgress -> {
+                            // Check Cart Locked Change
+                            val isChanged = checkCartLockedChange()
+                            if (isChanged) {
+                                AudioManager.instance.soundBuzzer()
+                                setBlink(AlarmType.ERROR)
+                            }
+                        }
+                        PaymentState.Init,
+                        PaymentState.Preparing -> {
+                            // Refresh cart
+                            refreshCart()
+                        }
+                        else -> {
+
+                        }
+                    }
                 }
                 "ACCEPT_OPTIONS" -> {
                     // Refresh cart
@@ -351,6 +368,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     override fun onClickedCartItem(cartEntity: CartEntity, type: ActionCart) {
         val state = AppContainer.CurrentTransaction.paymentState
         if (state == PaymentState.ReadyToPay || state == PaymentState.InProgress) {
+            setBlink(AlarmType.ERROR)
             AudioManager.instance.soundDoNotChangeItem()
             return
         }
@@ -509,6 +527,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      *
      */
     private fun refreshCart() {
+
         displayCart()
         displayCountItem()
         displayTotal()
@@ -722,6 +741,18 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             AudioManager.instance.soundCartIsEmpty()
         }
         return !validate
+    }
+
+    /**
+     * Check cart locked change
+     *
+     * @return
+     */
+    private fun checkCartLockedChange(): Boolean {
+        val cart = AppContainer.CurrentTransaction.cart
+        val cartLocked = AppContainer.CurrentTransaction.cartLocked
+
+        return (cart.containsAll(cartLocked) && cartLocked.containsAll(cart))
     }
     // endregion
 }

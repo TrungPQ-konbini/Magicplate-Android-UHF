@@ -16,6 +16,7 @@ import com.rfid.rxobserver.RXObserver
 import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.*
 
 @AndroidEntryPoint
 class SalesActivity : AppCompatActivity() {
@@ -71,12 +72,12 @@ class SalesActivity : AppCompatActivity() {
             AppContainer.InitData.listPlatesModel = viewModelPlateModel.getAll().toMutableList()
         }
 
-//        // TODO: TrungPQ add to test
-//        Timer().schedule(object : TimerTask() {
-//            override fun run() {
-//                trungpqTest()
-//            }
-//        }, 5000)
+        // TODO: TrungPQ add to test
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                trungpqTest()
+            }
+        }, 5000)
     }
 
     private fun trungpqTest() {
