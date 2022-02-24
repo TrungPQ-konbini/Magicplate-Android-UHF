@@ -24,6 +24,8 @@ class AudioManager(private val context: Context) {
     private var mpPaymentFailedTryAgain: MediaPlayer? = null
     private var mpPaymentSuccess: MediaPlayer? = null
     private var mpPaymentFailed: MediaPlayer? = null
+    private var mpPaymentCancelled: MediaPlayer? = null
+    private var mpPaymentTimeout: MediaPlayer? = null
     private var mpPlaceTrayInTheBox: MediaPlayer? = null
     private var mpScanQR: MediaPlayer? =null
     private var mpTransactionTimeout: MediaPlayer? = null
@@ -110,6 +112,20 @@ class AudioManager(private val context: Context) {
             mpPaymentFailed = MediaPlayer.create(context, R.raw.payment_failed);
         }
         mpPaymentFailed?.start()
+    }
+
+    fun soundPaymentCancelled() {
+        if (mpPaymentCancelled == null) {
+            mpPaymentCancelled = MediaPlayer.create(context, R.raw.payment_cancelled);
+        }
+        mpPaymentCancelled?.start()
+    }
+
+    fun soundPaymentTimeout() {
+        if (mpPaymentTimeout == null) {
+            mpPaymentTimeout = MediaPlayer.create(context, R.raw.payment_timeout);
+        }
+        mpPaymentTimeout?.start()
     }
 
     fun soundPlaceTrayInTheBox() {

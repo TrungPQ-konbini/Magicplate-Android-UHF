@@ -11,20 +11,30 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Parcelable
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.acs.smartcard.Reader
+import com.google.gson.Gson
+import com.konbini.im30.hardware.IM30Interface
+import com.konbini.magicplateuhf.base.MessageMQTT
 import com.konbini.magicplateuhf.ui.SalesActivity
 import com.konbini.magicplateuhf.utils.AudioManager
 import com.konbini.magicplateuhf.utils.LogUtils
+import com.konbini.magicplateuhf.utils.MqttHelper
 import com.module.interaction.ModuleConnector
 import com.nativec.tools.ModuleManager
 import com.rfid.RFIDReaderHelper
 import com.rfid.ReaderConnector
 import dagger.hilt.android.HiltAndroidApp
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
+import org.eclipse.paho.client.mqttv3.MqttMessage
 
 @HiltAndroidApp
 class MainApplication : Application() {
 
     var mainAppInit: (() -> Unit)? = null
+
+    lateinit var mqttHelper: MqttHelper
 
     companion object {
         lateinit var mReaderASC: Reader
@@ -91,8 +101,10 @@ class MainApplication : Application() {
         instance = this
         AudioManager(this)
         getAppVersion()
+        initMQTT()
         initAcsReader()
         initRFIDReaderUHF()
+        initIM30()
         super.onCreate()
     }
 
@@ -110,6 +122,66 @@ class MainApplication : Application() {
         } catch (e: PackageManager.NameNotFoundException) {
             return
         }
+    }
+
+    /**
+     * Init MQTT
+     *
+     */
+    private fun initMQTT() {
+        if (this::mqttHelper.isInitialized) return
+
+        val host = AppSettings.MQTT.Host
+        val userName = AppSettings.MQTT.UserName
+        val password = AppSettings.MQTT.Password
+        val topic = AppSettings.MQTT.Topic
+
+        if (host.isNullOrEmpty() || userName.isNullOrEmpty() || password.isNullOrEmpty() || topic.isNullOrEmpty()) return
+
+        mqttHelper = MqttHelper(
+            applicationContext,
+            host,
+            topic,
+            userName,
+            password
+        )
+        mqttHelper.init()
+
+        mqttHelper.mqttAndroidClient.setCallback(object : MqttCallbackExtended {
+            override fun connectComplete(b: Boolean, s: String) {
+                Log.w("TrungPQ", "Connected")
+            }
+
+            override fun connectionLost(throwable: Throwable) {
+                Log.w("TrungPQ", "Connect False")
+            }
+
+            override fun deliveryComplete(iMqttDeliveryToken: IMqttDeliveryToken) {
+                Log.w("TrungPQ", "Delivered")
+            }
+
+            @Throws(java.lang.Exception::class)
+            override fun messageArrived(topic: String, mqttMessage: MqttMessage) {
+                Log.e("TrungPQ", mqttMessage.toString())
+                if (mqttMessage.toString() == "null") return
+                try {
+                    // convert message MQTT
+                    val message = Gson().fromJson(
+                        mqttMessage.toString(),
+                        MessageMQTT::class.java
+                    )
+                    LogUtils.logInfo("Receiver MQTT message: $message")
+                    if (message.menu || message.plateModel || message.product || message.timeBlock) {
+                        // sync all data
+                        val intent = Intent()
+                        intent.action = "MQTT_SYNC_DATA"
+                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+                    }
+                } catch (ex: Exception) {
+                    LogUtils.logError(ex)
+                }
+            }
+        })
     }
 
     /**
@@ -173,6 +245,29 @@ class MainApplication : Application() {
         } catch (ex: Exception) {
             Log.e(SalesActivity.TAG, ex.toString())
             LogUtils.logError(ex)
+        }
+    }
+
+    private fun initIM30() {
+        IM30Interface(instance)
+        val ports = IM30Interface.instance.port.getDevicesList().toList()
+        IM30Interface.instance.setLogger { log ->
+            Log.d("IM30", log)
+            LogUtils.logInfo(log)
+        }
+
+        ports.forEach { _port ->
+            LogUtils.logInfo(_port.second.productName.toString())
+            if (_port.second.productName == "USB Serial Converter"
+                || _port.second.productName == "Serrial device - FTDI"
+                || _port.second.productName == "FTDI"
+            ) {
+                LogUtils.logInfo("payment _ name _ ${_port.second.productName}")
+                if (IM30Interface.instance.isInit) {
+                    LogUtils.logInfo("IUC opened _ ${_port.second.productName}")
+                    IM30Interface.instance.open(_port.second.deviceName)
+                }
+            }
         }
     }
 }

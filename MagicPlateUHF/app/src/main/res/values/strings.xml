@@ -108,12 +108,14 @@
 
     <string name="message_loading">Loading…</string>
     <string name="message_processing">Processing…</string>
+    <string name="message_syncing">Syncing Data…</string>
     <string name="message_select_to_date">Select to date</string>
     <string name="message_select_from_date">Select from date</string>
     <string name="message_put_plate_on_the_tray">Place tray down, select payment method</string>
     <string name="message_enter_pin_code">Enter Pin Code</string>
     <string name="message_enter_new_custom_price">Enter new custom price !!!</string>
     <string name="message_please_tap_card">Please tap card !!!</string>
+    <string name="message_please_tap_card_in_seconds">Please tap card in %s seconds!!!</string>
     <string name="message_please_tap_card_again">Please tap card again !!!</string>
 
     <string name="message_success_save">Save Success !!!</string>
@@ -134,4 +136,6 @@
     <string name="message_error_write_data_format">Write Data format error !!!</string>
     <string name="message_error_param_unknown_error">Parameter Unknown Error</string>
 
+    <string name="message_payment_cancelled">Cancelled Payment !!!</string>
+    <string name="message_payment_timeout">Payment Timeout !!!</string>
 </resources>

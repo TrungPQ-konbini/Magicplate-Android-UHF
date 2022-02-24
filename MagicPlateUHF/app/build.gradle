@@ -110,10 +110,19 @@ dependencies {
     // Spinner
     implementation'com.github.devdhar04:MaterialSpinner:v0.1.2'
 
+    // MQTT
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.4'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
     // RFID UHF
     implementation files('src/main/libs/RFID.jar')
     implementation files('src/main/libs/Serialport-module.jar')
 
     // NFC Reader
     implementation files('src/main/libs/acssmc-1.1.5.jar')
+
+    // IM30
+    implementation files('src/main/libs/im30-release.aar')
+    implementation 'com.github.mik3y:usb-serial-for-android:3.4.1'
 }

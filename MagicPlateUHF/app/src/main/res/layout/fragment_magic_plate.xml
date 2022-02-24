@@ -253,18 +253,43 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/rfidMessageTitle"
+                <LinearLayout
+                    android:id="@+id/layoutMessageTitle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="3.5"
                     android:background="@drawable/card_shadow_white"
                     android:gravity="center"
-                    android:text="@string/message_put_plate_on_the_tray"
-                    android:textAllCaps="false"
-                    android:textColor="@color/red"
-                    android:textSize="40sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
+
+                    <com.github.ybq.android.spinkit.SpinKitView
+                        android:id="@+id/spin_kit_message"
+                        style="@style/SpinKitView.Large.Circle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:SpinKit_Color="@color/india_green" />
+
+                    <TextView
+                        android:id="@+id/rfidMessageTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/message_put_plate_on_the_tray"
+                        android:textAllCaps="false"
+                        android:textColor="@color/red"
+                        android:textSize="@dimen/dimen_32"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/rfidCancelPayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/custom_button_mysterious_black_10"
+                        android:padding="@dimen/dimen_12"
+                        android:text="@string/title_cancel"
+                        android:textColor="@color/white" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/selectPayment"

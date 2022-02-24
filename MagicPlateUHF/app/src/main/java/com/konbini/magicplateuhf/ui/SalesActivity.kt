@@ -25,6 +25,7 @@ class SalesActivity : AppCompatActivity() {
         const val TAG = "SalesActivity"
     }
 
+//    private var test = false
     private var listEPC: MutableList<String> = mutableListOf()
 
     private var rxObserver: RXObserver = object : RXObserver() {
@@ -34,6 +35,7 @@ class SalesActivity : AppCompatActivity() {
         }
 
         override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
+//            if (test) listEPC.removeFirst()
             AppContainer.CurrentTransaction.listEPC.clear()
             AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
             // Get list tags
@@ -72,12 +74,25 @@ class SalesActivity : AppCompatActivity() {
             AppContainer.InitData.listPlatesModel = viewModelPlateModel.getAll().toMutableList()
         }
 
-        // TODO: TrungPQ add to test
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                trungpqTest()
-            }
-        }, 5000)
+//        // TODO: TrungPQ add to test
+//        Timer().schedule(object : TimerTask() {
+//            override fun run() {
+//                trungpqTest()
+//            }
+//        }, 5000)
+//        Timer().schedule(object : TimerTask() {
+//            override fun run() {
+//                test = true
+//                Log.e(TAG, "Start Alarm")
+//            }
+//        }, 15000)
+//
+//        Timer().schedule(object : TimerTask() {
+//            override fun run() {
+//                test = false
+//                Log.e(TAG, "Stop Alarm")
+//            }
+//        }, 25000)
     }
 
     private fun trungpqTest() {

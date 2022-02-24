@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.konbini.magicplateuhf">
 
+    <uses-feature android:name="android.hardware.usb.host" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -29,6 +31,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MagicPlateUHF.NoActionBar" />
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>
 
 </manifest>
