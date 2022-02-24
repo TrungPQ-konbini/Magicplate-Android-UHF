@@ -64,10 +64,12 @@ object AppContainer {
         }
 
         fun refreshCart(): Boolean {
+            val gson = Gson()
             cart.removeAll { _cartEntity ->
                 listEPC.contains(_cartEntity.strEPC)
             }
             if (listTagEntity.isNotEmpty()) {
+                totalPrice = 0F
                 listTagEntity.forEach { _tagEntity ->
                     val menuEntity = InitData.listMenusToday.find { _menuEntity ->
                         _menuEntity.plateModelCode == _tagEntity.modelNumber
@@ -89,41 +91,34 @@ object AppContainer {
                             quantity = menuEntity.quantity,
                             options = menuEntity.options
                         )
+
+                        var itemPrice = cartEntity.price.toFloat()
+
+                        if (!cartEntity.options.isNullOrEmpty()) {
+                            val collectionType: Type = object : TypeToken<Collection<Option?>?>() {}.type
+                            val options: Collection<Option> =
+                                gson.fromJson(cartEntity.options, collectionType)
+
+                            options.forEach { _option ->
+                                _option.options?.forEach { _optionItem ->
+                                    if (_optionItem.isChecked) {
+                                        var price = 0F
+                                        if (!_optionItem.price.isNullOrEmpty())
+                                            price = _optionItem.price.toFloat()
+                                        itemPrice += price
+                                    }
+                                }
+                            }
+                        }
+
+                        totalPrice += (itemPrice * cartEntity.quantity.toFloat())
                         cart.add(cartEntity)
                     }
                 }
                 countItems = cart.size
-                getTotalCartCustomerUI()
                 return true
             } else {
                 return false
-            }
-        }
-
-        private fun getTotalCartCustomerUI() {
-            val gson = Gson()
-            totalPrice = 0F
-            cart.forEach cartCustomerUI@{ _menuEntity ->
-                var itemPrice = _menuEntity.price.toFloat()
-
-                if (!_menuEntity.options.isNullOrEmpty()) {
-                    val collectionType: Type = object : TypeToken<Collection<Option?>?>() {}.type
-                    val options: Collection<Option> =
-                        gson.fromJson(_menuEntity.options, collectionType)
-
-                    options.forEach { _option ->
-                        _option.options?.forEach { _optionItem ->
-                            if (_optionItem.isChecked) {
-                                var price = 0F
-                                if (!_optionItem.price.isNullOrEmpty())
-                                    price = _optionItem.price.toFloat()
-                                itemPrice += price
-                            }
-                        }
-                    }
-                }
-
-                totalPrice += (itemPrice * _menuEntity.quantity.toFloat())
             }
         }
 
