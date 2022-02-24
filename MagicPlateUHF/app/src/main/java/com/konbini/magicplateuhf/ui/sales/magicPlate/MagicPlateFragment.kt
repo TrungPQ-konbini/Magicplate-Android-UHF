@@ -256,6 +256,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         viewLifecycleOwner.lifecycleScope.launch {
             showHideLoading(true)
 
+            AppContainer.CurrentTransaction.resetTemporaryInfo()
+
             AppContainer.InitData.listProducts = viewModel.getAllProducts().toMutableList()
             AppContainer.InitData.listTimeBlocks = viewModel.getAllTimeBlock().toMutableList()
             AppContainer.InitData.listMenus = viewModel.getAllMenu().toMutableList()
@@ -498,6 +500,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun displayCart() {
         val cart = AppContainer.CurrentTransaction.cart
+        cart.sortBy { tagEntity -> tagEntity.strEPC }
         cartAdapter.setItems(ArrayList(cart))
     }
 
@@ -602,7 +605,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun listenerAcsReader() {
         try {
-            MainApplication.mReader.setOnStateChangeListener { slotNum, prevState, currState ->
+            MainApplication.mReaderASC.setOnStateChangeListener { slotNum, prevState, currState ->
                 var prevState = prevState
                 var currState = currState
                 if (prevState < Reader.CARD_UNKNOWN
@@ -635,14 +638,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         // In order to set the Get Data command to the card, we need to send a warm reset, followed by setting
                         // the communications protocol.
                         try {
-                            MainApplication.mReader.power(slotNum, Reader.CARD_WARM_RESET)
-                            MainApplication.mReader.setProtocol(
+                            MainApplication.mReaderASC.power(slotNum, Reader.CARD_WARM_RESET)
+                            MainApplication.mReaderASC.setProtocol(
                                 slotNum,
                                 Reader.PROTOCOL_T0 or Reader.PROTOCOL_T1
                             )
 
                             // Send the command to the reader
-                            var responseLength = MainApplication.mReader.transmit(
+                            var responseLength = MainApplication.mReaderASC.transmit(
                                 slotNum,
                                 command,
                                 command.size,

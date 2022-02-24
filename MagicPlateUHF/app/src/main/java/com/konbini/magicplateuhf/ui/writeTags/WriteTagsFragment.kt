@@ -20,12 +20,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.konbini.magicplateuhf.AppContainer
+import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.databinding.FragmentWriteTagsBinding
 import com.konbini.magicplateuhf.ui.MainActivity
 import com.konbini.magicplateuhf.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -53,7 +55,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         // Refresh tags
                         dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
                         dataTags.sortBy { tagEntity -> tagEntity.strEPC }
-                        adapter.setItems(ArrayList(dataTags))
+                        adapter.setItems(dataTags)
                         setTitleButtonWrite()
                     }
                 }
@@ -217,40 +219,37 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private fun writeTags(position: Int) {
-        try {
-            if (position < dataTags.size) {
-                val tag = dataTags[position]
-                val epcValue = tag.strEPC ?: ""
-                if (epcValue.isEmpty()) return
+        lifecycleScope.launch {
+            try {
+                if (position < dataTags.size) {
+                    val tag = dataTags[position]
+                    val epcValue = tag.strEPC ?: ""
+                    if (epcValue.isEmpty()) return@launch
 
-                // Select tag
-                setAccessEpcMatch(epcValue)
+                    // Select tag
+                    setAccessEpcMatch(epcValue)
 
-                val newEPC = setNewEPC(epcValue)
-                writeTag(newEPC)
+                    val newEPC = setNewEPC(epcValue)
+                    delay(100)
+                    writeTag(newEPC)
 
-                object : CountDownTimer(200, 50) {
-                    override fun onTick(millisUntilFinished: Long) {}
+                    delay(200)
+                    writeTags(position + 1)
+                } else {
+                    showHideLoading(false)
+                    AlertDialogUtil.showSuccess(
+                        getString(R.string.message_success_write_tags),
+                        requireContext()
+                    )
 
-                    override fun onFinish() {
-                        writeTags(position + 1)
-                        cancel()
-                    }
-                }.start()
-            } else {
-                showHideLoading(false)
-                AlertDialogUtil.showSuccess(
-                    getString(R.string.message_success_write_tags),
-                    requireContext()
-                )
+                    AppContainer.InitData.allowWriteTags = false
+                    // Start reading UHF
+                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                }
 
-                AppContainer.InitData.allowWriteTags = false
-                // Start reading UHF
-                MainActivity.mReader?.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
             }
-
-        } catch (ex: Exception) {
-            LogUtils.logError(ex)
         }
     }
 
@@ -274,7 +273,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
             )
             return
         }
-        MainActivity.mReader?.setAccessEpcMatch(
+        MainApplication.mReaderUHF.setAccessEpcMatch(
             0x01,
             (btAryEpc.size and 0xFF).toByte(), btAryEpc
         )
@@ -315,7 +314,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
             )
             return
         }
-        MainActivity.mReader?.writeTag(
+        MainApplication.mReaderUHF.writeTag(
             0x01,
             btAryPassWord,
             btMemBank,

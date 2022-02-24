@@ -10,9 +10,15 @@ import android.content.pm.PackageManager
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Parcelable
+import android.util.Log
 import com.acs.smartcard.Reader
+import com.konbini.magicplateuhf.ui.SalesActivity
 import com.konbini.magicplateuhf.utils.AudioManager
 import com.konbini.magicplateuhf.utils.LogUtils
+import com.module.interaction.ModuleConnector
+import com.nativec.tools.ModuleManager
+import com.rfid.RFIDReaderHelper
+import com.rfid.ReaderConnector
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -21,10 +27,14 @@ class MainApplication : Application() {
     var mainAppInit: (() -> Unit)? = null
 
     companion object {
-        lateinit var mReader: Reader
+        lateinit var mReaderASC: Reader
         lateinit var mManager: UsbManager
         lateinit var instance: MainApplication
         lateinit var mPermissionIntent: PendingIntent
+
+        var isInitializedUHF = false
+        lateinit var mReaderUHF: RFIDReaderHelper
+        var connector: ModuleConnector = ReaderConnector()
 
         var currentVersion: String = "Version: N/A"
 
@@ -49,10 +59,10 @@ class MainApplication : Application() {
                         if (device != null) {
                             try {
                                 if (device.manufacturerName == "ACS")
-                                    mReader.open(device)
+                                    mReaderASC.open(device)
                             } catch (ex: Exception) {
                                 // Close reader
-                                mReader.close()
+                                mReaderASC.close()
                             }
                         }
                     }
@@ -61,9 +71,9 @@ class MainApplication : Application() {
                 synchronized(this) {
                     val device = intent
                         .getParcelableExtra<Parcelable>(UsbManager.EXTRA_DEVICE) as UsbDevice?
-                    if (device != null && device == mReader.device) {
+                    if (device != null && device == mReaderASC.device) {
                         // Close reader
-                        mReader.close()
+                        mReaderASC.close()
                     }
                 }
             }
@@ -82,6 +92,7 @@ class MainApplication : Application() {
         AudioManager(this)
         getAppVersion()
         initAcsReader()
+        initRFIDReaderUHF()
         super.onCreate()
     }
 
@@ -111,7 +122,7 @@ class MainApplication : Application() {
         mManager = getSystemService(USB_SERVICE) as UsbManager
 
         // Initialize reader
-        mReader = Reader(mManager)
+        mReaderASC = Reader(mManager)
 
         // Register receiver for USB permission
         mPermissionIntent = PendingIntent.getBroadcast(
@@ -136,6 +147,32 @@ class MainApplication : Application() {
                     mPermissionIntent
                 )
             }
+        }
+    }
+
+    /**
+     * Init RFID Reader UHF
+     *
+     */
+    private fun initRFIDReaderUHF() {
+        try {
+            if (connector.connectCom(
+                    AppSettings.Machine.ReaderUHF,
+                    AppSettings.Machine.ReaderUHFBaudRate
+                )
+            ) {
+                ModuleManager.newInstance().uhfStatus = true
+                try {
+                    mReaderUHF = RFIDReaderHelper.getDefaultHelper()
+                    isInitializedUHF = true
+                } catch (ex: Exception) {
+                    Log.e(SalesActivity.TAG, ex.toString())
+                    LogUtils.logError(ex)
+                }
+            }
+        } catch (ex: Exception) {
+            Log.e(SalesActivity.TAG, ex.toString())
+            LogUtils.logError(ex)
         }
     }
 }

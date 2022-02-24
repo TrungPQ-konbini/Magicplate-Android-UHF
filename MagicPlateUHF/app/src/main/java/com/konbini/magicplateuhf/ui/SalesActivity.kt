@@ -5,27 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.konbini.magicplateuhf.AppContainer
-import com.konbini.magicplateuhf.AppSettings
-import com.konbini.magicplateuhf.data.entities.PlateModelEntity
-import com.konbini.magicplateuhf.data.entities.TagEntity
+import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.databinding.ActivitySalesBinding
 import com.konbini.magicplateuhf.ui.plateModel.PlateModelViewModel
-import com.konbini.magicplateuhf.utils.CommonUtil
 import com.konbini.magicplateuhf.utils.LogUtils
-import com.module.interaction.ModuleConnector
-import com.nativec.tools.ModuleManager
-import com.rfid.RFIDReaderHelper
-import com.rfid.ReaderConnector
 import com.rfid.rxobserver.RXObserver
 import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 @AndroidEntryPoint
 class SalesActivity : AppCompatActivity() {
@@ -35,9 +25,6 @@ class SalesActivity : AppCompatActivity() {
     }
 
     private var listEPC: MutableList<String> = mutableListOf()
-
-    var connector: ModuleConnector = ReaderConnector()
-    lateinit var mReader: RFIDReaderHelper
 
     private var rxObserver: RXObserver = object : RXObserver() {
         override fun onInventoryTag(tag: RXInventoryTag) {
@@ -61,7 +48,7 @@ class SalesActivity : AppCompatActivity() {
 
                 if (!AppContainer.InitData.allowWriteTags) {
                     // Start reading UHF
-                    mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
             }
             listEPC.clear()
@@ -107,45 +94,25 @@ class SalesActivity : AppCompatActivity() {
             val intent = Intent()
             intent.action = "REFRESH_TAGS"
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-            if (this::mReader.isInitialized && mReader != null) {
+            if (MainApplication.isInitializedUHF) {
                 // Start reading UHF
-                mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
             }
         }
     }
 
     override fun onDestroy() {
-        if (this::mReader.isInitialized && mReader != null) {
-            mReader.unRegisterObserver(rxObserver)
+        if (MainApplication.isInitializedUHF) {
+            MainApplication.mReaderUHF.unRegisterObserver(rxObserver)
         }
-        if (connector != null) {
-            connector.disConnect()
-        }
-
-        ModuleManager.newInstance().uhfStatus = false
-        ModuleManager.newInstance().release()
-
         super.onDestroy()
     }
 
     private fun initRFIDReader() {
         try {
-            if (connector.connectCom(
-                    AppSettings.Machine.ReaderUHF,
-                    AppSettings.Machine.ReaderUHFBaudRate
-                )
-            ) {
-                ModuleManager.newInstance().uhfStatus = true
-                try {
-                    mReader = RFIDReaderHelper.getDefaultHelper()
-                    mReader.registerObserver(rxObserver)
-                    Thread.sleep(500)
-                    mReader.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                } catch (ex: Exception) {
-                    Log.e(TAG, ex.toString())
-                    LogUtils.logError(ex)
-                }
-            }
+            MainApplication.mReaderUHF.registerObserver(rxObserver)
+            Thread.sleep(500)
+            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
         } catch (ex: Exception) {
             Log.e(TAG, ex.toString())
             LogUtils.logError(ex)

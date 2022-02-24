@@ -60,8 +60,7 @@ class WriteTagsViewHolder(
         itemBinding.tvEPC.text = item.strEPC
         itemBinding.tvPlateCode.text = item.modelNumber
         itemBinding.tvPlateName.text = item.modelName ?: "N/A"
-        itemBinding.tvCustomPrice.text = (item.customPrice?.toInt()
-            ?.div(100))?.let { CommonUtil.formatCurrency(it.toFloat()) }
+        itemBinding.tvCustomPrice.text = CommonUtil.formatCurrency((item.customPrice.toDouble()/100).toFloat())
 
         // Set background color
         if (position % 2 == 0) {

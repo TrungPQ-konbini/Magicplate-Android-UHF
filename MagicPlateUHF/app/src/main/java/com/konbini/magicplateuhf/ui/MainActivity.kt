@@ -31,8 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "MainActivity"
-        var mReader: RFIDReaderHelper? = null
-        var connector: ModuleConnector = ReaderConnector()
     }
 
     private var listEPC: MutableList<String> = mutableListOf()
@@ -56,9 +54,9 @@ class MainActivity : AppCompatActivity() {
             intent.action = "REFRESH_TAGS"
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-            if (!AppContainer.InitData.allowWriteTags && mReader != null) {
+            if (!AppContainer.InitData.allowWriteTags && MainApplication.isInitializedUHF) {
                 // Start reading UHF
-                mReader?.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
             }
 
             listEPC.clear()
@@ -145,37 +143,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        if (mReader != null) {
-            mReader?.unRegisterObserver(rxObserver)
+        if (MainApplication.isInitializedUHF) {
+            MainApplication.mReaderUHF.unRegisterObserver(rxObserver)
         }
-        if (connector != null) {
-            connector.disConnect()
-        }
-
-        ModuleManager.newInstance().uhfStatus = false
-        ModuleManager.newInstance().release()
-
         super.onDestroy()
     }
 
     private fun initRFIDReader() {
         try {
-            if (connector.connectCom(
-                    AppSettings.Machine.ReaderUHF,
-                    AppSettings.Machine.ReaderUHFBaudRate
-                )
-            ) {
-                ModuleManager.newInstance().uhfStatus = true
-                try {
-                    mReader = RFIDReaderHelper.getDefaultHelper()
-                    mReader?.registerObserver(rxObserver)
-                    Thread.sleep(500)
-                    mReader?.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                } catch (ex: Exception) {
-                    Log.e(SalesActivity.TAG, ex.toString())
-                    LogUtils.logError(ex)
-                }
-            }
+            MainApplication.mReaderUHF.registerObserver(rxObserver)
+            Thread.sleep(500)
+            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
         } catch (ex: Exception) {
             Log.e(SalesActivity.TAG, ex.toString())
             LogUtils.logError(ex)
