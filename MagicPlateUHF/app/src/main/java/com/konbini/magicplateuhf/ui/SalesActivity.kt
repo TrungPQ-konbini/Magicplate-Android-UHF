@@ -30,7 +30,7 @@ class SalesActivity : AppCompatActivity() {
 
     private var rxObserver: RXObserver = object : RXObserver() {
         override fun onInventoryTag(tag: RXInventoryTag) {
-            Log.d(TAG, tag.strEPC)
+            //Log.d(TAG, tag.strEPC)
             listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
         }
 

@@ -495,6 +495,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      *
      */
     private fun cancelPayment(isTimeout: Boolean = false) {
+        // Handle Hardware
+        if (AppContainer.CurrentTransaction.paymentType == PaymentType.MASTER_CARD
+            || AppContainer.CurrentTransaction.paymentType == PaymentType.EZ_LINK
+            || AppContainer.CurrentTransaction.paymentType == PaymentType.PAY_NOW
+        ) {
+            IM30Interface.instance.cancel()
+        }
+
         // Reset temporary info
         AppContainer.CurrentTransaction.resetTemporaryInfo()
 
@@ -518,14 +526,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
         val message = getString(R.string.message_put_plate_on_the_tray)
         resetMessage(message, 0)
-
-        // Handle Hardware
-        if (AppContainer.CurrentTransaction.paymentType == PaymentType.MASTER_CARD
-            || AppContainer.CurrentTransaction.paymentType == PaymentType.EZ_LINK
-            || AppContainer.CurrentTransaction.paymentType == PaymentType.PAY_NOW
-        ) {
-            IM30Interface.instance.cancel()
-        }
     }
 
     // region ================Handle UI================
