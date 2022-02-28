@@ -239,13 +239,17 @@ class CommonUtil {
         fun convertEpcToTagEntity(strEPC: String): TagEntity? {
             if (strEPC.length != AppSettings.Machine.LengthEPC) return null
             var customPrice = "000000"
-            if (strEPC.substring(18).isDigitsOnly()) {
-                customPrice = strEPC.substring(18)
+            customPrice = if (strEPC.substring(18).isDigitsOnly()) {
+                strEPC.substring(18).toInt(16).toString()
+            } else {
+                "N/A"
             }
             return TagEntity(
                 strEPC = strEPC,
-                uuid = strEPC.substring(4, 10),
-                modelNumber = strEPC.substring(0, 4),
+                plateModel = strEPC.substring(0, 4).toInt(16).toString(),
+                serialNumber = strEPC.substring(4, 10).toInt(16).toString(),
+                paidDate = strEPC.substring(14, 16).toInt(16).toString(),
+                paidSession = strEPC.substring(16, 18).toInt(16).toString(),
                 customPrice = customPrice
             )
         }

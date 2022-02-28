@@ -26,9 +26,9 @@ object AppContainer {
             listEPC.forEach { _epc ->
                 val tagEntity: TagEntity? = CommonUtil.convertEpcToTagEntity(_epc)
                 if (tagEntity != null) {
-                    val plateModelEntity = listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode == tagEntity.modelNumber }
+                    val plateModelEntity = listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode == tagEntity.plateModel }
                     if (plateModelEntity != null) {
-                        tagEntity.modelName = plateModelEntity.plateModelTitle
+                        tagEntity.plateModelTitle = plateModelEntity.plateModelTitle
                     }
                     listTagEntity.add(tagEntity)
                 }
@@ -39,6 +39,7 @@ object AppContainer {
 
     object CurrentTransaction {
         var cardNFC = ""
+        var barcode = ""
         var countItems = 0
         var totalPrice = 0F
         var paymentType: PaymentType? = null
@@ -51,6 +52,7 @@ object AppContainer {
 
         fun resetTemporaryInfo() {
             cardNFC = ""
+            barcode = ""
             countItems = 0
             totalPrice = 0F
             paymentType = null
@@ -72,7 +74,7 @@ object AppContainer {
                 totalPrice = 0F
                 listTagEntity.forEach { _tagEntity ->
                     val menuEntity = InitData.listMenusToday.find { _menuEntity ->
-                        _menuEntity.plateModelCode == _tagEntity.modelNumber
+                        _menuEntity.plateModelCode == _tagEntity.plateModel
                     }
                     if (menuEntity != null) {
                         val customPrice = _tagEntity.customPrice

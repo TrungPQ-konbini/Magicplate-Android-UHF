@@ -3,7 +3,9 @@ package com.konbini.magicplateuhf.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
+import android.view.KeyEvent
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -23,6 +25,8 @@ class SalesActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "SalesActivity"
+        private var defaultInterval: Int = 1000
+        private var lastTimeClicked: Long = 0
     }
 
 //    private var test = false
@@ -133,5 +137,28 @@ class SalesActivity : AppCompatActivity() {
             Log.e(TAG, ex.toString())
             LogUtils.logError(ex)
         }
+    }
+
+    override fun dispatchKeyEvent(e: KeyEvent): Boolean {
+        if (e.action == KeyEvent.ACTION_DOWN) {
+            val pressedKey = e.unicodeChar.toChar()
+            AppContainer.CurrentTransaction.barcode += pressedKey
+        }
+        Log.e("KEY_CODE", e.keyCode.toString())
+        if (e.action == KeyEvent.ACTION_DOWN) {
+            when (e.keyCode) {
+                KeyEvent.KEYCODE_ENTER -> {
+                    if (SystemClock.elapsedRealtime() - lastTimeClicked < defaultInterval) {
+                        return super.dispatchKeyEvent(e)
+                    }
+                    lastTimeClicked = SystemClock.elapsedRealtime()
+                    Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
+                    val intent = Intent()
+                    intent.action = "NEW_BARCODE"
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+                }
+            }
+        }
+        return super.dispatchKeyEvent(e)
     }
 }

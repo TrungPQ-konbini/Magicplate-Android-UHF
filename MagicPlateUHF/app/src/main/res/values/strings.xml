@@ -135,6 +135,8 @@
     <string name="message_error_get_token">The client credentials are invalid !!!</string>
     <string name="message_error_write_data_format">Write Data format error !!!</string>
     <string name="message_error_param_unknown_error">Parameter Unknown Error</string>
+    <string name="message_error_payment_failed">%s \n Payment failed, please try again!!!</string>
+    <string name="message_error_unknown_error">unknown error: %s \n please try again!!!</string>
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>

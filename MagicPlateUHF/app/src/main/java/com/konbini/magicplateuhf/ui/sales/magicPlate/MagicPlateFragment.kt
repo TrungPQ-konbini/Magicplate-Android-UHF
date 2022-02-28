@@ -78,6 +78,32 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         }
                     }
                 }
+                "NEW_BARCODE" -> {
+                    val paymentState = AppContainer.CurrentTransaction.paymentState
+                    if (paymentState == PaymentState.InProgress || paymentState == PaymentState.ReadyToPay) {
+                        AudioManager.instance.soundDoNotChangeItem()
+                        return
+                    }
+                    val barcode = AppContainer.CurrentTransaction.barcode.split("\n")[0]
+                    val product = AppContainer.InitData.listProducts.find { _productEntity -> _productEntity.barcode == barcode }
+                    if (product != null) {
+                        val cartEntity = CartEntity(
+                            uuid = UUID.randomUUID().toString(),
+                            strEPC = "",
+                            menuDate = "",
+                            timeBlockId = "",
+                            productId = product.id.toString(),
+                            plateModelId = "",
+                            price = product.price,
+                            productName = product.name,
+                            plateModelName = "",
+                            plateModelCode = "",
+                            timeBlockTitle = "",
+                            quantity = 1,
+                            options = product.options
+                        )
+                    }
+                }
                 "ACCEPT_OPTIONS" -> {
                     // Refresh cart
                     refreshCart()
@@ -726,11 +752,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     /**
      * Handle payment error
      *
-     * @param message
+     * @param _message
      */
-    private fun handlePaymentError(message: String) {
+    private fun handlePaymentError(_message: String) {
         setBlink(AlarmType.ERROR)
-        displayMessage(message)
+        displayMessage(ErrorCodeIM30.handleMessageIuc(_message, requireContext()))
         AudioManager.instance.soundBuzzer()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
 

@@ -39,7 +39,7 @@ class WriteTagsAdapter : RecyclerView.Adapter<WriteTagsViewHolder>() {
         } else {
             for (tag: TagEntity in tags) {
                 if (tag.strEPC!!.lowercase()
-                        .contains(charText) || tag.modelNumber!!.lowercase()
+                        .contains(charText) || tag.plateModel!!.lowercase()
                         .contains(charText)
                 ) {
                     items.add(tag)
@@ -58,8 +58,8 @@ class WriteTagsViewHolder(
     fun bind(item: TagEntity, position: Int) {
         itemBinding.tvIndex.text = "${position + 1}"
         itemBinding.tvEPC.text = item.strEPC
-        itemBinding.tvPlateCode.text = item.modelNumber
-        itemBinding.tvPlateName.text = item.modelName ?: "N/A"
+        itemBinding.tvPlateCode.text = item.plateModel
+        itemBinding.tvPlateName.text = item.plateModelTitle ?: "N/A"
         itemBinding.tvCustomPrice.text = CommonUtil.formatCurrency((item.customPrice.toDouble()/100).toFloat())
 
         // Set background color
