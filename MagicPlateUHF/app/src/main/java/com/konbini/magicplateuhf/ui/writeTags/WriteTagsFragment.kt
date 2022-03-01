@@ -36,9 +36,9 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     companion object {
         const val TAG = "WriteTagsFragment"
-        var serialNumber = 1000
     }
 
+    private var serialNumber = 1000
     private var processing = false
     private var selectedPlateModel = ""
     private lateinit var adapter: WriteTagsAdapter
@@ -209,6 +209,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     override fun onNothingSelected(p0: AdapterView<*>?) {}
 
     private fun setNewEPC(oldEPC: String): String {
+        serialNumber += 1
         val newPlateModel = "%04X".format(selectedPlateModel.toInt())
         val newSerialNumber = "%06X".format(serialNumber)
         val newPaidDate = "%02X".format(0)
@@ -218,8 +219,6 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
             newCustomPrice =
                 "%06X".format((binding.newCustomPrice.text.toString().toDouble() * 100).toInt())
         }
-
-        serialNumber++
 
         return oldEPC.replace(oldEPC.substring(0, 4), newPlateModel)
             .replace(oldEPC.substring(4, 10), newSerialNumber)
@@ -243,7 +242,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     delay(100)
                     writeTag(newEPC)
 
-                    delay(200)
+                    delay(100)
                     writeTags(position + 1)
                 } else {
                     showHideLoading(false)

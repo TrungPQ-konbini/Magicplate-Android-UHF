@@ -85,7 +85,7 @@ object AppContainer {
                             timeBlockId = menuEntity.timeBlockId,
                             productId = menuEntity.productId,
                             plateModelId = menuEntity.plateModelId,
-                            price = if (!CommonUtil.isNumber(customPrice) || customPrice.isNullOrEmpty()) menuEntity.price else (customPrice.toFloat() / 100).toString(),
+                            price = if (customPrice.isNullOrEmpty() || !CommonUtil.isNumber(customPrice) || customPrice == "0") menuEntity.price else (customPrice.toFloat() / 100).toString(),
                             productName = menuEntity.productName,
                             plateModelName = menuEntity.plateModelName,
                             plateModelCode = menuEntity.plateModelCode,

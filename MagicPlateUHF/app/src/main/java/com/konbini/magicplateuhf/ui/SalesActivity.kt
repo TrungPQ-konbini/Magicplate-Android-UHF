@@ -34,7 +34,7 @@ class SalesActivity : AppCompatActivity() {
 
     private var rxObserver: RXObserver = object : RXObserver() {
         override fun onInventoryTag(tag: RXInventoryTag) {
-            //Log.d(TAG, tag.strEPC)
+            Log.d(TAG, tag.strEPC)
             listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
         }
 
@@ -76,48 +76,6 @@ class SalesActivity : AppCompatActivity() {
         // Get all plate model
         lifecycleScope.launch {
             AppContainer.InitData.listPlatesModel = viewModelPlateModel.getAll().toMutableList()
-        }
-
-//        // TODO: TrungPQ add to test
-//        Timer().schedule(object : TimerTask() {
-//            override fun run() {
-//                trungpqTest()
-//            }
-//        }, 5000)
-//        Timer().schedule(object : TimerTask() {
-//            override fun run() {
-//                test = true
-//                Log.e(TAG, "Start Alarm")
-//            }
-//        }, 15000)
-//
-//        Timer().schedule(object : TimerTask() {
-//            override fun run() {
-//                test = false
-//                Log.e(TAG, "Stop Alarm")
-//            }
-//        }, 25000)
-    }
-
-    private fun trungpqTest() {
-        listEPC.add("40 00 2D 2C AD F8 94 D1 B3 40 50 D0".replace("\\s".toRegex(), ""))
-        listEPC.add("40 00 2F 2C AD F8 94 D1 B3 40 50 D0".replace("\\s".toRegex(), ""))
-        AppContainer.CurrentTransaction.listEPC.clear()
-        AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
-        // Get list tags
-        val listTagEntity = AppContainer.InitData.getListTagEntity(listEPC)
-        AppContainer.CurrentTransaction.listTagEntity = listTagEntity
-        // Add items to cart
-        val refresh = AppContainer.CurrentTransaction.refreshCart()
-        if (refresh) {
-            // Send Broadcast to update UI
-            val intent = Intent()
-            intent.action = "REFRESH_TAGS"
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-            if (MainApplication.isInitializedUHF) {
-                // Start reading UHF
-                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-            }
         }
     }
 
