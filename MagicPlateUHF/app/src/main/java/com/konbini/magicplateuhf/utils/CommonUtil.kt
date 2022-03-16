@@ -239,11 +239,8 @@ class CommonUtil {
         fun convertEpcToTagEntity(strEPC: String): TagEntity? {
             if (strEPC.length != AppSettings.Machine.LengthEPC) return null
             var customPrice = "000000"
-            customPrice = if (strEPC.substring(18).isDigitsOnly()) {
-                strEPC.substring(18).toInt(16).toString()
-            } else {
-                "N/A"
-            }
+            customPrice = strEPC.substring(18).toInt(16).toString()
+
             return TagEntity(
                 strEPC = strEPC,
                 plateModel = strEPC.substring(0, 4).toInt(16).toString(),

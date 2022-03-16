@@ -67,9 +67,11 @@ object AppContainer {
 
         fun refreshCart(): Boolean {
             val gson = Gson()
-            cart.removeAll { _cartEntity ->
-                listEPC.contains(_cartEntity.strEPC)
-            }
+//            cart.removeAll { _cartEntity ->
+//                listEPC.contains(_cartEntity.strEPC)
+//            }
+
+            cart.clear()
             if (listTagEntity.isNotEmpty()) {
                 totalPrice = 0F
                 listTagEntity.forEach { _tagEntity ->
@@ -120,6 +122,8 @@ object AppContainer {
                 countItems = cart.size
                 return true
             } else {
+                totalPrice = 0F
+                countItems = 0
                 return false
             }
         }

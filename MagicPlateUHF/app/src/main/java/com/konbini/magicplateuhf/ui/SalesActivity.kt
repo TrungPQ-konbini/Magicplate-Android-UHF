@@ -47,8 +47,9 @@ class SalesActivity : AppCompatActivity() {
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
             // Add items to cart
             val refresh = AppContainer.CurrentTransaction.refreshCart()
-            if (refresh) {
+            //if (refresh) {
                 // Send Broadcast to update UI
+
                 val intent = Intent()
                 intent.action = "REFRESH_TAGS"
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
@@ -57,7 +58,7 @@ class SalesActivity : AppCompatActivity() {
                     // Start reading UHF
                     MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
-            }
+            //}
             listEPC.clear()
         }
     }

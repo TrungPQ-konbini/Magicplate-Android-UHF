@@ -216,8 +216,9 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         val newPaidSession = "%02X".format(0)
         var newCustomPrice = "%06X".format(0)
         if (binding.newCustomPrice.text.toString().isNotEmpty()) {
+            val price = (binding.newCustomPrice.text.toString().toDouble() * 100).toInt()
             newCustomPrice =
-                "%06X".format((binding.newCustomPrice.text.toString().toDouble() * 100).toInt())
+                "%06X".format(price)
         }
 
         return oldEPC.replace(oldEPC.substring(0, 4), newPlateModel)

@@ -1,5 +1,7 @@
 package com.konbini.magicplateuhf.ui.sales.magicPlate
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -7,6 +9,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,12 +24,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.acs.smartcard.Reader
 import com.acs.smartcard.ReaderException
+import com.dantsu.escposprinter.EscPosPrinter
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnections
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
+import com.dantsu.escposprinter.connection.tcp.TcpConnection
+import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.google.gson.Gson
 import com.konbini.im30.hardware.IM30Interface
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
+import com.konbini.magicplateuhf.data.*
 import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
 import com.konbini.magicplateuhf.data.enum.*
@@ -69,7 +79,9 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             }
                         }
                         PaymentState.Init,
-                        PaymentState.Preparing -> {
+                        PaymentState.Preparing,
+                        PaymentState.Success,
+                        PaymentState.Cancelled-> {
                             // Refresh cart
                             refreshCart()
                         }
@@ -245,6 +257,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             viewModel.state.collect { _state ->
                 when (_state.status) {
                     Resource.Status.LOADING -> {
+                        // Reset countdown timeout payment
+                        timerTimeoutPayment.cancel()
+                        timeout = AppSettings.Options.Payment.Timeout
+
                         displayMessage(_state.message)
                         AudioManager.instance.soundProcessingPayment()
                         AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
@@ -252,7 +268,16 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     Resource.Status.SUCCESS -> {
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
-                        if (!_state.isFinish) {
+
+                        if (AppSettings.Options.SyncOrderRealtime) {
+                            if (!_state.isFinish) {
+                                // Print Receipt
+                                printReceipt(AppContainer.CurrentTransaction.cartLocked)
+                                AudioManager.instance.soundPaymentSuccess()
+                            }
+                        } else {
+                            // Print Receipt
+                            printReceipt(AppContainer.CurrentTransaction.cartLocked)
                             AudioManager.instance.soundPaymentSuccess()
                         }
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
@@ -313,6 +338,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun setupActions() {
         binding.rfidItemCount.setOnClickListener {
+            // TODO for test only
+            gotoLogin()
             binding.rfidItemCount.blink(Color.RED, 1, 50L)
             clickedTitleModel += 1
             Log.e(TAG, "Clicked Title Model-$clickedTitleModel")
@@ -343,6 +370,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         binding.rfidCancelPayment.setSafeOnClickListener {
             cancelPayment()
         }
+
+        // TODO: Start TrungPQ add to test
+        binding.spinKitMessage.setSafeOnClickListener {
+            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
+            AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+            viewModel.debit()
+        }
+        // TODO: End TrungPQ add to test
     }
 
     /**
@@ -1017,4 +1052,43 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         return cart.size != cartLocked.size
     }
     // endregion
+
+    private fun printReceipt(cartLocked: MutableList<CartEntity>) {
+        val bluetoothAdapter= BluetoothAdapter.getDefaultAdapter()
+        val devices = BluetoothConnections().list
+
+        val device = BluetoothPrintersConnections.selectFirstPaired()
+        val printer = EscPosPrinter(device, 203, 48f, 32)
+        val content = formatReceipt(printer, cartLocked)
+        printer.printFormattedTextAndCut(content)
+    }
+
+    private fun formatReceipt(printer: EscPosPrinter, cartLocked: MutableList<CartEntity>): String {
+        return "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM))+"</img>\n" +
+                "[L]\n" +
+                "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
+                "[L]\n" +
+                "[C]================================\n" +
+                "[L]\n" +
+                "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
+                "[L]  + Size : S\n" +
+                "[L]\n" +
+                "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
+                "[L]  + Size : 57/58\n" +
+                "[L]\n" +
+                "[C]--------------------------------\n" +
+                "[R]TOTAL PRICE :[R]34.98e\n" +
+                "[R]TAX :[R]4.23e\n" +
+                "[L]\n" +
+                "[C]================================\n" +
+                "[L]\n" +
+                "[L]<font size='tall'>Customer :</font>\n" +
+                "[L]Raymond DUPONT\n" +
+                "[L]5 rue des girafes\n" +
+                "[L]31547 PERPETES\n" +
+                "[L]Tel : +33801201456\n" +
+                "[L]\n" +
+                "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+                "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+    }
 }
