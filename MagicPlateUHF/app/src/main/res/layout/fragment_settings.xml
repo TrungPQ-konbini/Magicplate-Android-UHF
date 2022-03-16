@@ -647,6 +647,117 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!--Receipt-->
+            <LinearLayout
+                android:id="@+id/receiptPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mqttPanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_printer"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+
+                <!--Printer TCP-->
+                <LinearLayout
+                    android:id="@+id/receiptPrinterIpPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_tcp" />
+
+                    <EditText
+                        android:id="@+id/printerIp"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_tcp"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+
+                <!--Printer USB-->
+                <LinearLayout
+                    android:id="@+id/receiptPrinterUsbPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_usb" />
+
+                    <EditText
+                        android:id="@+id/printerUsb"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_usb"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+
+                <!--Width Paper-->
+                <LinearLayout
+                    android:id="@+id/receiptWidthPaperPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_receipt_width_paper" />
+
+                    <EditText
+                        android:id="@+id/receiptWidthPaper"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_receipt_width_paper"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!--Content-->
+                <LinearLayout
+                    android:id="@+id/receiptContentPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_receipt_content" />
+
+                    <EditText
+                        android:id="@+id/receiptContent"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_receipt_content"
+                        android:inputType="textNoSuggestions|textMultiLine"
+                        android:lines="10"
+                        android:maxLines="10"
+                        android:minLines="10" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!--Alert-->
             <LinearLayout
                 android:id="@+id/alertPanel"
@@ -656,7 +767,7 @@
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mqttPanel">
+                app:layout_constraintTop_toBottomOf="@id/receiptPanel">
 
                 <TextView
                     android:layout_width="match_parent"

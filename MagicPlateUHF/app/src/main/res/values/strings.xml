@@ -140,4 +140,10 @@
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>
+    <string name="title_receipt_width_paper">Receipt Width Paper</string>
+    <string name="title_receipt_content">Receipt Content</string>
+    <string name="title_printer">Receipt Printer</string>
+    <string name="title_tcp">TCP</string>
+    <string name="title_usb">USB</string>
+    <string name="message_error_TCP_is_empty">TCP is empty!!!</string>
 </resources>

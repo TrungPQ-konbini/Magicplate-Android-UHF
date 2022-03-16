@@ -1,14 +1,17 @@
 package com.konbini.magicplateuhf.ui.sales.magicPlate
 
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.hardware.usb.UsbDevice
+import android.hardware.usb.UsbManager
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Parcelable
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,10 +28,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.acs.smartcard.Reader
 import com.acs.smartcard.ReaderException
 import com.dantsu.escposprinter.EscPosPrinter
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnections
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
 import com.dantsu.escposprinter.connection.tcp.TcpConnection
+import com.dantsu.escposprinter.connection.usb.UsbConnection
+import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.google.gson.Gson
 import com.konbini.im30.hardware.IM30Interface
@@ -59,6 +62,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     companion object {
         const val TAG = "MagicPlateFragment"
+        const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
     }
 
     private val gson = Gson()
@@ -81,7 +85,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         PaymentState.Init,
                         PaymentState.Preparing,
                         PaymentState.Success,
-                        PaymentState.Cancelled-> {
+                        PaymentState.Cancelled -> {
                             // Refresh cart
                             refreshCart()
                         }
@@ -97,7 +101,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         return
                     }
                     val barcode = AppContainer.CurrentTransaction.barcode.split("\n")[0]
-                    val product = AppContainer.InitData.listProducts.find { _productEntity -> _productEntity.barcode == barcode }
+                    val product =
+                        AppContainer.InitData.listProducts.find { _productEntity -> _productEntity.barcode == barcode }
                     if (product != null) {
                         val cartEntity = CartEntity(
                             uuid = UUID.randomUUID().toString(),
@@ -310,7 +315,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModelSettings.state.collect() { _state ->
-                when(_state.status) {
+                when (_state.status) {
                     Resource.Status.LOADING -> {
                         binding.spinTitle.text = getString(R.string.message_syncing)
                         showHideLoading(true)
@@ -1054,41 +1059,126 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     // endregion
 
     private fun printReceipt(cartLocked: MutableList<CartEntity>) {
-        val bluetoothAdapter= BluetoothAdapter.getDefaultAdapter()
-        val devices = BluetoothConnections().list
+        if (AppSettings.Options.Printer.Bluetooth) {
+            // Bluetooth
+            printReceiptBluetooth(cartLocked)
+        } else {
+            if (AppSettings.Options.Printer.TCP) {
+                // TCP
+                printReceiptTCP(cartLocked)
+            } else {
+                // USB
+                printReceiptUSB(cartLocked)
+            }
+        }
+    }
 
+    private fun printReceiptBluetooth(cartLocked: MutableList<CartEntity>) {
         val device = BluetoothPrintersConnections.selectFirstPaired()
-        val printer = EscPosPrinter(device, 203, 48f, 32)
+        val printer =
+            EscPosPrinter(device, 203, AppSettings.ReceiptPrinter.WidthPaper.toFloat(), 32)
         val content = formatReceipt(printer, cartLocked)
         printer.printFormattedTextAndCut(content)
     }
 
+    private fun printReceiptTCP(cartLocked: MutableList<CartEntity>) {
+        val ip = AppSettings.ReceiptPrinter.TCP
+        if (ip.isNotEmpty()) {
+            val printer = EscPosPrinter(
+                TcpConnection(ip, 9300, 15),
+                203,
+                AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
+                32
+            )
+            val content = formatReceipt(printer, cartLocked)
+            printer.printFormattedTextAndCut(content)
+        } else {
+            AlertDialogUtil.showError(
+                getString(R.string.message_error_TCP_is_empty),
+                requireContext()
+            )
+        }
+    }
+
+    private fun printReceiptUSB(cartLocked: MutableList<CartEntity>) {
+        val usbConnection = UsbPrintersConnections.selectFirstConnected(requireContext())
+        val usbManager = requireActivity().getSystemService(Context.USB_SERVICE) as UsbManager?
+        if (usbConnection != null && usbManager != null) {
+            val permissionIntent = PendingIntent.getBroadcast(
+                requireContext(),
+                0,
+                Intent(ACTION_USB_PERMISSION),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
+            )
+            val filter = IntentFilter(ACTION_USB_PERMISSION)
+            requireActivity().registerReceiver(usbReceiver, filter)
+            usbManager.requestPermission(usbConnection.device, permissionIntent)
+        }
+    }
+
+    private val usbReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            if (ACTION_USB_PERMISSION == action) {
+                synchronized(this) {
+                    val usbManager =
+                        requireActivity().getSystemService(Context.USB_SERVICE) as UsbManager?
+                    val usbDevice =
+                        intent.getParcelableExtra<Parcelable>(UsbManager.EXTRA_DEVICE) as UsbDevice?
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        if (usbManager != null && usbDevice != null) {
+                            val printer =
+                                EscPosPrinter(
+                                    UsbConnection(usbManager, usbDevice),
+                                    203,
+                                    AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
+                                    32
+                                )
+                            val content = formatReceipt(printer, AppContainer.CurrentTransaction.cartLocked)
+                            printer.printFormattedTextAndCut(content)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun formatReceipt(printer: EscPosPrinter, cartLocked: MutableList<CartEntity>): String {
-        return "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM))+"</img>\n" +
+        return "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+            printer,
+            resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)
+        ) + "</img>\n" +
                 "[L]\n" +
-                "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
+                "[C]<u><font size='big'>ORDER N°00001</font></u>\n" +
                 "[L]\n" +
-                "[C]================================\n" +
-                "[L]\n" +
-                "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
-                "[L]  + Size : S\n" +
-                "[L]\n" +
-                "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
-                "[L]  + Size : 57/58\n" +
-                "[L]\n" +
-                "[C]--------------------------------\n" +
-                "[R]TOTAL PRICE :[R]34.98e\n" +
-                "[R]TAX :[R]4.23e\n" +
-                "[L]\n" +
-                "[C]================================\n" +
+                formatContent(cartLocked) +
                 "[L]\n" +
                 "[L]<font size='tall'>Customer :</font>\n" +
-                "[L]Raymond DUPONT\n" +
+                "[L]TrungPQ\n" +
                 "[L]5 rue des girafes\n" +
                 "[L]31547 PERPETES\n" +
                 "[L]Tel : +33801201456\n" +
                 "[L]\n" +
-                "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-                "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+                "[C]<barcode type='ean13' height='10'>123456789</barcode>\n" +
+                "[C]<qrcode size='20'>123456789</qrcode>"
+    }
+
+    private fun formatContent(cartLocked: MutableList<CartEntity>): String {
+        var total = 0F
+        var items = ""
+        cartLocked.forEach { cartEntity ->
+            val price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+            val strItem = "[L]<b>${cartEntity.productName}</b>[C]${cartEntity.quantity}[R]$price\n"
+            items += strItem
+            total += (cartEntity.price.toFloat() * cartEntity.quantity)
+        }
+        return "[C]================================\n" +
+                "[L]\n" +
+                items +
+                "[L]\n" +
+                "[C]--------------------------------\n" +
+                "[R]TOTAL PRICE :[R]${formatCurrency(total)}\n" +
+                "[L]\n" +
+                "[C]================================\n"
     }
 }

@@ -109,6 +109,13 @@ object AppSettings {
         var Topic = "shimanotest"
     }
 
+    object ReceiptPrinter {
+        var TCP = ""
+        var USB = ""
+        var Content = ""
+        var WidthPaper = 50 // 50mm
+    }
+
     object Alert {
         object Telegram {
             var Activated = false
@@ -138,6 +145,11 @@ object AppSettings {
             var pathImageWallet = ""
             var PayNow = false
             var pathImagePayNow = ""
+        }
+        object Printer {
+            var Bluetooth = true
+            var TCP = false
+            var USB = false
         }
         var NotAllowWalletNonRfid = true
         var AllowAdminCancelPayment = true
