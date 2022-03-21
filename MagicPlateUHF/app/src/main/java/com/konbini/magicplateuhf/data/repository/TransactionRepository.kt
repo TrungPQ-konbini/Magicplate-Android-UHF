@@ -10,6 +10,8 @@ class TransactionRepository @Inject constructor(
     private val localDataSource: TransactionDao,
     private val remoteDataSource: TransactionRemoteDataSource
 ) {
+    suspend fun getLastTransactionId() = localDataSource.getLastTransactionId()
+
     suspend fun getAll() = localDataSource.getAll()
 
     suspend fun getAllToday(startToday: Long, endToday: Long) =

@@ -41,6 +41,7 @@ import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.*
 import com.konbini.magicplateuhf.data.entities.CartEntity
+import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
 import com.konbini.magicplateuhf.data.enum.*
 import com.konbini.magicplateuhf.databinding.FragmentMagicPlateBinding
@@ -50,6 +51,7 @@ import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -63,10 +65,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     companion object {
         const val TAG = "MagicPlateFragment"
         const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
+
+        var displayName = ""
+        var balance = 0F
     }
 
+    private var orderNumber = 0
     private val gson = Gson()
     private var processing = false
+    private var dataTags: ArrayList<TagEntity> = ArrayList()
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -271,6 +278,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                     }
                     Resource.Status.SUCCESS -> {
+                        // Reset custom price and add paid date and session date
+                        dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
+                        AppContainer.InitData.allowWriteTags = true
+                        writeTags(0)
+
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
 
@@ -1059,16 +1071,19 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     // endregion
 
     private fun printReceipt(cartLocked: MutableList<CartEntity>) {
-        if (AppSettings.Options.Printer.Bluetooth) {
-            // Bluetooth
-            printReceiptBluetooth(cartLocked)
-        } else {
-            if (AppSettings.Options.Printer.TCP) {
-                // TCP
-                printReceiptTCP(cartLocked)
+        viewLifecycleOwner.lifecycleScope.launch {
+            orderNumber = viewModel.getLastTransactionId() + 1
+            if (AppSettings.Options.Printer.Bluetooth) {
+                // Bluetooth
+                printReceiptBluetooth(cartLocked)
             } else {
-                // USB
-                printReceiptUSB(cartLocked)
+                if (AppSettings.Options.Printer.TCP) {
+                    // TCP
+                    printReceiptTCP(cartLocked)
+                } else {
+                    // USB
+                    printReceiptUSB()
+                }
             }
         }
     }
@@ -1077,7 +1092,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val device = BluetoothPrintersConnections.selectFirstPaired()
         val printer =
             EscPosPrinter(device, 203, AppSettings.ReceiptPrinter.WidthPaper.toFloat(), 32)
-        val content = formatReceipt(printer, cartLocked)
+        val content = formatReceipt(cartLocked)
         printer.printFormattedTextAndCut(content)
     }
 
@@ -1090,7 +1105,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
                 32
             )
-            val content = formatReceipt(printer, cartLocked)
+            val content = formatReceipt(cartLocked)
             printer.printFormattedTextAndCut(content)
         } else {
             AlertDialogUtil.showError(
@@ -1100,7 +1115,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
     }
 
-    private fun printReceiptUSB(cartLocked: MutableList<CartEntity>) {
+    private fun printReceiptUSB() {
         val usbConnection = UsbPrintersConnections.selectFirstConnected(requireContext())
         val usbManager = requireActivity().getSystemService(Context.USB_SERVICE) as UsbManager?
         if (usbConnection != null && usbManager != null) {
@@ -1134,7 +1149,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                     AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
                                     32
                                 )
-                            val content = formatReceipt(printer, AppContainer.CurrentTransaction.cartLocked)
+                            val content =
+                                formatReceipt(AppContainer.CurrentTransaction.cartLocked)
                             printer.printFormattedTextAndCut(content)
                         }
                     }
@@ -1143,24 +1159,25 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
     }
 
-    private fun formatReceipt(printer: EscPosPrinter, cartLocked: MutableList<CartEntity>): String {
-        return "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
-            printer,
-            resources.getDrawableForDensity(R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM)
-        ) + "</img>\n" +
+    private fun formatReceipt(cartLocked: MutableList<CartEntity>): String {
+        return "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
+                "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
+                "[C]<font size='tall'>Date: ${Date()}</font>\n" +
+                "[C]<u><font size='big'>RECEIPT</font></u>\n" +
                 "[L]\n" +
-                "[C]<u><font size='big'>ORDER N°00001</font></u>\n" +
+                "[C]<u><font size='tall'>ORDER N°${"%06d".format(orderNumber)}</font></u>\n" +
                 "[L]\n" +
                 formatContent(cartLocked) +
                 "[L]\n" +
-                "[L]<font size='tall'>Customer :</font>\n" +
-                "[L]TrungPQ\n" +
-                "[L]5 rue des girafes\n" +
-                "[L]31547 PERPETES\n" +
-                "[L]Tel : +33801201456\n" +
+                "[L]<font size='tall'>Membership :</font>\n" +
+                "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
+                "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
                 "[L]\n" +
                 "[C]<barcode type='ean13' height='10'>123456789</barcode>\n" +
-                "[C]<qrcode size='20'>123456789</qrcode>"
+                "[C]<qrcode size='20'>123456789</qrcode>" +
+                "[L]\n" +
+                "[L]\n" +
+                "[L]\n"
     }
 
     private fun formatContent(cartLocked: MutableList<CartEntity>): String {
@@ -1179,6 +1196,62 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[C]--------------------------------\n" +
                 "[R]TOTAL PRICE :[R]${formatCurrency(total)}\n" +
                 "[L]\n" +
-                "[C]================================\n"
+                "[C]================================\n" +
+                "[C]<font size='tall'>Tel: ${AppSettings.Company.Tel}</font>\n" +
+                "[C]<font size='tall'>Email: ${AppSettings.Company.Email}</font>\n" +
+                "[C]<font size='tall'>Address: ${AppSettings.Company.Address}</font>\n" +
+                "[C]<font size='tall'>Thank you!!!</font>\n"
+    }
+
+    private fun writeTags(position: Int) {
+        lifecycleScope.launch {
+            try {
+                if (position < dataTags.size) {
+                    val tag = dataTags[position]
+                    val epcValue = tag.strEPC ?: ""
+                    if (epcValue.isEmpty()) return@launch
+
+                    // Select tag
+                    UhfUtil.setAccessEpcMatch(
+                        epcValue,
+                        requireContext(),
+                        getString(R.string.message_error_param_unknown_error)
+                    )
+
+                    val newEPC = setNewEPC(epcValue)
+                    delay(100)
+                    UhfUtil.writeTag(
+                        newEPC,
+                        requireContext(),
+                        getString(R.string.message_error_write_data_format)
+                    )
+
+                    delay(100)
+                    writeTags(position + 1)
+                } else {
+                    AppContainer.InitData.allowWriteTags = false
+                    // Start reading UHF
+                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                }
+
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
+            }
+        }
+    }
+
+    private fun setNewEPC(oldEPC: String): String {
+        val calendar = Calendar.getInstance()
+        val newPaidDate =
+            "%02X".format(calendar.get(Calendar.DAY_OF_MONTH)) // TODO: Double check day of month + 1
+        var newPaidSession = "%02X".format(0)
+        if (AppContainer.InitData.currentTimeBock != null) {
+            newPaidSession = "%02X".format(AppContainer.InitData.currentTimeBock?.id)
+        }
+        val newCustomPrice = "%06X".format(0)
+
+        return oldEPC.replace(oldEPC.substring(14, 16), newPaidDate)
+            .replace(oldEPC.substring(16, 18), newPaidSession)
+            .replace(oldEPC.substring(18), newCustomPrice)
     }
 }
