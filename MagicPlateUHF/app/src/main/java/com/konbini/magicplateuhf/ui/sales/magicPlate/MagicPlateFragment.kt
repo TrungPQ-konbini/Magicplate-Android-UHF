@@ -50,6 +50,7 @@ import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -83,9 +84,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             }
                         }
                         PaymentState.Init,
-                        PaymentState.Preparing,
-                        PaymentState.Success,
-                        PaymentState.Cancelled -> {
+                        PaymentState.Preparing -> {
                             // Refresh cart
                             refreshCart()
                         }
@@ -271,8 +270,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                     }
                     Resource.Status.SUCCESS -> {
+                        AppContainer.CurrentTransaction.paymentState = PaymentState.Success
+                        AppContainer.InitData.allowReadTags = false
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
+                        AppContainer.CurrentTransaction.resetTemporaryInfo()
+                        // Refresh cart
+                        refreshCart()
 
                         if (AppSettings.Options.SyncOrderRealtime) {
                             if (!_state.isFinish) {
@@ -285,14 +289,22 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             printReceipt(AppContainer.CurrentTransaction.cartLocked)
                             AudioManager.instance.soundPaymentSuccess()
                         }
-                        AppContainer.CurrentTransaction.paymentState = PaymentState.Success
 
                         if (_state.isFinish) {
                             val message = getString(R.string.message_put_plate_on_the_tray)
                             resetMessage(message, 0)
-                            AppContainer.CurrentTransaction.resetTemporaryInfo()
-                            // Refresh cart
-                            refreshCart()
+
+                            if (AppSettings.Machine.DelayAfterOrderCompleted > 0) {
+                                val timeMillis = AppSettings.Machine.DelayAfterOrderCompleted.toLong() * 1000
+                                delay(timeMillis)
+                                AppContainer.InitData.allowReadTags = true
+                                // Start reading UHF
+                                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                            } else {
+                                AppContainer.InitData.allowReadTags = true
+                                // Start reading UHF
+                                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                            }
                         }
                     }
                     Resource.Status.ERROR -> {
@@ -1159,8 +1171,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[L]31547 PERPETES\n" +
                 "[L]Tel : +33801201456\n" +
                 "[L]\n" +
-                "[C]<barcode type='ean13' height='10'>123456789</barcode>\n" +
-                "[C]<qrcode size='20'>123456789</qrcode>"
+                "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+                "[C]<qrcode size='20'>831254784551</qrcode>"
     }
 
     private fun formatContent(cartLocked: MutableList<CartEntity>): String {

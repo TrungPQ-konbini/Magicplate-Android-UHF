@@ -13,6 +13,7 @@ import java.util.*
 object AppContainer {
     object InitData {
         var allowWriteTags = false
+        var allowReadTags = true
         var currentTimeBock: TimeBlockEntity? = null
         var listMenus: MutableList<MenuEntity> = mutableListOf()
         var listMenusToday: MutableList<MenuEntity> = mutableListOf()

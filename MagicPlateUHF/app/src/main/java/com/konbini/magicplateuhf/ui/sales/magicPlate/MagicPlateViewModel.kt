@@ -40,7 +40,7 @@ class MagicPlateViewModel @Inject constructor(
     private val walletRepository: WalletRepository,
     private val transactionRepository: TransactionRepository,
     private val offlineDataRepository: OfflineDataRepository
-): ViewModel() {
+) : ViewModel() {
     companion object {
         const val TAG = "MagicPlateViewModel"
     }
@@ -100,7 +100,12 @@ class MagicPlateViewModel @Inject constructor(
         viewModelScope.launch {
             val calendar = Calendar.getInstance()
             val currentTime = calendar.timeInMillis
-            _state.emit(State(Resource.Status.LOADING, resources.getString(R.string.message_processing)))
+            _state.emit(
+                State(
+                    Resource.Status.LOADING,
+                    resources.getString(R.string.message_processing)
+                )
+            )
             try {
                 // Get token wallet
                 val requestTokenWallet = WalletTokenRequest(
@@ -164,6 +169,7 @@ class MagicPlateViewModel @Inject constructor(
                                     resources.getString(R.string.message_success_payment_balance),
                                     CommonUtil.formatCurrency(_responseDebit.balance ?: 0F)
                                 )
+                                insert(transaction)
                                 _state.emit(
                                     State(
                                         status = Resource.Status.SUCCESS,
@@ -171,7 +177,6 @@ class MagicPlateViewModel @Inject constructor(
                                         isFinish = !AppSettings.Options.SyncOrderRealtime
                                     )
                                 )
-                                insert(transaction)
                             }
                         } else {
                             var messageDetail = ""
