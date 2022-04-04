@@ -112,7 +112,7 @@ object AppSettings {
 
     object ReceiptPrinter {
         var TCP = ""
-        var USB = ""
+        var USB = "N/A"
         var Content = ""
         var WidthPaper = 50 // 50mm
     }

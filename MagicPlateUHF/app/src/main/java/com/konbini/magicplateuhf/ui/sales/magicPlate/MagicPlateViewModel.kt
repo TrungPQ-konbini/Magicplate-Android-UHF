@@ -51,6 +51,8 @@ class MagicPlateViewModel @Inject constructor(
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
 
+    suspend fun getLastTransactionId() = transactionRepository.getLastTransactionId()
+
     suspend fun getAllProducts() = productRepository.getAll()
 
     suspend fun getAllMenu() = menuRepository.getAll()
@@ -169,7 +171,10 @@ class MagicPlateViewModel @Inject constructor(
                                     resources.getString(R.string.message_success_payment_balance),
                                     CommonUtil.formatCurrency(_responseDebit.balance ?: 0F)
                                 )
-                                insert(transaction)
+
+                                MagicPlateFragment.displayName = _responseDebit.displayName ?: "N/A"
+                                MagicPlateFragment.balance = _responseDebit.balance ?: 0F
+
                                 _state.emit(
                                     State(
                                         status = Resource.Status.SUCCESS,

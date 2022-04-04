@@ -156,6 +156,57 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!--=================Printer=================-->
+    <TextView
+        android:id="@+id/title_printer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_printer"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_reader_color" />
+
+    <LinearLayout
+        android:id="@+id/layout_printer_connection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_shadow_white"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_printer">
+
+        <LinearLayout
+            android:id="@+id/layout_printer_connection_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <CheckBox
+                android:id="@+id/checkbox_printer_ble"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title_bluetooth" />
+
+            <CheckBox
+                android:id="@+id/checkbox_printer_tcp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title_tcp" />
+
+            <CheckBox
+                android:id="@+id/checkbox_printer_usb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title_usb" />
+        </LinearLayout>
+    </LinearLayout>
+
     <!--=================Alert=================-->
     <TextView
         android:id="@+id/title_alert"
@@ -165,7 +216,7 @@
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_reader_color" />
+        app:layout_constraintTop_toBottomOf="@id/layout_printer_connection" />
 
     <LinearLayout
         android:id="@+id/layout_alert"

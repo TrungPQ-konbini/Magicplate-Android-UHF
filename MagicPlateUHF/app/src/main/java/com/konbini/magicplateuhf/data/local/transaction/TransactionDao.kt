@@ -5,6 +5,9 @@ import com.konbini.magicplateuhf.data.entities.TransactionEntity
 
 @Dao
 interface TransactionDao {
+    @Query("SELECT id FROM transactions  ORDER BY id DESC LIMIT 1")
+    suspend fun getLastTransactionId(): Int
+
     @Query("SELECT * FROM transactions")
     suspend fun getAll(): List<TransactionEntity>
 

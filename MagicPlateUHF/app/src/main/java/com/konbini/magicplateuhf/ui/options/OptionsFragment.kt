@@ -134,6 +134,51 @@ class OptionsFragment : Fragment() {
             }
         }
 
+        binding.checkboxPrinterBle.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setBoolean("AppSettings.Options.Printer.Bluetooth", isChecked)
+                PrefUtil.setBoolean("AppSettings.Options.Printer.TCP", false)
+                PrefUtil.setBoolean("AppSettings.Options.Printer.USB", false)
+
+                binding.checkboxPrinterTcp.isChecked = false
+                binding.checkboxPrinterUsb.isChecked = false
+            } else {
+                if (!binding.checkboxPrinterTcp.isChecked && !binding.checkboxPrinterUsb.isChecked) {
+                    binding.checkboxPrinterBle.isChecked = true
+                }
+            }
+        }
+
+        binding.checkboxPrinterTcp.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setBoolean("AppSettings.Options.Printer.Bluetooth", false)
+                PrefUtil.setBoolean("AppSettings.Options.Printer.TCP", isChecked)
+                PrefUtil.setBoolean("AppSettings.Options.Printer.USB", false)
+
+                binding.checkboxPrinterBle.isChecked = false
+                binding.checkboxPrinterUsb.isChecked = false
+            } else {
+                if (!binding.checkboxPrinterBle.isChecked && !binding.checkboxPrinterUsb.isChecked) {
+                    binding.checkboxPrinterTcp.isChecked = true
+                }
+            }
+        }
+
+        binding.checkboxPrinterUsb.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setBoolean("AppSettings.Options.Printer.Bluetooth", false)
+                PrefUtil.setBoolean("AppSettings.Options.Printer.TCP", false)
+                PrefUtil.setBoolean("AppSettings.Options.Printer.USB", isChecked)
+
+                binding.checkboxPrinterBle.isChecked = false
+                binding.checkboxPrinterTcp.isChecked = false
+            } else {
+                if (!binding.checkboxPrinterBle.isChecked && !binding.checkboxPrinterTcp.isChecked) {
+                    binding.checkboxPrinterUsb.isChecked = true
+                }
+            }
+        }
+
         binding.checkboxAlertTelegramActivated.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefUtil.setBoolean("AppSettings.Alert.Telegram.Activated", isChecked)
             LogUtils.logInfo("AppSettings.Alert.Telegram.Activated Options: $isChecked")
@@ -195,6 +240,10 @@ class OptionsFragment : Fragment() {
                 binding.checkboxBlackAscReader.isChecked = true
             }
         }
+
+        binding.checkboxPrinterBle.isChecked = AppSettings.Options.Printer.Bluetooth
+        binding.checkboxPrinterTcp.isChecked = AppSettings.Options.Printer.TCP
+        binding.checkboxPrinterUsb.isChecked = AppSettings.Options.Printer.USB
 
         binding.checkboxAlertTelegramActivated.isChecked = AppSettings.Alert.Telegram.Activated
         binding.checkboxAlertSlackActivated.isChecked = AppSettings.Alert.Slack.Activated

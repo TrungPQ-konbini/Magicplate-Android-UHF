@@ -5,14 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,8 +22,8 @@ import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.databinding.FragmentWriteTagsBinding
-import com.konbini.magicplateuhf.ui.MainActivity
 import com.konbini.magicplateuhf.utils.*
+import com.konbini.magicplateuhf.utils.UhfUtil.Companion
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -237,11 +235,11 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     if (epcValue.isEmpty()) return@launch
 
                     // Select tag
-                    setAccessEpcMatch(epcValue)
+                    UhfUtil.setAccessEpcMatch(epcValue, requireContext(), getString(R.string.message_error_param_unknown_error))
 
                     val newEPC = setNewEPC(epcValue)
                     delay(100)
-                    writeTag(newEPC)
+                    UhfUtil.writeTag(newEPC, requireContext(), getString(R.string.message_error_write_data_format))
 
                     delay(100)
                     writeTags(position + 1)
@@ -264,74 +262,74 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         }
     }
 
-    private fun setAccessEpcMatch(tag: String) {
-        var btAryEpc: ByteArray? = null
-        btAryEpc = try {
-            val result = StringTool.stringToStringArray(tag.uppercase(), 2)
-            StringTool.stringArrayToByteArray(result, result.size)
-        } catch (ex: Exception) {
-            AlertDialogUtil.showError(
-                getString(R.string.message_error_param_unknown_error),
-                requireContext()
-            )
-            LogUtils.logError(ex)
-            return
-        }
-        if (btAryEpc == null) {
-            AlertDialogUtil.showError(
-                getString(R.string.message_error_param_unknown_error),
-                requireContext()
-            )
-            return
-        }
-        MainApplication.mReaderUHF.setAccessEpcMatch(
-            0x01,
-            (btAryEpc.size and 0xFF).toByte(), btAryEpc
-        )
-    }
+//    private fun setAccessEpcMatch(tag: String) {
+//        var btAryEpc: ByteArray? = null
+//        btAryEpc = try {
+//            val result = StringTool.stringToStringArray(tag.uppercase(), 2)
+//            StringTool.stringArrayToByteArray(result, result.size)
+//        } catch (ex: Exception) {
+//            AlertDialogUtil.showError(
+//                getString(R.string.message_error_param_unknown_error),
+//                requireContext()
+//            )
+//            LogUtils.logError(ex)
+//            return
+//        }
+//        if (btAryEpc == null) {
+//            AlertDialogUtil.showError(
+//                getString(R.string.message_error_param_unknown_error),
+//                requireContext()
+//            )
+//            return
+//        }
+//        MainApplication.mReaderUHF.setAccessEpcMatch(
+//            0x01,
+//            (btAryEpc.size and 0xFF).toByte(), btAryEpc
+//        )
+//    }
 
-    private fun writeTag(tag: String) {
-        /*
-         * 0x00: area password
-         * 0x01: area epc
-         * 0x02: area tid
-         * 0x03: area user
-         */
-        val btMemBank: Byte = 0x01 // Fix access area EPC
-        val btWordAdd: Byte = 0x02
-        var btWordCnt: Byte = 0x00
-        val btAryPassWord: ByteArray =
-            byteArrayOf(0x00, 0x00, 0x00, 0x00) // Fix password is 00000000
-
-        var btAryData: ByteArray? = null
-        var result: Array<String>? = null
-        try {
-            result = StringTool.stringToStringArray(tag.uppercase(), 2)
-            btAryData = StringTool.stringArrayToByteArray(result, result.size)
-            btWordCnt = (result.size / 2 + result.size % 2 and 0xFF).toByte()
-        } catch (ex: Exception) {
-            AlertDialogUtil.showError(
-                getString(R.string.message_error_write_data_format),
-                requireContext()
-            )
-            LogUtils.logError(ex)
-            return
-        }
-
-        if (btAryData == null || btAryData.isEmpty()) {
-            AlertDialogUtil.showError(
-                getString(R.string.message_error_write_data_format),
-                requireContext()
-            )
-            return
-        }
-        MainApplication.mReaderUHF.writeTag(
-            0x01,
-            btAryPassWord,
-            btMemBank,
-            btWordAdd,
-            btWordCnt,
-            btAryData
-        )
-    }
+//    private fun writeTag(tag: String) {
+//        /*
+//         * 0x00: area password
+//         * 0x01: area epc
+//         * 0x02: area tid
+//         * 0x03: area user
+//         */
+//        val btMemBank: Byte = 0x01 // Fix access area EPC
+//        val btWordAdd: Byte = 0x02
+//        var btWordCnt: Byte = 0x00
+//        val btAryPassWord: ByteArray =
+//            byteArrayOf(0x00, 0x00, 0x00, 0x00) // Fix password is 00000000
+//
+//        var btAryData: ByteArray? = null
+//        var result: Array<String>? = null
+//        try {
+//            result = StringTool.stringToStringArray(tag.uppercase(), 2)
+//            btAryData = StringTool.stringArrayToByteArray(result, result.size)
+//            btWordCnt = (result.size / 2 + result.size % 2 and 0xFF).toByte()
+//        } catch (ex: Exception) {
+//            AlertDialogUtil.showError(
+//                getString(R.string.message_error_write_data_format),
+//                requireContext()
+//            )
+//            LogUtils.logError(ex)
+//            return
+//        }
+//
+//        if (btAryData == null || btAryData.isEmpty()) {
+//            AlertDialogUtil.showError(
+//                getString(R.string.message_error_write_data_format),
+//                requireContext()
+//            )
+//            return
+//        }
+//        MainApplication.mReaderUHF.writeTag(
+//            0x01,
+//            btAryPassWord,
+//            btMemBank,
+//            btWordAdd,
+//            btWordCnt,
+//            btAryData
+//        )
+//    }
 }
