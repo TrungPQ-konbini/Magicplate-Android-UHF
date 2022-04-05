@@ -7,5 +7,8 @@ data class TagEntity(
     var serialNumber: String? = null,
     var paidDate: String? = null,
     var paidSession: String? = null,
-    var customPrice: String = ""
-)
+    var customPrice: String = "",
+    var lastUpdate: Long = 0
+) {
+
+}

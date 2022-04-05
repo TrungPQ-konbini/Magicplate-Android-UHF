@@ -59,6 +59,8 @@ class SalesActivity : AppCompatActivity() {
                     MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
             //}
+
+            AppContainer.CurrentTransaction.oldListTagEntity = listTagEntity
             listEPC.clear()
         }
     }

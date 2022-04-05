@@ -247,7 +247,8 @@ class CommonUtil {
                 serialNumber = strEPC.substring(4, 10).toInt(16).toString(),
                 paidDate = strEPC.substring(14, 16).toInt(16).toString(),
                 paidSession = strEPC.substring(16, 18).toInt(16).toString(),
-                customPrice = customPrice
+                customPrice = customPrice,
+                lastUpdate = System.currentTimeMillis()
             )
         }
 
