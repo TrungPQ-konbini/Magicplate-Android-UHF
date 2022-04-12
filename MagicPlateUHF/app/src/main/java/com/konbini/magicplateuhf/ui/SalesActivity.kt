@@ -54,11 +54,13 @@ class SalesActivity : AppCompatActivity() {
                 intent.action = "REFRESH_TAGS"
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-                if (!AppContainer.InitData.allowWriteTags) {
+                if (AppContainer.InitData.allowReadTags) {
                     // Start reading UHF
                     MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
             //}
+
+            AppContainer.CurrentTransaction.oldListTagEntity = listTagEntity
             listEPC.clear()
         }
     }

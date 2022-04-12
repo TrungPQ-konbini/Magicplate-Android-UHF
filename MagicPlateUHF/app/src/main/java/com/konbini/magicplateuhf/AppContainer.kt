@@ -1,5 +1,6 @@
 package com.konbini.magicplateuhf
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.konbini.magicplateuhf.data.entities.*
@@ -13,6 +14,7 @@ import java.util.*
 object AppContainer {
     object InitData {
         var allowWriteTags = false
+        var allowReadTags = true
         var currentTimeBock: TimeBlockEntity? = null
         var listMenus: MutableList<MenuEntity> = mutableListOf()
         var listMenusToday: MutableList<MenuEntity> = mutableListOf()
@@ -23,14 +25,60 @@ object AppContainer {
         fun getListTagEntity(listEPC: List<String>): MutableList<TagEntity> {
             val listPlatesModel = AppContainer.InitData.listPlatesModel
             val listTagEntity: MutableList<TagEntity> = mutableListOf()
+
+            val oldListTagEntity = CurrentTransaction.oldListTagEntity
+            Log.e(
+                "tRage",
+                "$======================================================================="
+            )
+            var index = 0
             listEPC.forEach { _epc ->
                 val tagEntity: TagEntity? = CommonUtil.convertEpcToTagEntity(_epc)
                 if (tagEntity != null) {
-                    val plateModelEntity = listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode == tagEntity.plateModel }
+//                    val dump =
+//                        CurrentTransaction.dumpListTagEntity.find { tag -> tag == tagEntity }
+//                    if (dump == null) {
+//                        // Add new to dump
+//                        CurrentTransaction.dumpListTagEntity.add(tagEntity)
+//                    } else {
+//                        // If exist, try to update
+//                        val removeOk = CurrentTransaction.dumpListTagEntity.remove(dump)
+//                        CurrentTransaction.dumpListTagEntity.add(tagEntity)
+//
+//                        index ++
+//                        val tRange = tagEntity.lastUpdate - dump.lastUpdate
+//                        Log.e("tRage", "$index $_epc:$tRange")
+//
+//                        Log.e("dumpListTagEntity", CurrentTransaction.dumpListTagEntity.count().toString())
+//
+////                        if (tRange <= 1000) {
+////                            listTagEntity.add(tagEntity)
+////                        }
+//                    }
+
+
+                    tagEntity.lastUpdate = System.currentTimeMillis()
+
+                    val oldTagEntity =
+                        oldListTagEntity.find { tag -> tag.strEPC == tagEntity.strEPC }
+                    val plateModelEntity =
+                        listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode == tagEntity.plateModel }
                     if (plateModelEntity != null) {
                         tagEntity.plateModelTitle = plateModelEntity.plateModelTitle
                     }
+
                     listTagEntity.add(tagEntity)
+
+//                    if (oldTagEntity == null) {
+//                        listTagEntity.add(tagEntity)
+//                    } else {
+//                        index ++
+//                        val tRange = tagEntity.lastUpdate - oldTagEntity.lastUpdate
+//                        Log.e("tRage", "$index $_epc:$tRange")
+//                        if (tRange <= 1000) {
+//                            listTagEntity.add(tagEntity)
+//                        }
+//                    }
                 }
             }
             return listTagEntity
@@ -46,6 +94,9 @@ object AppContainer {
         var paymentState: PaymentState = PaymentState.Init
         var listEPC: MutableList<String> = mutableListOf()
         var listTagEntity: MutableList<TagEntity> = mutableListOf()
+        var dumpListTagEntity: MutableList<TagEntity> = mutableListOf()
+        var oldListTagEntity: MutableList<TagEntity> = mutableListOf()
+
         var cart: MutableList<CartEntity> = mutableListOf()
         var cartLocked: MutableList<CartEntity> = mutableListOf()
         var option: Option = Option()
@@ -87,7 +138,10 @@ object AppContainer {
                             timeBlockId = menuEntity.timeBlockId,
                             productId = menuEntity.productId,
                             plateModelId = menuEntity.plateModelId,
-                            price = if (customPrice.isNullOrEmpty() || !CommonUtil.isNumber(customPrice) || customPrice == "0") menuEntity.price else (customPrice.toFloat() / 100).toString(),
+                            price = if (customPrice.isNullOrEmpty() || !CommonUtil.isNumber(
+                                    customPrice
+                                ) || customPrice == "0"
+                            ) menuEntity.price else (customPrice.toFloat() / 100).toString(),
                             productName = menuEntity.productName,
                             plateModelName = menuEntity.plateModelName,
                             plateModelCode = menuEntity.plateModelCode,
@@ -99,7 +153,8 @@ object AppContainer {
                         var itemPrice = cartEntity.price.toFloat()
 
                         if (!cartEntity.options.isNullOrEmpty()) {
-                            val collectionType: Type = object : TypeToken<Collection<Option?>?>() {}.type
+                            val collectionType: Type =
+                                object : TypeToken<Collection<Option?>?>() {}.type
                             val options: Collection<Option> =
                                 gson.fromJson(cartEntity.options, collectionType)
 

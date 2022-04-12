@@ -251,6 +251,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     )
 
                     AppContainer.InitData.allowWriteTags = false
+                    delay(1000)
                     // Start reading UHF
                     MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
