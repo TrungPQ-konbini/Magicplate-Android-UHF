@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Parcelable
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +31,6 @@ import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnection
 import com.dantsu.escposprinter.connection.tcp.TcpConnection
 import com.dantsu.escposprinter.connection.usb.UsbConnection
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.google.gson.Gson
 import com.konbini.im30.hardware.IM30Interface
 import com.konbini.magicplateuhf.AppContainer
@@ -53,7 +51,6 @@ import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt

@@ -126,5 +126,6 @@ dependencies {
     implementation files('src/main/libs/IM30_1.0.0_28022022_1206.aar')
     implementation 'com.github.mik3y:usb-serial-for-android:3.4.3'
 
+    // Printer ESCPOS
     implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.1.2'
 }
