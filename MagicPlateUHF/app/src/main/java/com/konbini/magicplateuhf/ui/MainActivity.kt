@@ -13,15 +13,10 @@ import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.ui.*
 import com.konbini.magicplateuhf.AppContainer
-import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.databinding.ActivityMainBinding
 import com.konbini.magicplateuhf.utils.LogUtils
-import com.module.interaction.ModuleConnector
-import com.nativec.tools.ModuleManager
-import com.rfid.RFIDReaderHelper
-import com.rfid.ReaderConnector
 import com.rfid.rxobserver.RXObserver
 import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
 
             // Get list tags
-            val listTagEntity = AppContainer.InitData.getListTagEntity(listEPC)
+            val listTagEntity = AppContainer.GlobalVariable.getListTagEntity(listEPC)
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
 
             // Send Broadcast to update UI
@@ -54,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             intent.action = "REFRESH_TAGS"
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-            if (!AppContainer.InitData.allowWriteTags && MainApplication.isInitializedUHF) {
+            if (!AppContainer.GlobalVariable.allowWriteTags && MainApplication.isInitializedUHF) {
                 // Start reading UHF
                 MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
             }
@@ -105,6 +100,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_options_setting,
                 R.id.nav_settings,
                 R.id.nav_write_tags,
+                R.id.nav_register_tags,
                 R.id.nav_logout
             ), drawerLayout
         )

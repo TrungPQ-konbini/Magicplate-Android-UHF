@@ -110,6 +110,10 @@ object AppSettings {
         var Topic = "shimanotest"
     }
 
+    object Timer {
+        var PeriodicGetToken = 60// minutes
+    }
+
     object ReceiptPrinter {
         var TCP = ""
         var USB = "N/A"
@@ -160,7 +164,8 @@ object AppSettings {
     object APIs {
         var ListAllProductCategories = "/wp-json/wc/v3/products/categories"
         var ListAllProducts = "/wp-json/wc/v3/products"
-        var ListAllPlateModel = "/wp-json/wp/v2/magicplate-web/get-plate-model-data"
+        var GetPlateModelData = "/wp-json/wp/v2/magicplate-web/get-plate-model-data"
+        var SetPlateModelData = "/wp-json/wp/v2/magicplate-web/set-plate-model-data"
         var ListAllTimeBlock = "/wp-json/wp/v2/magicplate-web/get-time-block-data"
         var ListAllMenu = "/wp-json/wp/v2/magicplate-web/get-static-menu-data"
         var ListAllOrderStatus = "/wp-json/wp/v2/kca/get-order-status"

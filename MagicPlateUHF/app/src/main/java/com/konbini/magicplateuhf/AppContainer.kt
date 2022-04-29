@@ -12,7 +12,9 @@ import java.lang.reflect.Type
 import java.util.*
 
 object AppContainer {
-    object InitData {
+    object GlobalVariable {
+        var isGettingToken = false
+        var currentToken: String = ""
         var allowWriteTags = false
         var allowReadTags = true
         var currentTimeBock: TimeBlockEntity? = null
@@ -23,7 +25,7 @@ object AppContainer {
         var listPlatesModel: MutableList<PlateModelEntity> = mutableListOf()
 
         fun getListTagEntity(listEPC: List<String>): MutableList<TagEntity> {
-            val listPlatesModel = AppContainer.InitData.listPlatesModel
+            val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
             val listTagEntity: MutableList<TagEntity> = mutableListOf()
 
             val oldListTagEntity = CurrentTransaction.oldListTagEntity
@@ -55,7 +57,6 @@ object AppContainer {
 ////                            listTagEntity.add(tagEntity)
 ////                        }
 //                    }
-
 
                     tagEntity.lastUpdate = System.currentTimeMillis()
 
@@ -126,7 +127,7 @@ object AppContainer {
             if (listTagEntity.isNotEmpty()) {
                 totalPrice = 0F
                 listTagEntity.forEach { _tagEntity ->
-                    val menuEntity = InitData.listMenusToday.find { _menuEntity ->
+                    val menuEntity = GlobalVariable.listMenusToday.find { _menuEntity ->
                         _menuEntity.plateModelCode == _tagEntity.plateModel
                     }
                     if (menuEntity != null) {

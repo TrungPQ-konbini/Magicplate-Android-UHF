@@ -10,5 +10,7 @@ data class PlateModel(
     @SerializedName("plate_model_code")
     val plateModelCode: String = "",
     @SerializedName("plate_model_title")
-    val plateModelTitle: String = ""
+    val plateModelTitle: String = "",
+    @SerializedName("last_plate_serial")
+    val lastPlateSerial: String = ""
 )

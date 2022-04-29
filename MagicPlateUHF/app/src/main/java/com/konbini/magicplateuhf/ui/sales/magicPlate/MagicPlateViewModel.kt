@@ -64,7 +64,7 @@ class MagicPlateViewModel @Inject constructor(
         val timeFormat = "HHmm"
         val stf = SimpleDateFormat(timeFormat, Locale.getDefault())
         val currentTime = stf.format(calendar.time).toString()
-        val timeBlocks = AppContainer.InitData.listTimeBlocks
+        val timeBlocks = AppContainer.GlobalVariable.listTimeBlocks
 
         timeBlocks.forEach { _timeBlockEntity ->
             val toHour = if (_timeBlockEntity.toHour.toInt() != 0) {
@@ -81,7 +81,7 @@ class MagicPlateViewModel @Inject constructor(
     }
 
     fun getMenusToday(): MutableList<MenuEntity> {
-        val currentTimeBock = AppContainer.InitData.currentTimeBock ?: return mutableListOf()
+        val currentTimeBock = AppContainer.GlobalVariable.currentTimeBock ?: return mutableListOf()
 
         val calendar = Calendar.getInstance()
         val dateFormat = "yyyy-MM-dd"
@@ -89,7 +89,7 @@ class MagicPlateViewModel @Inject constructor(
         val today = sdf.format(calendar.time).toString()
 
         val listMenusToday: MutableList<MenuEntity> = mutableListOf()
-        val listMenus = AppContainer.InitData.listMenus
+        val listMenus = AppContainer.GlobalVariable.listMenus
         listMenus.forEach { menuEntity ->
             if (menuEntity.menuDate == today && currentTimeBock.timeBlockTitle == menuEntity.timeBlockTitle) {
                 listMenusToday.add(menuEntity)

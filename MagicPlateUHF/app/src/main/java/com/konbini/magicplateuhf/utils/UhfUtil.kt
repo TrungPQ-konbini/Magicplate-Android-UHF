@@ -6,7 +6,7 @@ import com.konbini.magicplateuhf.R
 
 class UhfUtil {
     companion object {
-        fun setAccessEpcMatch(tag: String, context: Context, errorMessage: String) {
+        fun setAccessEpcMatch(tag: String, context: Context, errorMessage: String): Int {
             var btAryEpc: ByteArray? = null
             btAryEpc = try {
                 val result = StringTool.stringToStringArray(tag.uppercase(), 2)
@@ -14,22 +14,22 @@ class UhfUtil {
             } catch (ex: Exception) {
                 AlertDialogUtil.showError(errorMessage, context)
                 LogUtils.logError(ex)
-                return
+                return - 1
             }
             if (btAryEpc == null) {
                 AlertDialogUtil.showError(
                     errorMessage,
                     context
                 )
-                return
+                return - 1
             }
-            MainApplication.mReaderUHF.setAccessEpcMatch(
+            return MainApplication.mReaderUHF.setAccessEpcMatch(
                 0x01,
                 (btAryEpc.size and 0xFF).toByte(), btAryEpc
             )
         }
 
-        fun writeTag(tag: String, context: Context, errorMessage: String) {
+        fun writeTag(tag: String, context: Context, errorMessage: String): Int {
             /*
              * 0x00: area password
              * 0x01: area epc
@@ -51,14 +51,14 @@ class UhfUtil {
             } catch (ex: Exception) {
                 AlertDialogUtil.showError(errorMessage, context)
                 LogUtils.logError(ex)
-                return
+                return -1
             }
 
             if (btAryData == null || btAryData.isEmpty()) {
                 AlertDialogUtil.showError(errorMessage, context)
-                return
+                return -1
             }
-            MainApplication.mReaderUHF.writeTag(
+            return MainApplication.mReaderUHF.writeTag(
                 0x01,
                 btAryPassWord,
                 btMemBank,

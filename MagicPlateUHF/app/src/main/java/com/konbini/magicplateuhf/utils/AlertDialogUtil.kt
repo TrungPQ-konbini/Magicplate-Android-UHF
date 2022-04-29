@@ -15,20 +15,20 @@ object AlertDialogUtil {
         pDialog.show()
     }
 
-    fun showError(msg: String, context: Context) {
+    fun showError(msg: String, context: Context, title: String = "Error") {
         val pDialog = KAlertDialog(context, KAlertDialog.ERROR_TYPE)
         pDialog.progressHelper.barColor = context.getColor(R.color.red)
-        pDialog.titleText = "Error"
+        pDialog.titleText = title
         pDialog.contentText = msg
         pDialog.setCancelable(false)
         pDialog.setCanceledOnTouchOutside(true)
         pDialog.show()
     }
 
-    fun showWarning(msg: String, context: Context) {
+    fun showWarning(msg: String, context: Context, title: String = "Warning") {
         val pDialog = KAlertDialog(context, KAlertDialog.WARNING_TYPE)
         pDialog.progressHelper.barColor = context.getColor(R.color.yellow)
-        pDialog.titleText = "Warning"
+        pDialog.titleText = title
         pDialog.contentText = msg
         pDialog.setCancelable(true)
         pDialog.setCanceledOnTouchOutside(true)

@@ -20,6 +20,7 @@
     <string name="menu_options">Options</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_write_tags">Write Tags</string>
+    <string name="menu_register_tags">Register Tags</string>
 
     <string name="title_company">Company</string>
     <string name="title_company_logo">Logo</string>
@@ -100,6 +101,8 @@
     <string name="title_enter">Enter</string>
     <string name="title_accept">Accept</string>
     <string name="title_write_tags">Write %s Tags</string>
+    <string name="title_register_tags">Register %s Tags</string>
+    <string name="title_register_failed">Register failed</string>
     <string name="title_custom_price">Custom Price</string>
     <string name="title_not_allow_wallet_non_rfid">Do not allow wallet payments with non-RFID</string>
 
@@ -120,7 +123,9 @@
 
     <string name="message_success_save">Save Success !!!</string>
     <string name="message_success_write_tags">Write Tags Success !!!</string>
+    <string name="message_success_register_tags">Register Tags Success !!!</string>
     <string name="message_success_sync">Sync Success !!!</string>
+    <string name="message_success_register">Register Success !!!</string>
     <string name="message_success_login">Login Success !!!</string>
     <string name="message_success_payment_balance">Payment Success !!! \n Balance: %s</string>
     <string name="message_success_sync_order">Sync Order #%s Success !!!</string>
@@ -131,12 +136,14 @@
     <string name="message_warning_new_plate_code_required">New Plate Model Code is required !!!</string>
 
     <string name="message_error_sync_item">Sync %s Error !!!</string>
+    <string name="message_error_register">Register Error !!!</string>
     <string name="message_error_login">Login Error !!!</string>
     <string name="message_error_get_token">The client credentials are invalid !!!</string>
     <string name="message_error_write_data_format">Write Data format error !!!</string>
     <string name="message_error_param_unknown_error">Parameter Unknown Error</string>
     <string name="message_error_payment_failed">%s \n Payment failed, please try again!!!</string>
     <string name="message_error_unknown_error">unknown error: %s \n please try again!!!</string>
+    <string name="message_error_some_tag_write_error">Some tags write failed!!!</string>
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>
@@ -147,4 +154,5 @@
     <string name="title_usb">USB</string>
     <string name="message_error_TCP_is_empty">TCP is empty!!!</string>
     <string name="title_bluetooth">Bluetooth</string>
+    <string name="title_serial_number">Serial Number</string>
 </resources>

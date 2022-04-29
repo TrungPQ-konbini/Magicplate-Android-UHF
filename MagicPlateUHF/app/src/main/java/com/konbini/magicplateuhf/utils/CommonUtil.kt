@@ -243,12 +243,12 @@ class CommonUtil {
 
             return TagEntity(
                 strEPC = strEPC,
-                plateModel = strEPC.substring(0, 4).toInt(16).toString(),
+                plateModel = strEPC.substring(0, 2).toInt(16).toString(),
                 serialNumber = strEPC.substring(4, 10).toInt(16).toString(),
-                paidDate = strEPC.substring(14, 16).toInt(16).toString(),
-                paidSession = strEPC.substring(16, 18).toInt(16).toString(),
-                customPrice = customPrice,
-                lastUpdate = System.currentTimeMillis()
+                //paidDate = strEPC.substring(14, 16).toInt(16).toString(),
+                //paidSession = strEPC.substring(16, 18).toInt(16).toString(),
+                //customPrice = customPrice,
+                //lastUpdate = System.currentTimeMillis()
             )
         }
 

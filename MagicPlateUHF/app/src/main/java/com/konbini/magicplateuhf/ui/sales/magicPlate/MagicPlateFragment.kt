@@ -51,6 +51,7 @@ import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
@@ -104,7 +105,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
                     val barcode = AppContainer.CurrentTransaction.barcode.split("\n")[0]
                     val product =
-                        AppContainer.InitData.listProducts.find { _productEntity -> _productEntity.barcode == barcode }
+                        AppContainer.GlobalVariable.listProducts.find { _productEntity -> _productEntity.barcode == barcode }
                     if (product != null) {
                         val cartEntity = CartEntity(
                             uuid = UUID.randomUUID().toString(),
@@ -275,7 +276,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     Resource.Status.SUCCESS -> {
                         // Reset custom price and add paid date and session date
                         dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
-                        AppContainer.InitData.allowWriteTags = true
+                        AppContainer.GlobalVariable.allowWriteTags = true
                         writeTags(0)
 
                         setBlink(AlarmType.SUCCESS)
@@ -303,11 +304,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             if (AppSettings.Machine.DelayAfterOrderCompleted > 0) {
                                 val timeMillis = AppSettings.Machine.DelayAfterOrderCompleted.toLong() * 1000
                                 delay(timeMillis)
-                                AppContainer.InitData.allowReadTags = true
+                                AppContainer.GlobalVariable.allowReadTags = true
                                 // Start reading UHF
                                 MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                             } else {
-                                AppContainer.InitData.allowReadTags = true
+                                AppContainer.GlobalVariable.allowReadTags = true
                                 // Start reading UHF
                                 MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                             }
@@ -414,11 +415,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
             AppContainer.CurrentTransaction.resetTemporaryInfo()
 
-            AppContainer.InitData.listProducts = viewModel.getAllProducts().toMutableList()
-            AppContainer.InitData.listTimeBlocks = viewModel.getAllTimeBlock().toMutableList()
-            AppContainer.InitData.listMenus = viewModel.getAllMenu().toMutableList()
-            AppContainer.InitData.currentTimeBock = viewModel.getCurrentTimeBock()
-            AppContainer.InitData.listMenusToday = viewModel.getMenusToday()
+            AppContainer.GlobalVariable.listProducts = viewModel.getAllProducts().toMutableList()
+            AppContainer.GlobalVariable.listTimeBlocks = viewModel.getAllTimeBlock().toMutableList()
+            AppContainer.GlobalVariable.listMenus = viewModel.getAllMenu().toMutableList()
+            AppContainer.GlobalVariable.currentTimeBock = viewModel.getCurrentTimeBock()
+            AppContainer.GlobalVariable.listMenusToday = viewModel.getMenusToday()
 
             displayTimeBlock()
             displayTotal()
@@ -632,7 +633,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * Display current TimeBlock
      */
     private fun displayTimeBlock() {
-        val currentTimeBock = AppContainer.InitData.currentTimeBock
+        val currentTimeBock = AppContainer.GlobalVariable.currentTimeBock
         var textValue = "N/A: --/-- \n ${MainApplication.currentVersion}"
 
         if (currentTimeBock != null) {
@@ -1235,7 +1236,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     delay(100)
                     writeTags(position + 1)
                 } else {
-                    AppContainer.InitData.allowWriteTags = false
+                    AppContainer.GlobalVariable.allowWriteTags = false
                     // Start reading UHF
                     MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
@@ -1251,8 +1252,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val newPaidDate =
             "%02X".format(calendar.get(Calendar.DAY_OF_MONTH)) // TODO: Double check day of month + 1
         var newPaidSession = "%02X".format(0)
-        if (AppContainer.InitData.currentTimeBock != null) {
-            newPaidSession = "%02X".format(AppContainer.InitData.currentTimeBock?.id)
+        if (AppContainer.GlobalVariable.currentTimeBock != null) {
+            newPaidSession = "%02X".format(AppContainer.GlobalVariable.currentTimeBock?.id)
         }
         val newCustomPrice = "%06X".format(0)
 

@@ -11,4 +11,5 @@ data class PlateModelEntity(
     @ColumnInfo(name = "plate_model_id") val plateModelId: String,
     @ColumnInfo(name = "plate_model_code") val plateModelCode: String,
     @ColumnInfo(name = "plate_model_title") val plateModelTitle: String,
+    @ColumnInfo(name = "last_plate_serial") val lastPlateSerial: String
 ) : BaseEntity()

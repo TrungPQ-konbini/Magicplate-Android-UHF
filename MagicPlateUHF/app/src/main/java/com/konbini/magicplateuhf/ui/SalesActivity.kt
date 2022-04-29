@@ -1,5 +1,9 @@
 package com.konbini.magicplateuhf.ui
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,15 +14,16 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.konbini.magicplateuhf.AppContainer
+import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.databinding.ActivitySalesBinding
+import com.konbini.magicplateuhf.jobs.GetTokenJobService
 import com.konbini.magicplateuhf.ui.plateModel.PlateModelViewModel
 import com.konbini.magicplateuhf.utils.LogUtils
 import com.rfid.rxobserver.RXObserver
 import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.*
 
 @AndroidEntryPoint
 class SalesActivity : AppCompatActivity() {
@@ -27,6 +32,10 @@ class SalesActivity : AppCompatActivity() {
         const val TAG = "SalesActivity"
         private var defaultInterval: Int = 1000
         private var lastTimeClicked: Long = 0
+
+        const val SUCCESS_KEY = "SUCCESS"
+        const val FAILED_KEY = "FAILED"
+        const val JOB_GET_TOKEN_ID = 123
     }
 
 //    private var test = false
@@ -43,7 +52,7 @@ class SalesActivity : AppCompatActivity() {
             AppContainer.CurrentTransaction.listEPC.clear()
             AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
             // Get list tags
-            val listTagEntity = AppContainer.InitData.getListTagEntity(listEPC)
+            val listTagEntity = AppContainer.GlobalVariable.getListTagEntity(listEPC)
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
             // Add items to cart
             val refresh = AppContainer.CurrentTransaction.refreshCart()
@@ -54,7 +63,7 @@ class SalesActivity : AppCompatActivity() {
                 intent.action = "REFRESH_TAGS"
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-                if (AppContainer.InitData.allowReadTags) {
+                if (AppContainer.GlobalVariable.allowReadTags) {
                     // Start reading UHF
                     MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
@@ -66,6 +75,7 @@ class SalesActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivitySalesBinding
+    private val viewModel: SalesViewModel by viewModels()
     private val viewModelPlateModel: PlateModelViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,8 +88,13 @@ class SalesActivity : AppCompatActivity() {
 
         // Get all plate model
         lifecycleScope.launch {
-            AppContainer.InitData.listPlatesModel = viewModelPlateModel.getAll().toMutableList()
+            AppContainer.GlobalVariable.listPlatesModel = viewModelPlateModel.getAll().toMutableList()
         }
+    }
+
+    override fun onResume() {
+        scheduleGetTokenJob()
+        super.onResume()
     }
 
     override fun onDestroy() {
@@ -91,9 +106,11 @@ class SalesActivity : AppCompatActivity() {
 
     private fun initRFIDReader() {
         try {
-            MainApplication.mReaderUHF.registerObserver(rxObserver)
-            Thread.sleep(500)
-            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            if (MainApplication.isInitializedUHF) {
+                MainApplication.mReaderUHF.registerObserver(rxObserver)
+                Thread.sleep(500)
+                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            }
         } catch (ex: Exception) {
             Log.e(TAG, ex.toString())
             LogUtils.logError(ex)
@@ -121,5 +138,24 @@ class SalesActivity : AppCompatActivity() {
             }
         }
         return super.dispatchKeyEvent(e)
+    }
+
+    private fun scheduleGetTokenJob() {
+        val periodicGetToken: Long = AppSettings.Timer.PeriodicGetToken.toLong() * 60 * 1000
+        val componentName = ComponentName(this, GetTokenJobService::class.java)
+        val info = JobInfo.Builder(JOB_GET_TOKEN_ID, componentName)
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+            .setRequiresDeviceIdle(false)
+            .setRequiresCharging(false)
+            .setPersisted(true)
+            .setPeriodic(periodicGetToken)
+            .build()
+
+        val jobScheduler: JobScheduler =
+            getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val resultCode = jobScheduler.schedule(info)
+
+        val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
+        LogUtils.logInfo("Job Scheduled Get Token ${if (isJobScheduledSuccess) SUCCESS_KEY else FAILED_KEY}")
     }
 }

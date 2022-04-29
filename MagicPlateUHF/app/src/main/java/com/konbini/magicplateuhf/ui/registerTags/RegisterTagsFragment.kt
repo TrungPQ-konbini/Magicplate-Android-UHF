@@ -1,17 +1,17 @@
-package com.konbini.magicplateuhf.ui.writeTags
+package com.konbini.magicplateuhf.ui.registerTags
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -20,30 +20,35 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
+import com.konbini.magicplateuhf.data.entities.PlateModelEntity
 import com.konbini.magicplateuhf.data.entities.TagEntity
-import com.konbini.magicplateuhf.databinding.FragmentWriteTagsBinding
+import com.konbini.magicplateuhf.data.remote.plateModel.request.Data
+import com.konbini.magicplateuhf.databinding.FragmentRegisterTagsBinding
 import com.konbini.magicplateuhf.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
+class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     AdapterView.OnItemSelectedListener {
 
     companion object {
-        const val TAG = "WriteTagsFragment"
+        const val TAG = "RegisterTagsFragment"
     }
 
-    private var serialNumber = 1000
+    private var serialNumber = 0
     private var processing = false
-    private var selectedPlateModel = ""
-    private lateinit var adapter: WriteTagsAdapter
+    private lateinit var selectedPlateModel: PlateModelEntity
+    private lateinit var adapter: RegisterTagsAdapter
 
+    private var listSetPlateModelDataRequest: MutableList<Data> = mutableListOf()
+    private var listPLateModelsSync: MutableList<PlateModelEntity> = mutableListOf()
     private var dataTags: ArrayList<TagEntity> = ArrayList()
 
-    private var binding: FragmentWriteTagsBinding by autoCleared()
-    private val viewModel: WriteTagsViewModel by viewModels()
+    private var binding: FragmentRegisterTagsBinding by autoCleared()
+    private val viewModel: RegisterTagsViewModel by viewModels()
 
     private val changeTagReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -54,7 +59,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
                         dataTags.sortBy { tagEntity -> tagEntity.strEPC }
                         adapter.setItems(dataTags)
-                        setTitleButtonWrite()
+                        setTitleButtonRegister()
                     }
                 }
             }
@@ -66,7 +71,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWriteTagsBinding.inflate(inflater, container, false)
+        binding = FragmentRegisterTagsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,7 +81,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         setupRecyclerView()
         setupObservers()
         setupActions()
-        setTitleButtonWrite()
+        setTitleButtonRegister()
     }
 
     override fun onStart() {
@@ -116,7 +121,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private fun setupRecyclerView() {
-        adapter = WriteTagsAdapter()
+        adapter = RegisterTagsAdapter()
         val manager = LinearLayoutManager(requireContext())
         binding.recyclerViewTags.layoutManager = manager
         binding.recyclerViewTags.adapter = adapter
@@ -128,45 +133,70 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         binding.recyclerViewTags.addItemDecoration(mDividerItemDecoration)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun setupObservers() {
-
-    }
-
-    private fun setupActions() {
-        binding.searchTags.setOnQueryTextListener(this)
-
-        binding.buttonWriteTags.setSafeOnClickListener {
-            if (selectedPlateModel.isEmpty()) {
-                AlertDialogUtil.showWarning(
-                    getString(R.string.message_warning_new_plate_code_required),
-                    requireContext()
-                )
-                return@setSafeOnClickListener
-            }
-            if (dataTags.isNotEmpty()) {
-                showHideLoading(true)
-                try {
-                    AppContainer.GlobalVariable.allowWriteTags = true
-                    writeTags(0)
-                } catch (ex: Exception) {
-                    showHideLoading(false)
-                    AlertDialogUtil.showError(
-                        ex.message.toString(),
-                        requireContext()
-                    )
-                    LogUtils.logError(ex)
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.state.collect() { _state ->
+                when (_state.status) {
+                    Resource.Status.LOADING -> {
+                        showHideLoading(true)
+                    }
+                    Resource.Status.SUCCESS -> {
+                        listPLateModelsSync = _state.data as MutableList<PlateModelEntity>
+                        AppContainer.GlobalVariable.listPlatesModel = listPLateModelsSync
+                        writeTags()
+                        AlertDialogUtil.showSuccess(_state.message, requireContext())
+                        LogUtils.logInfo("Sync Plate Models success")
+                    }
+                    Resource.Status.ERROR -> {
+                        showHideLoading(false)
+                        //AlertDialogUtil.showError(_state.message, requireContext())
+                        LogUtils.logInfo("Sync Plate Models error")
+                    }
+                    else -> {}
                 }
             }
         }
     }
 
-    private fun setTitleButtonWrite() {
+    private fun setupActions() {
+        binding.searchTags.setOnQueryTextListener(this)
+
+        binding.buttonRegisterTags.setSafeOnClickListener {
+            viewModel.syncPlateModels()
+        }
+    }
+
+    private fun writeTags() {
+        if (!::selectedPlateModel.isInitialized) {
+            AlertDialogUtil.showWarning(
+                getString(R.string.message_warning_new_plate_code_required),
+                requireContext()
+            )
+            return
+        }
+        if (dataTags.isNotEmpty()) {
+            try {
+                AppContainer.GlobalVariable.allowWriteTags = true
+                writeTags(0)
+            } catch (ex: Exception) {
+                showHideLoading(false)
+                AlertDialogUtil.showError(
+                    ex.message.toString(),
+                    requireContext()
+                )
+                LogUtils.logError(ex)
+            }
+        }
+    }
+
+    private fun setTitleButtonRegister() {
         if (dataTags.isEmpty()) {
-            val titleButton = getString(R.string.title_write_tags).replace(" %s", "")
-            binding.buttonWriteTags.text = titleButton
+            val titleButton = getString(R.string.title_register_tags).replace(" %s", "")
+            binding.buttonRegisterTags.text = titleButton
         } else {
-            val titleButton = String.format(getString(R.string.title_write_tags), dataTags.size)
-            binding.buttonWriteTags.text = titleButton
+            val titleButton = String.format(getString(R.string.title_register_tags), dataTags.size)
+            binding.buttonRegisterTags.text = titleButton
         }
     }
 
@@ -194,35 +224,30 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
         val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
-        val listPlatesCode: MutableList<String> = mutableListOf()
-        listPlatesModel.forEach { _plateModelEntity ->
-            listPlatesCode.add(_plateModelEntity.plateModelCode)
-        }
-        if (listPlatesCode.isNotEmpty()) {
-            selectedPlateModel = listPlatesCode[position]
+        if (listPlatesModel.isNotEmpty()) {
+            selectedPlateModel = listPlatesModel[position]
         }
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {}
 
     private fun setNewEPC(oldEPC: String): String {
-        serialNumber += 1
-        val newPlateModel = "%04X".format(selectedPlateModel.toInt())
-        val newSerialNumber = "%06X".format(serialNumber)
-        val newPaidDate = "%02X".format(0)
-        val newPaidSession = "%02X".format(0)
-        var newCustomPrice = "%06X".format(0)
-        if (binding.newCustomPrice.text.toString().isNotEmpty()) {
-            val price = (binding.newCustomPrice.text.toString().toDouble() * 100).toInt()
-            newCustomPrice =
-                "%06X".format(price)
+        if (serialNumber == 0) {
+            listPLateModelsSync.forEach { _plateModelEntity ->
+                if (selectedPlateModel.plateModelCode == _plateModelEntity.plateModelCode) {
+                    val lastPlateSerial = _plateModelEntity.lastPlateSerial.toInt(16)
+                    serialNumber = lastPlateSerial + 1
+                }
+            }
+        } else {
+            serialNumber += 1
         }
 
-        return oldEPC.replace(oldEPC.substring(0, 4), newPlateModel)
+        val newPlateModel = "%02X".format(selectedPlateModel.plateModelCode.toInt())
+        val newSerialNumber = "%06X".format(serialNumber)
+
+        return oldEPC.replace(oldEPC.substring(0, 2), newPlateModel)
             .replace(oldEPC.substring(4, 10), newSerialNumber)
-            .replace(oldEPC.substring(14, 16), newPaidDate)
-            .replace(oldEPC.substring(16, 18), newPaidSession)
-            .replace(oldEPC.substring(18), newCustomPrice)
     }
 
     private fun writeTags(position: Int) {
@@ -234,20 +259,37 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     if (epcValue.isEmpty()) return@launch
 
                     // Select tag
-                    UhfUtil.setAccessEpcMatch(epcValue, requireContext(), getString(R.string.message_error_param_unknown_error))
-
-                    val newEPC = setNewEPC(epcValue)
-                    delay(100)
-                    UhfUtil.writeTag(newEPC, requireContext(), getString(R.string.message_error_write_data_format))
-
-                    delay(100)
+                    val epcMatch = UhfUtil.setAccessEpcMatch(epcValue, requireContext(), getString(R.string.message_error_param_unknown_error))
+                    if (epcMatch != -1) {
+                        val newEPC = setNewEPC(epcValue)
+                        delay(100)
+                        val writeTag = UhfUtil.writeTag(newEPC, requireContext(), getString(R.string.message_error_write_data_format))
+                        if (writeTag != -1) {
+                            // Add serials for submit to server
+                            val data = Data(
+                                plateModelId = selectedPlateModel.plateModelId.toInt(),
+                                lastPlateSerial = newEPC.substring(4, 10)
+                            )
+                            listSetPlateModelDataRequest.add(data)
+                            delay(100)
+                        }
+                    }
                     writeTags(position + 1)
                 } else {
                     showHideLoading(false)
-                    AlertDialogUtil.showSuccess(
-                        getString(R.string.message_success_write_tags),
-                        requireContext()
-                    )
+                    if (dataTags.size == listSetPlateModelDataRequest.size) {
+
+                        AlertDialogUtil.showSuccess(
+                            getString(R.string.message_success_register_tags),
+                            requireContext()
+                        )
+                    } else {
+                        AlertDialogUtil.showError(
+                            getString(R.string.message_error_some_tag_write_error),
+                            requireContext(),
+                            getString(R.string.title_register_failed)
+                        )
+                    }
 
                     AppContainer.GlobalVariable.allowWriteTags = false
                     delay(1000)
@@ -260,75 +302,4 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
             }
         }
     }
-
-//    private fun setAccessEpcMatch(tag: String) {
-//        var btAryEpc: ByteArray? = null
-//        btAryEpc = try {
-//            val result = StringTool.stringToStringArray(tag.uppercase(), 2)
-//            StringTool.stringArrayToByteArray(result, result.size)
-//        } catch (ex: Exception) {
-//            AlertDialogUtil.showError(
-//                getString(R.string.message_error_param_unknown_error),
-//                requireContext()
-//            )
-//            LogUtils.logError(ex)
-//            return
-//        }
-//        if (btAryEpc == null) {
-//            AlertDialogUtil.showError(
-//                getString(R.string.message_error_param_unknown_error),
-//                requireContext()
-//            )
-//            return
-//        }
-//        MainApplication.mReaderUHF.setAccessEpcMatch(
-//            0x01,
-//            (btAryEpc.size and 0xFF).toByte(), btAryEpc
-//        )
-//    }
-
-//    private fun writeTag(tag: String) {
-//        /*
-//         * 0x00: area password
-//         * 0x01: area epc
-//         * 0x02: area tid
-//         * 0x03: area user
-//         */
-//        val btMemBank: Byte = 0x01 // Fix access area EPC
-//        val btWordAdd: Byte = 0x02
-//        var btWordCnt: Byte = 0x00
-//        val btAryPassWord: ByteArray =
-//            byteArrayOf(0x00, 0x00, 0x00, 0x00) // Fix password is 00000000
-//
-//        var btAryData: ByteArray? = null
-//        var result: Array<String>? = null
-//        try {
-//            result = StringTool.stringToStringArray(tag.uppercase(), 2)
-//            btAryData = StringTool.stringArrayToByteArray(result, result.size)
-//            btWordCnt = (result.size / 2 + result.size % 2 and 0xFF).toByte()
-//        } catch (ex: Exception) {
-//            AlertDialogUtil.showError(
-//                getString(R.string.message_error_write_data_format),
-//                requireContext()
-//            )
-//            LogUtils.logError(ex)
-//            return
-//        }
-//
-//        if (btAryData == null || btAryData.isEmpty()) {
-//            AlertDialogUtil.showError(
-//                getString(R.string.message_error_write_data_format),
-//                requireContext()
-//            )
-//            return
-//        }
-//        MainApplication.mReaderUHF.writeTag(
-//            0x01,
-//            btAryPassWord,
-//            btMemBank,
-//            btWordAdd,
-//            btWordCnt,
-//            btAryData
-//        )
-//    }
 }

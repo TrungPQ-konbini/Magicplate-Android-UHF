@@ -1,4 +1,4 @@
-package com.konbini.magicplateuhf.ui.writeTags
+package com.konbini.magicplateuhf.ui.registerTags
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.TagEntity
-import com.konbini.magicplateuhf.databinding.ItemWriteTagBinding
+import com.konbini.magicplateuhf.databinding.ItemRegisterTagBinding
 import com.konbini.magicplateuhf.utils.CommonUtil
 
-class WriteTagsAdapter : RecyclerView.Adapter<WriteTagsViewHolder>() {
+class RegisterTagsAdapter : RecyclerView.Adapter<RegisterTagsViewHolder>() {
 
     private val items = ArrayList<TagEntity>()
 
@@ -19,13 +19,13 @@ class WriteTagsAdapter : RecyclerView.Adapter<WriteTagsViewHolder>() {
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WriteTagsViewHolder {
-        val binding: ItemWriteTagBinding =
-            ItemWriteTagBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return WriteTagsViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RegisterTagsViewHolder {
+        val binding: ItemRegisterTagBinding =
+            ItemRegisterTagBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RegisterTagsViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: WriteTagsViewHolder, position: Int) =
+    override fun onBindViewHolder(holder: RegisterTagsViewHolder, position: Int) =
         holder.bind(items[position], position)
 
     override fun getItemCount(): Int = items.size
@@ -50,8 +50,8 @@ class WriteTagsAdapter : RecyclerView.Adapter<WriteTagsViewHolder>() {
     }
 }
 
-class WriteTagsViewHolder(
-    private val itemBinding: ItemWriteTagBinding
+class RegisterTagsViewHolder(
+    private val itemBinding: ItemRegisterTagBinding
 ) : RecyclerView.ViewHolder(itemBinding.root) {
 
     @SuppressLint("SetTextI18n")
@@ -61,10 +61,10 @@ class WriteTagsViewHolder(
         itemBinding.tvPlateCode.text = item.plateModel
         itemBinding.tvPlateName.text = item.plateModelTitle ?: "N/A"
         if(item.customPrice == "N/A") {
-            itemBinding.tvCustomPrice.text = "N/A"
+            itemBinding.tvSerialNumber.text = "N/A"
 
         }else {
-            itemBinding.tvCustomPrice.text = CommonUtil.formatCurrency((item.customPrice.toDouble()/100).toFloat())
+            itemBinding.tvSerialNumber.text = CommonUtil.formatCurrency((item.customPrice.toDouble()/100).toFloat())
 
         }
 
