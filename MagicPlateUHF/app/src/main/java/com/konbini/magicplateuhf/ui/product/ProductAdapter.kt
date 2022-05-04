@@ -91,7 +91,10 @@ class ProductViewHolder(
         categoriesId: String?
     ): String {
         if (categoriesId == null) return ""
-        val listCategoriesId: List<Int> = categoriesId.split(",").map { it -> it.trim().toInt() }
+        var listCategoriesId: List<Int> = emptyList()
+        if (!categoriesId.isNullOrEmpty()) {
+            listCategoriesId = categoriesId.split(",").map { it -> it.trim().toInt() }
+        }
         val listCategoriesName: MutableList<String> = mutableListOf()
         categories.forEach { categoryEntity ->
             if (listCategoriesId.contains(categoryEntity.id)) {
@@ -102,7 +105,7 @@ class ProductViewHolder(
         return if (listCategoriesName.size > 0) {
             listCategoriesName.joinToString(separator = ", ")
         } else {
-            ""
+            "N/A"
         }
     }
 }

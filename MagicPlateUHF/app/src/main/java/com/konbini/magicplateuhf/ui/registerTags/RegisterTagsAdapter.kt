@@ -60,12 +60,11 @@ class RegisterTagsViewHolder(
         itemBinding.tvEPC.text = item.strEPC
         itemBinding.tvPlateCode.text = item.plateModel
         itemBinding.tvPlateName.text = item.plateModelTitle ?: "N/A"
-        if(item.customPrice == "N/A") {
+
+        if(item.serialNumber == "N/A" || item.serialNumber.isNullOrEmpty()) {
             itemBinding.tvSerialNumber.text = "N/A"
-
         }else {
-            itemBinding.tvSerialNumber.text = CommonUtil.formatCurrency((item.customPrice.toDouble()/100).toFloat())
-
+            itemBinding.tvSerialNumber.text = item.serialNumber
         }
 
         // Set background color

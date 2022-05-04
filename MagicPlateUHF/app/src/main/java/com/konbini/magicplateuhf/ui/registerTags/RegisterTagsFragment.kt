@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -145,12 +146,12 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         listPLateModelsSync = _state.data as MutableList<PlateModelEntity>
                         AppContainer.GlobalVariable.listPlatesModel = listPLateModelsSync
                         writeTags()
-                        AlertDialogUtil.showSuccess(_state.message, requireContext())
+                        //AlertDialogUtil.showSuccess(_state.message, requireContext())
                         LogUtils.logInfo("Sync Plate Models success")
                     }
                     Resource.Status.ERROR -> {
                         showHideLoading(false)
-                        //AlertDialogUtil.showError(_state.message, requireContext())
+                        AlertDialogUtil.showError(_state.message, requireContext())
                         LogUtils.logInfo("Sync Plate Models error")
                     }
                     else -> {}
@@ -260,10 +261,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
                     // Select tag
                     val epcMatch = UhfUtil.setAccessEpcMatch(epcValue, requireContext(), getString(R.string.message_error_param_unknown_error))
+                    Log.e(TAG, "[epcMatch] | $epcMatch")
                     if (epcMatch != -1) {
                         val newEPC = setNewEPC(epcValue)
-                        delay(100)
+                        LogUtils.logInfo("New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
+                        Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
+                        delay(150)
                         val writeTag = UhfUtil.writeTag(newEPC, requireContext(), getString(R.string.message_error_write_data_format))
+                        Log.e(TAG, "[writeTag] | $writeTag")
                         if (writeTag != -1) {
                             // Add serials for submit to server
                             val data = Data(
@@ -271,9 +276,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                                 lastPlateSerial = newEPC.substring(4, 10)
                             )
                             listSetPlateModelDataRequest.add(data)
-                            delay(100)
                         }
                     }
+                    delay(150)
                     writeTags(position + 1)
                 } else {
                     showHideLoading(false)
@@ -283,16 +288,22 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                             getString(R.string.message_success_register_tags),
                             requireContext()
                         )
+
+                        // Sync last serial to server
+                        viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
                     } else {
                         AlertDialogUtil.showError(
                             getString(R.string.message_error_some_tag_write_error),
                             requireContext(),
                             getString(R.string.title_register_failed)
                         )
+                        serialNumber = 0
+                        listSetPlateModelDataRequest.clear()
                     }
 
                     AppContainer.GlobalVariable.allowWriteTags = false
-                    delay(1000)
+                    delay(150)
+                    //MainApplication.mReaderUHF.resetInventoryBuffer(0xff.toByte())
                     // Start reading UHF
                     MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }

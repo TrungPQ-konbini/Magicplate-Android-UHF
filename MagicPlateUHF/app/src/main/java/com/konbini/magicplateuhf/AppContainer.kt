@@ -58,7 +58,7 @@ object AppContainer {
 ////                        }
 //                    }
 
-                    tagEntity.lastUpdate = System.currentTimeMillis()
+                    //tagEntity.lastUpdate = System.currentTimeMillis()
 
                     val oldTagEntity =
                         oldListTagEntity.find { tag -> tag.strEPC == tagEntity.strEPC }

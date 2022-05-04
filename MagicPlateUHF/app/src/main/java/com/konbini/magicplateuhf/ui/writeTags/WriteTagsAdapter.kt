@@ -60,7 +60,7 @@ class WriteTagsViewHolder(
         itemBinding.tvEPC.text = item.strEPC
         itemBinding.tvPlateCode.text = item.plateModel
         itemBinding.tvPlateName.text = item.plateModelTitle ?: "N/A"
-        if(item.customPrice == "N/A") {
+        if(item.customPrice == "N/A" || item.customPrice.isNullOrEmpty()) {
             itemBinding.tvCustomPrice.text = "N/A"
 
         }else {

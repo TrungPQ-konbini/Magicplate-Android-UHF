@@ -325,7 +325,7 @@ class SettingsViewModel @Inject constructor(
             plateModelId = _plateModel.plateModelId,
             plateModelCode = _plateModel.plateModelCode,
             plateModelTitle = _plateModel.plateModelTitle,
-            lastPlateSerial = _plateModel.lastPlateSerial
+            lastPlateSerial = _plateModel.lastPlateSerial ?: ""
         )
     }
 

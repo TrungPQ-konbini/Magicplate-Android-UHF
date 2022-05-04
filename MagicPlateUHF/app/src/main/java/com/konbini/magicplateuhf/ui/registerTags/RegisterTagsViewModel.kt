@@ -43,6 +43,10 @@ class RegisterTagsViewModel @Inject constructor(
         viewModelScope.launch {
             val url = AppSettings.Cloud.Host
 
+            _state.value = State(
+                status = Resource.Status.LOADING
+            )
+
             val syncPlateModels =
                 withContext(Dispatchers.Default) {
                     plateModelRepository.syncPlateModels(url)
@@ -120,7 +124,7 @@ class RegisterTagsViewModel @Inject constructor(
             plateModelId = _plateModel.plateModelId,
             plateModelCode = _plateModel.plateModelCode,
             plateModelTitle = _plateModel.plateModelTitle,
-            lastPlateSerial = _plateModel.lastPlateSerial
+            lastPlateSerial = _plateModel.lastPlateSerial ?: "000001"
         )
     }
 }

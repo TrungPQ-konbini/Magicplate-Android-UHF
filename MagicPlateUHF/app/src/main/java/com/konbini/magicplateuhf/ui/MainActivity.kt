@@ -139,9 +139,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        if (MainApplication.isInitializedUHF) {
-            MainApplication.mReaderUHF.unRegisterObserver(rxObserver)
-        }
+//        if (MainApplication.isInitializedUHF) {
+//            MainApplication.mReaderUHF.unRegisterObserver(rxObserver)
+//        }
         super.onDestroy()
     }
 
