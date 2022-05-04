@@ -2,7 +2,6 @@ package com.konbini.magicplateuhf.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
@@ -10,15 +9,10 @@ import androidx.navigation.findNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.ui.*
-import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.databinding.ActivityMainBinding
-import com.konbini.magicplateuhf.utils.LogUtils
-import com.rfid.rxobserver.RXObserver
-import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,36 +20,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "MainActivity"
-    }
-
-    private var listEPC: MutableList<String> = mutableListOf()
-
-    private var rxObserver: RXObserver = object : RXObserver() {
-        override fun onInventoryTag(tag: RXInventoryTag) {
-            Log.d(SalesActivity.TAG, tag.strEPC)
-            listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
-        }
-
-        override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
-            AppContainer.CurrentTransaction.listEPC.clear()
-            AppContainer.CurrentTransaction.listEPC.addAll(listEPC)
-
-            // Get list tags
-            val listTagEntity = AppContainer.GlobalVariable.getListTagEntity(listEPC)
-            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
-
-            // Send Broadcast to update UI
-            val intent = Intent()
-            intent.action = "REFRESH_TAGS"
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-
-            if (!AppContainer.GlobalVariable.allowWriteTags && MainApplication.isInitializedUHF) {
-                // Start reading UHF
-                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-            }
-
-            listEPC.clear()
-        }
     }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -66,8 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        initRFIDReader()
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -139,20 +101,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-//        if (MainApplication.isInitializedUHF) {
-//            MainApplication.mReaderUHF.unRegisterObserver(rxObserver)
-//        }
         super.onDestroy()
-    }
-
-    private fun initRFIDReader() {
-        try {
-            MainApplication.mReaderUHF.registerObserver(rxObserver)
-            Thread.sleep(500)
-            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-        } catch (ex: Exception) {
-            Log.e(SalesActivity.TAG, ex.toString())
-            LogUtils.logError(ex)
-        }
     }
 }

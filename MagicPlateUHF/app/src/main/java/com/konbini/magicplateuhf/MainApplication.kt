@@ -24,6 +24,8 @@ import com.module.interaction.ModuleConnector
 import com.nativec.tools.ModuleManager
 import com.rfid.RFIDReaderHelper
 import com.rfid.ReaderConnector
+import com.rfid.rxobserver.RXObserver
+import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.HiltAndroidApp
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
@@ -37,21 +39,70 @@ class MainApplication : Application() {
     lateinit var mqttHelper: MqttHelper
 
     companion object {
+        const val TAG = "MainApplication"
         lateinit var mReaderASC: Reader
         lateinit var mManager: UsbManager
         lateinit var instance: MainApplication
         lateinit var mPermissionIntent: PendingIntent
 
-        var isInitializedUHF = false
         lateinit var mReaderUHF: RFIDReaderHelper
         var connector: ModuleConnector = ReaderConnector()
 
         var currentVersion: String = "Version: N/A"
-
         const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
+
+        var tagSizeOld = 0
+        var timeTagSizeChanged = 0L
 
         fun shared(): MainApplication {
             return instance
+        }
+    }
+
+    private var rxObserver: RXObserver = object : RXObserver() {
+        override fun onInventoryTag(tag: RXInventoryTag) {
+            Log.e(TAG, tag.strEPC)
+            AppContainer.GlobalVariable.listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
+        }
+
+        override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
+            AppContainer.CurrentTransaction.listEPC.clear()
+            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+
+            // Get list tags
+            val listTagEntity = AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+
+            val current = System.currentTimeMillis()
+            if (AppContainer.CurrentTransaction.listEPC.size != tagSizeOld) {
+                Log.e(TAG, "listEPC: ${AppContainer.CurrentTransaction.listEPC.size} | tagSizeOld: $tagSizeOld")
+                if (timeTagSizeChanged == 0L) {
+                    timeTagSizeChanged = current
+                    return
+                } else {
+                    val offset = current - timeTagSizeChanged
+                    if (offset < 500) {
+                        Log.e(TAG, "$current | $offset")
+                        return
+                    }
+                }
+            } else {
+                timeTagSizeChanged = 0L
+
+                // Add items to cart
+                val intent = Intent()
+                intent.action = "REFRESH_TAGS"
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+            }
+            tagSizeOld = AppContainer.CurrentTransaction.listEPC.size
+
+            if (AppContainer.GlobalVariable.allowReadTags) {
+                // Start reading UHF
+                mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            }
+
+            AppContainer.CurrentTransaction.oldListTagEntity = listTagEntity
+            AppContainer.GlobalVariable.listEPC.clear()
         }
     }
 
@@ -236,7 +287,9 @@ class MainApplication : Application() {
                 ModuleManager.newInstance().uhfStatus = true
                 try {
                     mReaderUHF = RFIDReaderHelper.getDefaultHelper()
-                    isInitializedUHF = true
+                    mReaderUHF.registerObserver(rxObserver)
+                    Thread.sleep(500)
+                    mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 } catch (ex: Exception) {
                     Log.e(SalesActivity.TAG, ex.toString())
                     LogUtils.logError(ex)

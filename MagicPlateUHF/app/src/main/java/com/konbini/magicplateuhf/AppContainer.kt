@@ -13,6 +13,10 @@ import java.util.*
 
 object AppContainer {
     object GlobalVariable {
+        var tagSizeOld = 0
+        var timeTagSizeChanged = 0L
+        var listEPC: MutableList<String> = mutableListOf()
+
         var isGettingToken = false
         var currentToken: String = ""
         var allowWriteTags = false
