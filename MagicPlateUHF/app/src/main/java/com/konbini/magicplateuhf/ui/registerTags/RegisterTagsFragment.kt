@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -40,6 +41,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private var serialNumber = 0
+    private var lastSerialNumber = ""
+
     private var processing = false
     private lateinit var selectedPlateModel: PlateModelEntity
     private lateinit var adapter: RegisterTagsAdapter
@@ -227,6 +230,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
         if (listPlatesModel.isNotEmpty()) {
             selectedPlateModel = listPlatesModel[position]
+            val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
+            lastSerialNumber = selectedPlateModel.lastPlateSerial
+            binding.txtLastSerialNumber.setText(Html.fromHtml(text))
         }
     }
 
