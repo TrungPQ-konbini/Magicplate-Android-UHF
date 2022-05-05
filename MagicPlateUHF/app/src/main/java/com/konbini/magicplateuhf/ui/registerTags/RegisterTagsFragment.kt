@@ -81,11 +81,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.syncPlateModels()
         setupSpinner()
         setupRecyclerView()
         setupObservers()
         setupActions()
         setTitleButtonRegister()
+
+
     }
 
     override fun onStart() {
@@ -148,9 +151,10 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     Resource.Status.SUCCESS -> {
                         listPLateModelsSync = _state.data as MutableList<PlateModelEntity>
                         AppContainer.GlobalVariable.listPlatesModel = listPLateModelsSync
-                        writeTags()
+                        //writeTags()
                         //AlertDialogUtil.showSuccess(_state.message, requireContext())
                         LogUtils.logInfo("Sync Plate Models success")
+                        showHideLoading(false)
                     }
                     Resource.Status.ERROR -> {
                         showHideLoading(false)
@@ -169,6 +173,10 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 //        binding.buttonRegisterTags.setSafeOnClickListener {
 //            viewModel.syncPlateModels()
 //        }
+
+        binding.btnGetLastNumber.setSafeOnClickListener {
+            viewModel.syncPlateModels()
+        }
     }
 
     private fun writeTags() {
@@ -227,8 +235,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
+        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList().reversed()
         if (listPlatesModel.isNotEmpty()) {
+           // p0?.getItemIdAtPosition(position)
             selectedPlateModel = listPlatesModel[position]
             val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
             lastSerialNumber = selectedPlateModel.lastPlateSerial
