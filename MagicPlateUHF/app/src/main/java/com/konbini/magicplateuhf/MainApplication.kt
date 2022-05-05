@@ -99,6 +99,12 @@ class MainApplication : Application() {
                 }
             } else {
                 timeTagSizeChanged = 0L
+                AppContainer.CurrentTransaction.refreshCart()
+
+                // Add or Remove items to cart
+                val intent = Intent()
+                intent.action = "REFRESH_TAGS"
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
             }
 
             if (AppContainer.GlobalVariable.allowReadTags) {
