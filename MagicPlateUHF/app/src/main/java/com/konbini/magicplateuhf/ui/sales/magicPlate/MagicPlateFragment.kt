@@ -97,6 +97,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                         }
                     }
+                    // Add to Mask real-time reading tags
+                    var content = String.format(getString(R.string.title_count_n_tags), AppContainer.CurrentTransaction.listTagEntity.size)
+                    content += "\n\n"
+                    AppContainer.CurrentTransaction.listTagEntity.forEach { tagEntity ->
+                        content += "${tagEntity.strEPC} | ${tagEntity.plateModelTitle} \n"
+                    }
+                    binding.rfidRealTimeTags.text = content
                 }
                 "NEW_BARCODE" -> {
                     val paymentState = AppContainer.CurrentTransaction.paymentState
@@ -303,15 +310,22 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             resetMessage(message, 0)
 
                             if (AppSettings.Machine.DelayAfterOrderCompleted > 0) {
-                                val timeMillis = AppSettings.Machine.DelayAfterOrderCompleted.toLong() * 1000
+                                val timeMillis =
+                                    AppSettings.Machine.DelayAfterOrderCompleted.toLong() * 1000
                                 delay(timeMillis)
                                 AppContainer.GlobalVariable.allowReadTags = true
                                 // Start reading UHF
-                                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                                MainApplication.mReaderUHF.realTimeInventory(
+                                    0xff.toByte(),
+                                    0x01.toByte()
+                                )
                             } else {
                                 AppContainer.GlobalVariable.allowReadTags = true
                                 // Start reading UHF
-                                MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                                MainApplication.mReaderUHF.realTimeInventory(
+                                    0xff.toByte(),
+                                    0x01.toByte()
+                                )
                             }
                         }
                     }
@@ -429,6 +443,19 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
             showHideLoading(false)
         }
+
+        val swipeLayoutToHideAndShow = SwipeLayoutShowHide()
+        swipeLayoutToHideAndShow.initialize(
+            binding.root,
+            binding.rfidMaskReading,
+            Arrays.asList(
+                SwipeLayoutShowHide.SwipeDirection.rightToLeft,
+                SwipeLayoutShowHide.SwipeDirection.leftToRight,
+                SwipeLayoutShowHide.SwipeDirection.topToBottom,
+                SwipeLayoutShowHide.SwipeDirection.bottomToTop
+            ),
+            50
+        )
     }
 
     override fun onClickedPayment(payment: String) {
