@@ -105,6 +105,7 @@
     <string name="title_register_failed">Register failed</string>
     <string name="title_custom_price">Custom Price</string>
     <string name="title_not_allow_wallet_non_rfid">Do not allow wallet payments with non-RFID</string>
+    <string name="title_count_n_tags">Counts: %s Tags</string>
 
     <!--Category-->
     <string name="title_category_name">Category Name</string>
