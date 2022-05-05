@@ -88,19 +88,19 @@ object AppSettings {
     }
 
     object Cloud {
-        var Host = "https://dev.ineedfood.today"
-        var ConsumerKey = "ck_fdd0fe41326abfb54a33d0b7c5af67b0d3beab0b"
-        var ConsumerSecret = "cs_d8873fcfff5d8d2bacc3af12bb9fff3245eaf75e"
-        var ClientId = "jh2UsnTuLa5fl5BHYm8IU3zMTskV3sqwuWQZTD7N"
-        var ClientSecret = "gupVBZmqVHuDPH51AxCV5lM6WWOlGDTgpvWl9I54"
+        var Host = "https://gleneagles.whew.life"
+        var ConsumerKey = "ck_c19a45488414efe7a89c407d5aa167da2c135ad2"
+        var ConsumerSecret = "cs_af3d5413a62a039fd8a4e6d1c0d4c14b354ad6a44"
+        var ClientId = "7xVVr5CoxH7rLT6GNV9Xu1JfARKGNRxQzBiTdgj6"
+        var ClientSecret = "UgWmwqG44HvO0ByNmQSmt7TvuEZrBlwQU6isYowg"
         var OrderStatus = "completed"
         var AllOrderStatus = ""
     }
 
     object Wallet {
-        var Host = "https://dev.ineedfood.today"
-        var ClientId = "jh2UsnTuLa5fl5BHYm8IU3zMTskV3sqwuWQZTD7N"
-        var ClientSecret = "gupVBZmqVHuDPH51AxCV5lM6WWOlGDTgpvWl9I54"
+        var Host = "https://gleneagles.whew.life"
+        var ClientId = "7xVVr5CoxH7rLT6GNV9Xu1JfARKGNRxQzBiTdgj6"
+        var ClientSecret = "UgWmwqG44HvO0ByNmQSmt7TvuEZrBlwQU6isYowg"
     }
 
     object MQTT {
