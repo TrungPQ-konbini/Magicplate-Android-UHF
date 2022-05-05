@@ -275,10 +275,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                     }
                     Resource.Status.SUCCESS -> {
-                        // Reset custom price and add paid date and session date
-                        dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
-                        AppContainer.GlobalVariable.allowWriteTags = true
-                        writeTags(0)
+//                        // Reset custom price and add paid date and session date
+//                        dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
+//                        AppContainer.GlobalVariable.allowWriteTags = true
+//                        writeTags(0)
 
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
@@ -1215,55 +1215,55 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[C]<font size='tall'>Thank you!!!</font>\n"
     }
 
-    private fun writeTags(position: Int) {
-        lifecycleScope.launch {
-            try {
-                if (position < dataTags.size) {
-                    val tag = dataTags[position]
-                    val epcValue = tag.strEPC ?: ""
-                    if (epcValue.isEmpty()) return@launch
-
-                    // Select tag
-                    UhfUtil.setAccessEpcMatch(
-                        epcValue,
-                        requireContext(),
-                        getString(R.string.message_error_param_unknown_error)
-                    )
-
-                    val newEPC = setNewEPC(epcValue)
-                    delay(100)
-                    UhfUtil.writeTag(
-                        newEPC,
-                        requireContext(),
-                        getString(R.string.message_error_write_data_format)
-                    )
-
-                    delay(100)
-                    writeTags(position + 1)
-                } else {
-                    AppContainer.GlobalVariable.allowWriteTags = false
-                    // Start reading UHF
-                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                }
-
-            } catch (ex: Exception) {
-                LogUtils.logError(ex)
-            }
-        }
-    }
-
-    private fun setNewEPC(oldEPC: String): String {
-        val calendar = Calendar.getInstance()
-        val newPaidDate =
-            "%02X".format(calendar.get(Calendar.DAY_OF_MONTH)) // TODO: Double check day of month + 1
-        var newPaidSession = "%02X".format(0)
-        if (AppContainer.GlobalVariable.currentTimeBock != null) {
-            newPaidSession = "%02X".format(AppContainer.GlobalVariable.currentTimeBock?.id)
-        }
-        val newCustomPrice = "%06X".format(0)
-
-        return oldEPC.replace(oldEPC.substring(14, 16), newPaidDate)
-            .replace(oldEPC.substring(16, 18), newPaidSession)
-            .replace(oldEPC.substring(18), newCustomPrice)
-    }
+//    private fun writeTags(position: Int) {
+//        lifecycleScope.launch {
+//            try {
+//                if (position < dataTags.size) {
+//                    val tag = dataTags[position]
+//                    val epcValue = tag.strEPC ?: ""
+//                    if (epcValue.isEmpty()) return@launch
+//
+//                    // Select tag
+//                    UhfUtil.setAccessEpcMatch(
+//                        epcValue,
+//                        requireContext(),
+//                        getString(R.string.message_error_param_unknown_error)
+//                    )
+//
+//                    val newEPC = setNewEPC(epcValue)
+//                    delay(100)
+//                    UhfUtil.writeTag(
+//                        newEPC,
+//                        requireContext(),
+//                        getString(R.string.message_error_write_data_format)
+//                    )
+//
+//                    delay(100)
+//                    writeTags(position + 1)
+//                } else {
+//                    AppContainer.GlobalVariable.allowWriteTags = false
+//                    // Start reading UHF
+//                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+//                }
+//
+//            } catch (ex: Exception) {
+//                LogUtils.logError(ex)
+//            }
+//        }
+//    }
+//
+//    private fun setNewEPC(oldEPC: String): String {
+//        val calendar = Calendar.getInstance()
+//        val newPaidDate =
+//            "%02X".format(calendar.get(Calendar.DAY_OF_MONTH)) // TODO: Double check day of month + 1
+//        var newPaidSession = "%02X".format(0)
+//        if (AppContainer.GlobalVariable.currentTimeBock != null) {
+//            newPaidSession = "%02X".format(AppContainer.GlobalVariable.currentTimeBock?.id)
+//        }
+//        val newCustomPrice = "%06X".format(0)
+//
+//        return oldEPC.replace(oldEPC.substring(14, 16), newPaidDate)
+//            .replace(oldEPC.substring(16, 18), newPaidSession)
+//            .replace(oldEPC.substring(18), newCustomPrice)
+//    }
 }
