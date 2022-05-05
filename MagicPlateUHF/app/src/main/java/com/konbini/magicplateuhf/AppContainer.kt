@@ -32,58 +32,20 @@ object AppContainer {
             val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
             val listTagEntity: MutableList<TagEntity> = mutableListOf()
 
-            val oldListTagEntity = CurrentTransaction.oldListTagEntity
             Log.e(
-                "tRage",
+                MainApplication.TAG,
                 "$======================================================================="
             )
-            var index = 0
             listEPC.forEach { _epc ->
                 val tagEntity: TagEntity? = CommonUtil.convertEpcToTagEntity(_epc)
                 if (tagEntity != null) {
-//                    val dump =
-//                        CurrentTransaction.dumpListTagEntity.find { tag -> tag == tagEntity }
-//                    if (dump == null) {
-//                        // Add new to dump
-//                        CurrentTransaction.dumpListTagEntity.add(tagEntity)
-//                    } else {
-//                        // If exist, try to update
-//                        val removeOk = CurrentTransaction.dumpListTagEntity.remove(dump)
-//                        CurrentTransaction.dumpListTagEntity.add(tagEntity)
-//
-//                        index ++
-//                        val tRange = tagEntity.lastUpdate - dump.lastUpdate
-//                        Log.e("tRage", "$index $_epc:$tRange")
-//
-//                        Log.e("dumpListTagEntity", CurrentTransaction.dumpListTagEntity.count().toString())
-//
-////                        if (tRange <= 1000) {
-////                            listTagEntity.add(tagEntity)
-////                        }
-//                    }
-
-                    //tagEntity.lastUpdate = System.currentTimeMillis()
-
-                    val oldTagEntity =
-                        oldListTagEntity.find { tag -> tag.strEPC == tagEntity.strEPC }
                     val plateModelEntity =
-                        listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode == tagEntity.plateModel }
+                        listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode.toInt() == tagEntity.plateModel?.toInt() }
                     if (plateModelEntity != null) {
                         tagEntity.plateModelTitle = plateModelEntity.plateModelTitle
                     }
 
                     listTagEntity.add(tagEntity)
-
-//                    if (oldTagEntity == null) {
-//                        listTagEntity.add(tagEntity)
-//                    } else {
-//                        index ++
-//                        val tRange = tagEntity.lastUpdate - oldTagEntity.lastUpdate
-//                        Log.e("tRage", "$index $_epc:$tRange")
-//                        if (tRange <= 1000) {
-//                            listTagEntity.add(tagEntity)
-//                        }
-//                    }
                 }
             }
             return listTagEntity
@@ -99,8 +61,6 @@ object AppContainer {
         var paymentState: PaymentState = PaymentState.Init
         var listEPC: MutableList<String> = mutableListOf()
         var listTagEntity: MutableList<TagEntity> = mutableListOf()
-        var dumpListTagEntity: MutableList<TagEntity> = mutableListOf()
-        var oldListTagEntity: MutableList<TagEntity> = mutableListOf()
 
         var cart: MutableList<CartEntity> = mutableListOf()
         var cartLocked: MutableList<CartEntity> = mutableListOf()
@@ -123,16 +83,13 @@ object AppContainer {
 
         fun refreshCart(): Boolean {
             val gson = Gson()
-//            cart.removeAll { _cartEntity ->
-//                listEPC.contains(_cartEntity.strEPC)
-//            }
 
             cart.clear()
             if (listTagEntity.isNotEmpty()) {
                 totalPrice = 0F
                 listTagEntity.forEach { _tagEntity ->
                     val menuEntity = GlobalVariable.listMenusToday.find { _menuEntity ->
-                        _menuEntity.plateModelCode == _tagEntity.plateModel
+                        _menuEntity.plateModelCode.toInt() == _tagEntity.plateModel?.toInt()
                     }
                     if (menuEntity != null) {
                         val customPrice = _tagEntity.customPrice

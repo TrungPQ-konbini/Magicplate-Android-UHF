@@ -1079,7 +1079,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun printReceipt(cartLocked: MutableList<CartEntity>) {
         viewLifecycleOwner.lifecycleScope.launch {
-            orderNumber = viewModel.getLastTransactionId() + 1
+            val lastNumber = viewModel.getLastTransactionId()
+            if (lastNumber != null) {
+                orderNumber = lastNumber + 1
+            }
+
             if (AppSettings.Options.Printer.Bluetooth) {
                 // Bluetooth
                 printReceiptBluetooth(cartLocked)

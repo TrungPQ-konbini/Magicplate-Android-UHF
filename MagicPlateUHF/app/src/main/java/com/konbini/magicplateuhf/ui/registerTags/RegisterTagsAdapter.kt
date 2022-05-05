@@ -58,7 +58,7 @@ class RegisterTagsViewHolder(
     fun bind(item: TagEntity, position: Int) {
         itemBinding.tvIndex.text = "${position + 1}"
         itemBinding.tvEPC.text = item.strEPC
-        itemBinding.tvPlateCode.text = item.plateModel
+        itemBinding.tvPlateCode.text = "%02d".format(item.plateModel?.toInt())
         itemBinding.tvPlateName.text = item.plateModelTitle ?: "N/A"
 
         if(item.serialNumber == "N/A" || item.serialNumber.isNullOrEmpty()) {
