@@ -163,9 +163,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private fun setupActions() {
         binding.searchTags.setOnQueryTextListener(this)
 
-        binding.buttonRegisterTags.setSafeOnClickListener {
-            viewModel.syncPlateModels()
-        }
+//        binding.buttonRegisterTags.setSafeOnClickListener {
+//            viewModel.syncPlateModels()
+//        }
     }
 
     private fun writeTags() {
@@ -194,10 +194,10 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private fun setTitleButtonRegister() {
         if (dataTags.isEmpty()) {
             val titleButton = getString(R.string.title_register_tags).replace(" %s", "")
-            binding.buttonRegisterTags.text = titleButton
+           // binding.buttonRegisterTags.text = titleButton
         } else {
             val titleButton = String.format(getString(R.string.title_register_tags), dataTags.size)
-            binding.buttonRegisterTags.text = titleButton
+           // binding.buttonRegisterTags.text = titleButton
         }
     }
 
