@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -70,8 +71,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private var orderNumber = 0
     private val gson = Gson()
-    private var processing = false
-    private var dataTags: ArrayList<TagEntity> = ArrayList()
+//    private var processing = false
+//    private var dataTags: ArrayList<TagEntity> = ArrayList()
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -160,6 +161,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     }
 
+    private var clickedTitleHeaderIndex = 0
     private var clickedTitleModel = 0
     private var clickedTitleTotal = 0
 
@@ -376,6 +378,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      *
      */
     private fun setupActions() {
+        binding.titleHeaderIndex.setOnClickListener {
+            clickedTitleHeaderIndex += 1
+            if (clickedTitleHeaderIndex == 3) {
+                clickedTitleHeaderIndex = 0
+                binding.rfidMaskReading.isVisible = !binding.rfidMaskReading.isVisible
+            }
+        }
+
         binding.rfidItemCount.setOnClickListener {
             // TODO for test only
             gotoLogin()
@@ -443,19 +453,19 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
             showHideLoading(false)
         }
-
-        val swipeLayoutToHideAndShow = SwipeLayoutShowHide()
-        swipeLayoutToHideAndShow.initialize(
-            binding.rfidProducts,
-            binding.rfidMaskReading,
-            Arrays.asList(
-                SwipeLayoutShowHide.SwipeDirection.rightToLeft,
-                SwipeLayoutShowHide.SwipeDirection.leftToRight,
-                SwipeLayoutShowHide.SwipeDirection.topToBottom,
-                SwipeLayoutShowHide.SwipeDirection.bottomToTop
-            ),
-            50
-        )
+//        Remove Swipe to show Overlay
+//        val swipeLayoutToHideAndShow = SwipeLayoutShowHide()
+//        swipeLayoutToHideAndShow.initialize(
+//            binding.rfidProducts,
+//            binding.rfidMaskReading,
+//            Arrays.asList(
+//                SwipeLayoutShowHide.SwipeDirection.rightToLeft,
+//                SwipeLayoutShowHide.SwipeDirection.leftToRight,
+//                SwipeLayoutShowHide.SwipeDirection.topToBottom,
+//                SwipeLayoutShowHide.SwipeDirection.bottomToTop
+//            ),
+//            50
+//        )
     }
 
     override fun onClickedPayment(payment: String) {
