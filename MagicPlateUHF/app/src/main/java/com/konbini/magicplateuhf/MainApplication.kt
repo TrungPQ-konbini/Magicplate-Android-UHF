@@ -98,6 +98,13 @@ class MainApplication : Application() {
                     }
                 }
             } else {
+                AppContainer.CurrentTransaction.listEPC.clear()
+                AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+
+                // Get list tags
+                val listTagEntity = AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+                AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+
                 timeTagSizeChanged = 0L
                 AppContainer.CurrentTransaction.refreshCart()
 

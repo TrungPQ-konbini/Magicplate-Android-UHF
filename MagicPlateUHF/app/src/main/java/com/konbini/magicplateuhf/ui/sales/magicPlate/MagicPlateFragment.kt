@@ -446,7 +446,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         val swipeLayoutToHideAndShow = SwipeLayoutShowHide()
         swipeLayoutToHideAndShow.initialize(
-            binding.root,
+            binding.rfidProducts,
             binding.rfidMaskReading,
             Arrays.asList(
                 SwipeLayoutShowHide.SwipeDirection.rightToLeft,
