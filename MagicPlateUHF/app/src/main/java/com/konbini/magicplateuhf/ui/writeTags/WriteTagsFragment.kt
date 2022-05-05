@@ -135,38 +135,38 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private fun setupActions() {
         binding.searchTags.setOnQueryTextListener(this)
 
-        binding.buttonWriteTags.setSafeOnClickListener {
-            if (selectedPlateModel.isEmpty()) {
-                AlertDialogUtil.showWarning(
-                    getString(R.string.message_warning_new_plate_code_required),
-                    requireContext()
-                )
-                return@setSafeOnClickListener
-            }
-            if (dataTags.isNotEmpty()) {
-                showHideLoading(true)
-                try {
-                    AppContainer.GlobalVariable.allowWriteTags = true
-                    writeTags(0)
-                } catch (ex: Exception) {
-                    showHideLoading(false)
-                    AlertDialogUtil.showError(
-                        ex.message.toString(),
-                        requireContext()
-                    )
-                    LogUtils.logError(ex)
-                }
-            }
-        }
+//        binding.buttonWriteTags.setSafeOnClickListener {
+//            if (selectedPlateModel.isEmpty()) {
+//                AlertDialogUtil.showWarning(
+//                    getString(R.string.message_warning_new_plate_code_required),
+//                    requireContext()
+//                )
+//                return@setSafeOnClickListener
+//            }
+//            if (dataTags.isNotEmpty()) {
+//                showHideLoading(true)
+//                try {
+//                    AppContainer.GlobalVariable.allowWriteTags = true
+//                    writeTags(0)
+//                } catch (ex: Exception) {
+//                    showHideLoading(false)
+//                    AlertDialogUtil.showError(
+//                        ex.message.toString(),
+//                        requireContext()
+//                    )
+//                    LogUtils.logError(ex)
+//                }
+//            }
+//        }
     }
 
     private fun setTitleButtonWrite() {
         if (dataTags.isEmpty()) {
             val titleButton = getString(R.string.title_write_tags).replace(" %s", "")
-            binding.buttonWriteTags.text = titleButton
+           // binding.buttonWriteTags.text = titleButton
         } else {
             val titleButton = String.format(getString(R.string.title_write_tags), dataTags.size)
-            binding.buttonWriteTags.text = titleButton
+           // binding.buttonWriteTags.text = titleButton
         }
     }
 
@@ -212,11 +212,12 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         val newPaidDate = "%02X".format(0)
         val newPaidSession = "%02X".format(0)
         var newCustomPrice = "%06X".format(0)
-        if (binding.newCustomPrice.text.toString().isNotEmpty()) {
-            val price = (binding.newCustomPrice.text.toString().toDouble() * 100).toInt()
-            newCustomPrice =
-                "%06X".format(price)
-        }
+        // TODO: remove later
+//        if (binding.newCustomPrice.text.toString().isNotEmpty()) {
+//            val price = (binding.newCustomPrice.text.toString().toDouble() * 100).toInt()
+//            newCustomPrice =
+//                "%06X".format(price)
+//        }
 
         return oldEPC.replace(oldEPC.substring(0, 4), newPlateModel)
             .replace(oldEPC.substring(4, 10), newSerialNumber)

@@ -18,9 +18,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            abiFilters "armeabi-v7a"
-        }
+//        ndk {
+//            abiFilters "armeabi-v7a"
+//        }
     }
 
     buildTypes {
@@ -46,6 +46,14 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+
+    task wrapper(type: Wrapper){
+        gradleVersion = '7.2'
+    }
+
+    task prepareKotlinBuildScriptModel {
+
     }
 }
 
