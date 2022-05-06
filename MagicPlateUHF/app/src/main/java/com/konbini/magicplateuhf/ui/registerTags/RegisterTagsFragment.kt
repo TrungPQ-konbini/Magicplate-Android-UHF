@@ -177,6 +177,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         binding.btnGetLastNumber.setSafeOnClickListener {
             viewModel.syncPlateModels()
         }
+
+        binding.btnEndSession.setSafeOnClickListener {
+            viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
+        }
+
+        binding.btnStartWriting.setSafeOnClickListener {
+            writeTags()
+        }
     }
 
     private fun writeTags() {
@@ -276,14 +284,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
                     // Select tag
                     val epcMatch = UhfUtil.setAccessEpcMatch(epcValue, requireContext(), getString(R.string.message_error_param_unknown_error))
-                    Log.e(TAG, "[epcMatch] | $epcMatch")
+                    LogUtils.logInfo("[epcMatch] | $epcMatch")
                     if (epcMatch != -1) {
                         val newEPC = setNewEPC(epcValue)
                         LogUtils.logInfo("New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
-                        Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
+                        //Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
                         delay(150)
                         val writeTag = UhfUtil.writeTag(newEPC, requireContext(), getString(R.string.message_error_write_data_format))
-                        Log.e(TAG, "[writeTag] | $writeTag")
+                        LogUtils.logInfo("[writeTag] | $writeTag")
                         if (writeTag != -1) {
                             // Add serials for submit to server
                             val data = Data(
@@ -305,7 +313,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         )
 
                         // Sync last serial to server
-                        viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
+                        //viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
                     } else {
                         AlertDialogUtil.showError(
                             getString(R.string.message_error_some_tag_write_error),
