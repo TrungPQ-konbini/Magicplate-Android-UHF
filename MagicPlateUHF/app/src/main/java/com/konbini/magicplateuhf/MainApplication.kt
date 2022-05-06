@@ -66,42 +66,56 @@ class MainApplication : Application() {
         }
 
         override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
-            AppContainer.CurrentTransaction.listEPC.clear()
-            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
-
-            // Get list tags
-            val listTagEntity = AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
-            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+            Log.e(
+                TAG,
+                "==========End command reading UHF=========="
+            )
 
             val current = System.currentTimeMillis()
-            if (AppContainer.CurrentTransaction.listEPC.size != tagSizeOld) {
-                Log.e(TAG, "listEPC: ${AppContainer.CurrentTransaction.listEPC.size} | tagSizeOld: $tagSizeOld")
+            if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
                 if (timeTagSizeChanged == 0L) {
                     timeTagSizeChanged = current
-                    return
                 } else {
                     val offset = current - timeTagSizeChanged
                     if (offset < 500) {
-                        Log.e(TAG, "$current | $offset")
-                        return
+                        Log.e(TAG, "$current | $offset => Ignore")
+                    } else {
+                        Log.e(TAG, "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}")
+                        AppContainer.CurrentTransaction.listEPC.clear()
+                        AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+
+                        // Get list tags
+                        val listTagEntity = AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+                        AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+
+                        timeTagSizeChanged = 0L
+                        AppContainer.CurrentTransaction.refreshCart()
+
+                        // Add or Remove items to cart
+                        val intent = Intent()
+                        intent.action = "REFRESH_TAGS"
+                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
                     }
                 }
             } else {
                 timeTagSizeChanged = 0L
+                AppContainer.CurrentTransaction.refreshCart()
 
-                // Add items to cart
+                // Add or Remove items to cart
                 val intent = Intent()
                 intent.action = "REFRESH_TAGS"
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
             }
-            tagSizeOld = AppContainer.CurrentTransaction.listEPC.size
 
             if (AppContainer.GlobalVariable.allowReadTags) {
                 // Start reading UHF
                 mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                Log.e(
+                    TAG,
+                    "==========Start command reading UHF=========="
+                )
             }
 
-            AppContainer.CurrentTransaction.oldListTagEntity = listTagEntity
             AppContainer.GlobalVariable.listEPC.clear()
         }
     }

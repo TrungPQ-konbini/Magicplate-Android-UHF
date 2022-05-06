@@ -78,15 +78,16 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             when (intent?.action) {
                 "REFRESH_TAGS" -> {
                     when (AppContainer.CurrentTransaction.paymentState) {
-                        PaymentState.ReadyToPay,
-                        PaymentState.InProgress -> {
-                            // Check Cart Locked Change
-                            val isChanged = checkCartLockedChange()
-                            if (isChanged) {
-                                AudioManager.instance.soundBuzzer()
-                                setBlink(AlarmType.ERROR)
-                            }
-                        }
+//                        TODO: Boss said remove alert to check change cart
+//                        PaymentState.ReadyToPay,
+//                        PaymentState.InProgress -> {
+//                            // Check Cart Locked Change
+//                            val isChanged = checkCartLockedChange()
+//                            if (isChanged) {
+//                                AudioManager.instance.soundBuzzer()
+//                                setBlink(AlarmType.ERROR)
+//                            }
+//                        }
                         PaymentState.Init,
                         PaymentState.Preparing -> {
                             // Refresh cart
@@ -1079,7 +1080,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun printReceipt(cartLocked: MutableList<CartEntity>) {
         viewLifecycleOwner.lifecycleScope.launch {
-            orderNumber = viewModel.getLastTransactionId() + 1
+            val lastNumber = viewModel.getLastTransactionId()
+            if (lastNumber != null) {
+                orderNumber = lastNumber + 1
+            }
+
             if (AppSettings.Options.Printer.Bluetooth) {
                 // Bluetooth
                 printReceiptBluetooth(cartLocked)

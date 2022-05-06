@@ -23,7 +23,6 @@ import com.konbini.magicplateuhf.utils.Resource
 import com.konbini.magicplateuhf.utils.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -115,12 +114,12 @@ class MagicPlateViewModel @Inject constructor(
                     AppSettings.Cloud.ClientId,
                     AppSettings.Cloud.ClientSecret
                 )
-                val tokenWallet = async {
-                    walletRepository.getAccessToken(AppSettings.Cloud.Host, requestTokenWallet)
-                }
+                val tokenWallet = withContext(Dispatchers.Default) {
+                        walletRepository.getAccessToken(AppSettings.Cloud.Host, requestTokenWallet)
+                    }
 
-                if (tokenWallet.await().status == Resource.Status.SUCCESS) {
-                    tokenWallet.await().data?.let { _walletTokenResponse ->
+                if (tokenWallet.status == Resource.Status.SUCCESS) {
+                    tokenWallet.data?.let { _walletTokenResponse ->
                         // Params
                         val macAddress = AppSettings.Machine.MacAddress
                         val source = AppSettings.Machine.Source
@@ -166,6 +165,7 @@ class MagicPlateViewModel @Inject constructor(
                                     note = "n/a"
                                 )
                                 transaction.dateCreated = currentTime.toString()
+                                insert(transaction)
 
                                 val msg = String.format(
                                     resources.getString(R.string.message_success_payment_balance),
