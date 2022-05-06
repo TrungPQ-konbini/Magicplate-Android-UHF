@@ -324,11 +324,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         listSetPlateModelDataRequest.clear()
                     }
 
-                    AppContainer.GlobalVariable.allowWriteTags = false
-                    delay(150)
-                    //MainApplication.mReaderUHF.resetInventoryBuffer(0xff.toByte())
+                    delay(1000)
                     // Start reading UHF
-                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                    MainApplication.startRealTimeInventory()
                 }
 
             } catch (ex: Exception) {

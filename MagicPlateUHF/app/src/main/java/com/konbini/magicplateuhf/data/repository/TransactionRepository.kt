@@ -4,6 +4,7 @@ import com.konbini.magicplateuhf.data.entities.TransactionEntity
 import com.konbini.magicplateuhf.data.local.transaction.TransactionDao
 import com.konbini.magicplateuhf.data.remote.transaction.TransactionRemoteDataSource
 import com.konbini.magicplateuhf.data.remote.transaction.request.OrderRequest
+import com.konbini.magicplateuhf.data.remote.transaction.request.SubmitTransactionRequest
 import javax.inject.Inject
 
 class TransactionRepository @Inject constructor(
@@ -32,8 +33,15 @@ class TransactionRepository @Inject constructor(
     suspend fun update(uuid: String?, syncId: Int?, syncedDate: String?) =
         localDataSource.update(uuid, syncId, syncedDate)
 
+    suspend fun deleteSingleByUuid(uuid: String) = localDataSource.deleteSingleByUuid(uuid)
+
     suspend fun createAnOrder(
         url: String,
         bodyRequest: OrderRequest
     ) = remoteDataSource.createAnOrder(url, bodyRequest)
+
+    suspend fun submitTransaction(
+        url: String,
+        bodyRequest: SubmitTransactionRequest
+    ) = remoteDataSource.submitTransaction(url, bodyRequest)
 }

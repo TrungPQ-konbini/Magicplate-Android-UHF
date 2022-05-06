@@ -18,6 +18,7 @@ object AppContainer {
         var listEPC: MutableList<String> = mutableListOf()
 
         var isGettingToken = false
+        var isSyncTransaction = false
         var currentToken: String = ""
         var allowWriteTags = false
         var allowReadTags = true
@@ -72,7 +73,7 @@ object AppContainer {
             countItems = 0
             totalPrice = 0F
             paymentType = null
-            paymentState = PaymentState.Init
+            //paymentState = PaymentState.Init
             listEPC.clear()
             listTagEntity.clear()
             cart.clear()

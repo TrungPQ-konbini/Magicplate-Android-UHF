@@ -11,6 +11,7 @@ import androidx.core.text.isDigitsOnly
 import com.google.gson.Gson
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
+import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.entities.MenuEntity
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
@@ -24,6 +25,48 @@ import java.util.*
 
 class CommonUtil {
     companion object {
+        fun getDateJob(isNextDay: Boolean = false, hours: Int, minutes: Int): Date {
+            // get Unix for now
+            val calendar = Calendar.getInstance()
+            val currentLocalTime = calendar.timeInMillis
+
+            // get Unix for job
+            val calendarJob = Calendar.getInstance()
+            calendarJob.set(Calendar.HOUR_OF_DAY, hours)
+            calendarJob.set(Calendar.MINUTE, minutes)
+            calendarJob.set(Calendar.SECOND, 0)
+            var jobLocalTime = calendarJob.timeInMillis
+
+            val dateJob: Date
+            if (!isNextDay) {
+                if (currentLocalTime <= jobLocalTime) {
+                    // Today's Job
+                    dateJob = Date(jobLocalTime)
+                } else {
+                    // Tomorrow's Job
+                    calendarJob.set(Calendar.DAY_OF_MONTH, calendarJob.get(Calendar.DAY_OF_MONTH) + 1)
+                    jobLocalTime = calendarJob.timeInMillis
+                    dateJob = Date(jobLocalTime)
+                }
+            } else {
+                // Tomorrow's Job
+                calendarJob.set(Calendar.DAY_OF_MONTH, calendarJob.get(Calendar.DAY_OF_MONTH) + 1)
+                jobLocalTime = calendarJob.timeInMillis
+                dateJob = Date(jobLocalTime)
+            }
+
+            return dateJob
+        }
+
+        fun isNumber(s: String?): Boolean {
+            return if (s.isNullOrEmpty()) false else s.all { Character.isDigit(it) }
+        }
+
+        fun theMonth(month: Int): String {
+            val monthNames = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+            return monthNames[month]
+        }
+
         fun formatCurrency(value: Float, title: String = ""): String {
             var currency = 0F
             if (value > 0) currency = value
@@ -98,6 +141,45 @@ class CommonUtil {
                 in 21..23 -> "Good Night"
                 else -> "Welcome"
             }
+        }
+
+        fun formatSubmitTransactionRequest(transactionEntity: TransactionEntity): SubmitTransactionRequest {
+            val formatterTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+            // get old cart
+            val cart = Gson().fromJson(transactionEntity.details, Array<CartEntity>::class.java).asList()
+
+            val listProducts: MutableList<SubmitTransactionRequestProducts> = mutableListOf()
+
+            cart.forEach { _cartEntity ->
+                val product = SubmitTransactionRequestProducts(
+                    productId = _cartEntity.productId.toInt(),
+                    productQuantity = _cartEntity.quantity,
+                    isCustomPrice = true,
+                    customPrice = _cartEntity.price.toDouble()
+                )
+                listProducts.add(product)
+            }
+
+            return SubmitTransactionRequest(
+                accessToken = AppContainer.GlobalVariable.currentToken,
+                macAddress = AppSettings.Machine.MacAddress,
+                txnDateTime = formatterTime.format(Date(transactionEntity.dateCreated)),
+                txnUniqueId = transactionEntity.uuid,
+                paymentType = if (transactionEntity.paymentType == PaymentType.KONBINI_WALLET.value) "KONBI_WALLET" else transactionEntity.paymentType,
+                cardNumber = transactionEntity.cardNumber,
+                orderStatus = AppSettings.Cloud.OrderStatus,
+                source = AppSettings.Machine.Source,
+                terminal = AppSettings.Machine.Terminal,
+                store = AppSettings.Machine.Store,
+                others = "",
+                slotId = "",
+                discountType = "0",
+                ccwId1= "",
+                ccwId2= "",
+                ccwId3= "",
+                products = ArrayList(listProducts)
+            )
         }
 
         fun formatCreateAnOrderRequest(transactionEntity: TransactionEntity): OrderRequest {
@@ -250,10 +332,6 @@ class CommonUtil {
                 //customPrice = customPrice,
                 //lastUpdate = System.currentTimeMillis()
             )
-        }
-
-        fun isNumber(s: String?): Boolean {
-            return if (s.isNullOrEmpty()) false else s.all { Character.isDigit(it) }
         }
 
         @SuppressLint("WrongConstant")

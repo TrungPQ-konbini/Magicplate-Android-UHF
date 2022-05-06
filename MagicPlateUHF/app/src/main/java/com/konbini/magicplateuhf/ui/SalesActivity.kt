@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.SystemClock
 import android.util.Log
 import android.view.KeyEvent
@@ -18,9 +19,11 @@ import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.databinding.ActivitySalesBinding
 import com.konbini.magicplateuhf.jobs.GetTokenJobService
 import com.konbini.magicplateuhf.ui.plateModel.PlateModelViewModel
+import com.konbini.magicplateuhf.utils.CommonUtil.Companion.getDateJob
 import com.konbini.magicplateuhf.utils.LogUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.*
 
 @AndroidEntryPoint
 class SalesActivity : AppCompatActivity() {
@@ -35,9 +38,24 @@ class SalesActivity : AppCompatActivity() {
         const val JOB_GET_TOKEN_ID = 123
     }
 
+    private lateinit var jobTimerTask: TimerTask
+    private lateinit var jobXDayTimerTask: TimerTask
+
     private lateinit var binding: ActivitySalesBinding
     private val viewModel: SalesViewModel by viewModels()
     private val viewModelPlateModel: PlateModelViewModel by viewModels()
+
+    private val timer = object : CountDownTimer(
+        AppSettings.Timer.PeriodicSyncOffline.toLong() * 60 * 1000,
+        1000
+    ) {
+        override fun onTick(millisUntilFinished: Long) {}
+
+        override fun onFinish() {
+            syncTransactions()
+            start()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +65,25 @@ class SalesActivity : AppCompatActivity() {
 
         // Get all plate model
         lifecycleScope.launch {
-            AppContainer.GlobalVariable.listPlatesModel = viewModelPlateModel.getAll().toMutableList()
+            AppContainer.GlobalVariable.listPlatesModel =
+                viewModelPlateModel.getAll().toMutableList()
         }
     }
 
     override fun onResume() {
+        if (!AppSettings.Options.Sync.NoSyncOrder) {
+            if (AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod || AppSettings.Options.Sync.SyncOrderRealtime) {
+                syncTransactions()
+                timer.cancel()
+                timer.start()
+            }
+
+            if (AppSettings.Options.Sync.SyncOrderSpecifiedTime) {
+                timer.cancel()
+                jobSyncOrderSpecifiedTime()
+            }
+        }
+        jobStoreXDayLocalData()
         scheduleGetTokenJob()
         super.onResume()
     }
@@ -81,6 +113,49 @@ class SalesActivity : AppCompatActivity() {
             }
         }
         return super.dispatchKeyEvent(e)
+    }
+
+    private fun syncTransactions() {
+        viewModel.syncTransactions()
+    }
+
+    private fun jobStoreXDayLocalData(isNextDay: Boolean = false) {
+        if (!isNextDay) {
+            viewModel.processStoreXDayLocalData()
+        }
+        val dateJob = getDateJob(isNextDay, 1, 1)
+
+        jobXDayTimerTask = object : TimerTask() {
+            override fun run() {
+                viewModel.processStoreXDayLocalData()
+                jobStoreXDayLocalData(isNextDay = true)
+            }
+
+        }
+
+        Log.e(TAG, "Next schedule is $dateJob")
+        LogUtils.logOffline("[STORE_X_DAY_LOCAL_DATA] Next schedule is $dateJob")
+        Timer().schedule(jobXDayTimerTask, dateJob)
+    }
+
+    private fun jobSyncOrderSpecifiedTime(isNextDay: Boolean = false) {
+        val dateJob = getDateJob(
+            isNextDay,
+            AppSettings.Timer.SpecifiedTimeHour,
+            AppSettings.Timer.SpecifiedTimeMinute
+        )
+
+        jobTimerTask = object : TimerTask() {
+            override fun run() {
+                syncTransactions()
+                jobSyncOrderSpecifiedTime(isNextDay = true)
+            }
+
+        }
+
+        Log.e("OFFLINE_SYNC", "Next schedule is $dateJob")
+        LogUtils.logOffline("Next schedule is $dateJob")
+        Timer().schedule(jobTimerTask, dateJob)
     }
 
     private fun scheduleGetTokenJob() {

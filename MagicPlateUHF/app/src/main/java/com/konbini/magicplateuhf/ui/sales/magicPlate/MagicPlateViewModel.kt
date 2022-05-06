@@ -14,7 +14,6 @@ import com.konbini.magicplateuhf.data.entities.TimeBlockEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
 import com.konbini.magicplateuhf.data.enum.PaymentState
 import com.konbini.magicplateuhf.data.remote.wallet.request.DebitRequest
-import com.konbini.magicplateuhf.data.remote.wallet.request.WalletTokenRequest
 import com.konbini.magicplateuhf.data.remote.wallet.response.ErrorResponse
 import com.konbini.magicplateuhf.data.repository.*
 import com.konbini.magicplateuhf.utils.CommonUtil
@@ -108,114 +107,91 @@ class MagicPlateViewModel @Inject constructor(
                 )
             )
             try {
-                // Get token wallet
-                val requestTokenWallet = WalletTokenRequest(
-                    "client_credentials",
-                    AppSettings.Cloud.ClientId,
-                    AppSettings.Cloud.ClientSecret
+                // Params
+                val macAddress = AppSettings.Machine.MacAddress
+                val source = AppSettings.Machine.Source
+                val terminal = AppSettings.Machine.Terminal
+                val store = AppSettings.Machine.Store
+
+                // Debit wallet
+                val requestDebit = DebitRequest(
+                    AppContainer.GlobalVariable.currentToken,
+                    AppContainer.CurrentTransaction.cardNFC,
+                    "ccw_id1",
+                    AppContainer.CurrentTransaction.totalPrice,
+                    "$source\n" +
+                            "$terminal\n" +
+                            "$store\n" +
+                            "Machine: $macAddress"
                 )
-                val tokenWallet = withContext(Dispatchers.Default) {
-                        walletRepository.getAccessToken(AppSettings.Cloud.Host, requestTokenWallet)
+                val debit =
+                    withContext(Dispatchers.Default) {
+                        walletRepository.debit(AppSettings.Cloud.Host, requestDebit)
                     }
 
-                if (tokenWallet.status == Resource.Status.SUCCESS) {
-                    tokenWallet.data?.let { _walletTokenResponse ->
-                        // Params
-                        val macAddress = AppSettings.Machine.MacAddress
-                        val source = AppSettings.Machine.Source
-                        val terminal = AppSettings.Machine.Terminal
-                        val store = AppSettings.Machine.Store
-
-                        // Debit wallet
-                        val requestDebit = DebitRequest(
-                            _walletTokenResponse.access_token!!,
-                            AppContainer.CurrentTransaction.cardNFC,
-                            "ccw_id1",
-                            AppContainer.CurrentTransaction.totalPrice,
-                            "$source\n" +
-                                    "$terminal\n" +
-                                    "$store\n" +
-                                    "Machine: $macAddress"
+                if (debit.status == Resource.Status.SUCCESS) {
+                    debit.data?.let { _responseDebit ->
+                        // Save transaction
+                        val transaction = TransactionEntity(
+                            0,
+                            uuid = UUID.randomUUID().toString(),
+                            amount = AppContainer.CurrentTransaction.totalPrice.toString(),
+                            discountPercent = "0.0",
+                            taxPercent = "0.0",
+                            buyer = _responseDebit.userRegistryId ?: "",
+                            beginImage = "n/a",
+                            endImage = "n/a",
+                            details = gson.toJson(AppContainer.CurrentTransaction.cartLocked),
+                            paymentDetail = AppContainer.CurrentTransaction.paymentType!!.value,
+                            paymentTime = currentTime.toString(),
+                            paymentState = PaymentState.Success.name,
+                            paymentType = AppContainer.CurrentTransaction.paymentType!!.value,
+                            cardType = AppContainer.CurrentTransaction.paymentType!!.value,
+                            cardNumber = AppContainer.CurrentTransaction.cardNFC,
+                            approveCode = "n/a",
+                            note = "n/a"
                         )
-                        val debit =
-                            withContext(Dispatchers.Default) {
-                                walletRepository.debit(AppSettings.Cloud.Host, requestDebit)
-                            }
+                        transaction.dateCreated = currentTime.toString()
+                        insert(transaction)
 
-                        if (debit.status == Resource.Status.SUCCESS) {
-                            debit.data?.let { _responseDebit ->
-                                // Save transaction
-                                val transaction = TransactionEntity(
-                                    0,
-                                    uuid = UUID.randomUUID().toString(),
-                                    amount = AppContainer.CurrentTransaction.totalPrice.toString(),
-                                    discountPercent = "0.0",
-                                    taxPercent = "0.0",
-                                    buyer = _responseDebit.userRegistryId ?: "",
-                                    beginImage = "n/a",
-                                    endImage = "n/a",
-                                    details = gson.toJson(AppContainer.CurrentTransaction.cartLocked),
-                                    paymentDetail = AppContainer.CurrentTransaction.paymentType!!.value,
-                                    paymentTime = currentTime.toString(),
-                                    paymentState = PaymentState.Success.name,
-                                    paymentType = AppContainer.CurrentTransaction.paymentType!!.value,
-                                    cardType = AppContainer.CurrentTransaction.paymentType!!.value,
-                                    cardNumber = AppContainer.CurrentTransaction.cardNFC,
-                                    approveCode = "n/a",
-                                    note = "n/a"
-                                )
-                                transaction.dateCreated = currentTime.toString()
-                                insert(transaction)
+                        val msg = String.format(
+                            resources.getString(R.string.message_success_payment_balance),
+                            CommonUtil.formatCurrency(_responseDebit.balance ?: 0F)
+                        )
 
-                                val msg = String.format(
-                                    resources.getString(R.string.message_success_payment_balance),
-                                    CommonUtil.formatCurrency(_responseDebit.balance ?: 0F)
-                                )
+                        MagicPlateFragment.displayName = _responseDebit.displayName ?: "N/A"
+                        MagicPlateFragment.balance = _responseDebit.balance ?: 0F
 
-                                MagicPlateFragment.displayName = _responseDebit.displayName ?: "N/A"
-                                MagicPlateFragment.balance = _responseDebit.balance ?: 0F
-
-                                _state.emit(
-                                    State(
-                                        status = Resource.Status.SUCCESS,
-                                        message = msg,
-                                        isFinish = !AppSettings.Options.SyncOrderRealtime
-                                    )
-                                )
-                            }
-                        } else {
-                            var messageDetail = ""
-                            // Debit fail
-                            val message = debit.message
-                            try {
-                                val errorResponse =
-                                    gson.fromJson(message, ErrorResponse::class.java)
-                                messageDetail =
-                                    "${errorResponse.errorCode} - ${errorResponse.message}"
-                                _state.emit(
-                                    State(
-                                        Resource.Status.ERROR,
-                                        "Error: $messageDetail"
-                                    )
-                                )
-                            } catch (ex: JsonParseException) {
-                                _state.emit(
-                                    State(
-                                        Resource.Status.ERROR,
-                                        "Error: $message"
-                                    )
-                                )
-                            }
-                        }
+                        _state.emit(
+                            State(
+                                status = Resource.Status.SUCCESS,
+                                message = msg
+                            )
+                        )
                     }
                 } else {
-                    // Get token wallet fail
-                    _state.emit(
-                        State(
-                            Resource.Status.ERROR,
-                            resources.getString(R.string.message_error_get_token)
+                    var messageDetail = ""
+                    // Debit fail
+                    val message = debit.message
+                    try {
+                        val errorResponse =
+                            gson.fromJson(message, ErrorResponse::class.java)
+                        messageDetail =
+                            "${errorResponse.errorCode} - ${errorResponse.message}"
+                        _state.emit(
+                            State(
+                                Resource.Status.ERROR,
+                                "Error: $messageDetail"
+                            )
                         )
-                    )
+                    } catch (ex: JsonParseException) {
+                        _state.emit(
+                            State(
+                                Resource.Status.ERROR,
+                                "Error: $message"
+                            )
+                        )
+                    }
                 }
             } catch (exception: Exception) {
                 exception.message?.let { Log.e(TAG, it) }
@@ -232,60 +208,110 @@ class MagicPlateViewModel @Inject constructor(
 
     fun insert(transactionEntity: TransactionEntity) {
         viewModelScope.launch {
+            LogUtils.logInfo("[Insert Local Transaction] ${gson.toJson(transactionEntity)}")
             transactionRepository.insert(transactionEntity)
 
-            if (!AppSettings.Options.SyncOrderRealtime) {
+            if (!AppSettings.Options.Sync.SyncOrderRealtime) {
+                LogUtils.logInfo("[Insert Offline Transaction] ${gson.toJson(transactionEntity)}")
                 offlineDataRepository.insert(transactionEntity)
             } else {
-                val bodyRequest = CommonUtil.formatCreateAnOrderRequest(transactionEntity)
-                Log.e(TAG, gson.toJson(bodyRequest))
+                if (AppSettings.APIs.useNativeWoo) {
+                    val bodyRequest = CommonUtil.formatCreateAnOrderRequest(transactionEntity)
+                    Log.e(TAG, gson.toJson(bodyRequest))
 
-                val createAnOrder = transactionRepository.createAnOrder(
-                    url = AppSettings.Cloud.Host,
-                    bodyRequest
-                )
+                    val createAnOrder = transactionRepository.createAnOrder(
+                        url = AppSettings.Cloud.Host,
+                        bodyRequest
+                    )
 
-                if (createAnOrder.status == Resource.Status.SUCCESS) {
-                    createAnOrder.data?.let { _createAnOrder ->
-                        // Update database order number
-                        updateTransaction(transactionEntity, _createAnOrder.number?.toInt() ?: 0)
-                        _state.emit(
-                            State(
-                                status = Resource.Status.SUCCESS,
-                                message = String.format(
+                    if (createAnOrder.status == Resource.Status.SUCCESS) {
+                        createAnOrder.data?.let { _createAnOrder ->
+                            // Update database order number
+                            updateTransaction(
+                                transactionEntity,
+                                _createAnOrder.number?.toInt() ?: 0
+                            )
+                            LogUtils.logInfo(
+                                String.format(
                                     resources.getString(R.string.message_success_sync_order),
                                     _createAnOrder.number
-                                ),
-                                isFinish = true
+                                )
                             )
+                        }
+                    } else {
+                        // Show message
+                        var messageDetail = ""
+                        // Create An Order fail
+                        val message = createAnOrder.message
+                        try {
+                            val errorResponse =
+                                gson.fromJson(message, ErrorResponse::class.java)
+                            messageDetail =
+                                "${errorResponse.errorCode}: ${errorResponse.message}"
+                            LogUtils.logInfo(messageDetail)
+                        } catch (ex: JsonParseException) {
+                            LogUtils.logError(ex)
+                        }
+                        // Save to sync offline data
+                        LogUtils.logInfo(
+                            "[Insert Offline Transaction] ${
+                                gson.toJson(
+                                    transactionEntity
+                                )
+                            }"
                         )
+                        offlineDataRepository.insert(transactionEntity)
                     }
                 } else {
-                    // Show message
-                    var messageDetail = ""
-                    // Create An Order fail
-                    val message = createAnOrder.message
-                    try {
-                        val errorResponse =
-                            gson.fromJson(message, ErrorResponse::class.java)
-                        messageDetail =
-                            "${errorResponse.errorCode}: ${errorResponse.message}"
-                        _state.emit(
-                            State(
-                                Resource.Status.ERROR,
-                                "Error: $messageDetail"
+                    // use submit transaction API's Daniel
+                    val bodyRequest = CommonUtil.formatSubmitTransactionRequest(transactionEntity)
+
+                    Log.e(TAG, gson.toJson(bodyRequest))
+                    LogUtils.logInfo("[Submit Transaction Request] ${gson.toJson(bodyRequest)}")
+
+                    val submitTransaction = transactionRepository.submitTransaction(
+                        url = AppSettings.Cloud.Host,
+                        bodyRequest
+                    )
+
+                    if (submitTransaction.status == Resource.Status.SUCCESS) {
+                        submitTransaction.data?.let { _submitTransaction ->
+                            // Update database order number
+                            updateTransaction(
+                                transactionEntity,
+                                _submitTransaction.detail.orderId.toInt()
                             )
-                        )
-                    } catch (ex: JsonParseException) {
-                        _state.emit(
-                            State(
-                                Resource.Status.ERROR,
-                                "Error: $message"
+                            LogUtils.logInfo(
+                                String.format(
+                                    resources.getString(R.string.message_success_sync_order),
+                                    _submitTransaction.detail.orderId
+                                )
                             )
+                        }
+                    } else {
+                        // Show message
+                        var messageDetail = ""
+                        // submit transaction fail
+                        val message = submitTransaction.message
+                        try {
+                            val errorResponse =
+                                gson.fromJson(message, ErrorResponse::class.java)
+                            messageDetail =
+                                "${errorResponse.errorCode}: ${errorResponse.message}"
+                            LogUtils.logInfo(messageDetail)
+                        } catch (ex: JsonParseException) {
+                            LogUtils.logError(ex)
+                        }
+                        // Save to sync offline data
+                        LogUtils.logInfo(
+                            "[Insert Offline Transaction] ${
+                                gson.toJson(
+                                    transactionEntity
+                                )
+                            }"
                         )
+                        offlineDataRepository.insert(transactionEntity)
                     }
-                    // Save to sync offline data
-                    offlineDataRepository.insert(transactionEntity)
                 }
             }
         }

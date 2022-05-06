@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.konbini.magicplateuhf.AppSettings
+import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.databinding.FragmentSettingsBinding
 import com.konbini.magicplateuhf.utils.*
@@ -101,6 +102,8 @@ class SettingsFragment : Fragment() {
 
     private fun setupDefault() {
         bindCompany()
+        bindHardware()
+        bindTimer()
         bindMachine()
         bindCloud()
         bindWallet()
@@ -119,6 +122,25 @@ class SettingsFragment : Fragment() {
         binding.companyTel.setText(AppSettings.Company.Tel)
         binding.companyEmail.setText(AppSettings.Company.Email)
         binding.companyAddress.setText(AppSettings.Company.Address)
+    }
+
+    private fun bindHardware() {
+        binding.hardwareUhfReader.setText(AppSettings.Hardware.Comport.ReaderUHF)
+        binding.hardwareIuc.setText(AppSettings.Hardware.Comport.IUC)
+    }
+
+    private fun bindTimer() {
+        val hour = String.format("%02d", AppSettings.Timer.SpecifiedTimeHour)
+        binding.specificTimeHour.setText(hour)
+
+        val minute = String.format("%02d", AppSettings.Timer.SpecifiedTimeMinute)
+        binding.specificTimeMinute.setText(minute)
+
+        binding.periodicSyncOffline.setText(AppSettings.Timer.PeriodicSyncOffline.toString())
+        binding.periodicGetToken.setText(AppSettings.Timer.PeriodicGetToken.toString())
+
+        binding.xDayStoreLocalOrders.setText(AppSettings.Timer.xDayStoreLocalOrders.toString())
+        binding.xDayStoreLocalMenus.setText(AppSettings.Timer.xDayStoreLocalMenus.toString())
     }
 
     private fun bindMachine() {
@@ -181,6 +203,9 @@ class SettingsFragment : Fragment() {
         val companyEmail = binding.companyEmail.text.toString().trim()
         val companyAddress = binding.companyAddress.text.toString().trim()
 
+        val hardwareIuc = binding.hardwareIuc.text.toString().trim()
+        val hardwareUhfReader = binding.hardwareUhfReader.text.toString().trim()
+
         val machinePinCode = binding.machinePinCode.text.toString().trim()
         val machineMacAddress = binding.machineMacAddress.text.toString().trim()
         val machineSource = binding.machineSource.text.toString().trim()
@@ -208,11 +233,49 @@ class SettingsFragment : Fragment() {
 
         val alertSlackWebhook = binding.alertSlackWebhook.text.toString().trim()
 
+        val hour = binding.specificTimeHour.text.toString().trim()
+        val minute = binding.specificTimeMinute.text.toString().trim()
+
+        val periodicSyncOffline = binding.periodicSyncOffline.text.toString().trim()
+        val periodicGetToken = binding.periodicGetToken.text.toString().trim()
+        val xDayStoreLocalOrders = binding.xDayStoreLocalOrders.text.toString().trim()
+        val xDayStoreLocalMenus = binding.xDayStoreLocalMenus.text.toString().trim()
+
         PrefUtil.setString("AppSettings.Company.Logo", companyLogo)
         PrefUtil.setString("AppSettings.Company.Name", companyName)
         PrefUtil.setString("AppSettings.Company.Tel", companyTel)
         PrefUtil.setString("AppSettings.Company.Email", companyEmail)
         PrefUtil.setString("AppSettings.Company.Address", companyAddress)
+
+        PrefUtil.setString("AppSettings.Hardware.Comport.IUC", hardwareIuc)
+        if (AppSettings.Hardware.Comport.IUC != hardwareIuc) {
+            MainApplication.initIM30()
+        }
+
+        PrefUtil.setString("AppSettings.Hardware.Comport.ReaderUHF", hardwareUhfReader)
+        if (AppSettings.Hardware.Comport.ReaderUHF != hardwareUhfReader) {
+            MainApplication.initRFIDReaderUHF()
+        }
+
+        PrefUtil.setInt("AppSettings.Timer.SpecifiedTimeHour", if (hour.isEmpty()) 0 else hour.toInt())
+        PrefUtil.setInt("AppSettings.Timer.SpecifiedTimeMinute", if (minute.isEmpty()) 0 else minute.toInt())
+
+        PrefUtil.setInt(
+            "AppSettings.Timer.PeriodicSyncOffline",
+            if (periodicSyncOffline.isEmpty()) 0 else periodicSyncOffline.toInt()
+        )
+        PrefUtil.setInt(
+            "AppSettings.Timer.PeriodicGetToken",
+            if (periodicGetToken.isEmpty()) 0 else periodicGetToken.toInt()
+        )
+        PrefUtil.setInt(
+            "AppSettings.Timer.xDayStoreLocalOrders",
+            if (xDayStoreLocalOrders.isEmpty()) 0 else xDayStoreLocalOrders.toInt()
+        )
+        PrefUtil.setInt(
+            "AppSettings.Timer.xDayStoreLocalMenus",
+            if (xDayStoreLocalMenus.isEmpty()) 0 else xDayStoreLocalMenus.toInt()
+        )
 
         PrefUtil.setString("AppSettings.Machine.PinCode", machinePinCode)
         PrefUtil.setString("AppSettings.Machine.MacAddress", machineMacAddress)

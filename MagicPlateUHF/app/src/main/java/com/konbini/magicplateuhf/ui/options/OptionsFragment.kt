@@ -197,10 +197,54 @@ class OptionsFragment : Fragment() {
             showMessageSuccess()
         }
 
-        binding.checkboxSyncOrderRealtime.setOnCheckedChangeListener { buttonView, isChecked ->
-            PrefUtil.setBoolean("AppSettings.Options.SyncOrderRealtime", isChecked)
-            LogUtils.logInfo("AppSettings.Options.SyncOrderRealtime Options: $isChecked")
+        binding.checkboxIgnoreWhenRemovingTags.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.IgnoreWhenRemovingTags", isChecked)
+            LogUtils.logInfo("AppSettings.Options.IgnoreWhenRemovingTags Options: $isChecked")
             showMessageSuccess()
+        }
+
+        binding.checkboxSyncOrderRealtime.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
+                binding.checkboxSyncSpecifiedTime.isChecked = false
+                binding.checkboxNoSyncOrder.isChecked = false
+                showMessageSuccess()
+            }
+            PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderRealtime", isChecked)
+            LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderRealtime Options: $isChecked")
+        }
+
+        binding.checkboxSyncOrderPeriodicPerTimePeriod.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                binding.checkboxSyncOrderRealtime.isChecked = false
+                binding.checkboxSyncSpecifiedTime.isChecked = false
+                binding.checkboxNoSyncOrder.isChecked = false
+                showMessageSuccess()
+            }
+            PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod", isChecked)
+            LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod Options: $isChecked")
+        }
+
+        binding.checkboxSyncSpecifiedTime.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                binding.checkboxSyncOrderRealtime.isChecked = false
+                binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
+                binding.checkboxNoSyncOrder.isChecked = false
+                showMessageSuccess()
+            }
+            PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderSpecifiedTime", isChecked)
+            LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderSpecifiedTime Options: $isChecked")
+        }
+
+        binding.checkboxNoSyncOrder.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                binding.checkboxSyncOrderRealtime.isChecked = false
+                binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
+                binding.checkboxSyncSpecifiedTime.isChecked = false
+                showMessageSuccess()
+            }
+            PrefUtil.setBoolean("AppSettings.Options.Sync.NoSyncOrder", isChecked)
+            LogUtils.logInfo("AppSettings.Options.Sync.NoSyncOrder Options: $isChecked")
         }
 
         binding.checkboxCancelPayment.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -249,7 +293,13 @@ class OptionsFragment : Fragment() {
         binding.checkboxAlertSlackActivated.isChecked = AppSettings.Alert.Slack.Activated
 
         binding.checkboxNotAllowWalletNonRfidActivated.isChecked = AppSettings.Options.NotAllowWalletNonRfid
-        binding.checkboxSyncOrderRealtime.isChecked = AppSettings.Options.SyncOrderRealtime
+        binding.checkboxIgnoreWhenRemovingTags.isChecked = AppSettings.Options.IgnoreWhenRemovingTags
+
+        binding.checkboxSyncOrderRealtime.isChecked = AppSettings.Options.Sync.SyncOrderRealtime
+        binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod
+        binding.checkboxSyncSpecifiedTime.isChecked = AppSettings.Options.Sync.SyncOrderSpecifiedTime
+        binding.checkboxNoSyncOrder.isChecked = AppSettings.Options.Sync.NoSyncOrder
+
         binding.checkboxCancelPayment.isChecked = AppSettings.Options.AllowAdminCancelPayment
 
         binding.keyCodeCancelPayment.text = AppSettings.Options.KeyCodeCancelPayment

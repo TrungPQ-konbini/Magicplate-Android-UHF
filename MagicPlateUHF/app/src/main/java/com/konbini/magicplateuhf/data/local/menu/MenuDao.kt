@@ -23,6 +23,9 @@ interface MenuDao {
     @Query("DELETE FROM menus")
     suspend fun deleteAll()
 
+    @Query("DELETE FROM menus WHERE menu_date = :menuDate")
+    suspend fun deleteByMenuDate(menuDate: String)
+
     @Query("DELETE FROM menus WHERE id = :id")
     suspend fun deleteSingleById(id: Long)
 }
