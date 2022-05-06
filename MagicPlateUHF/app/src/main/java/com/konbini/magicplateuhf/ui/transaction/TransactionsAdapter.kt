@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.konbini.magicplateuhf.R
+import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
+import com.konbini.magicplateuhf.data.enum.PaymentType
 import com.konbini.magicplateuhf.databinding.ItemTransactionBinding
 import com.konbini.magicplateuhf.utils.CommonUtil
 
@@ -69,16 +72,31 @@ class TransactionViewHolder(
     @SuppressLint("SetTextI18n")
     fun bind(item: TransactionEntity) {
         this.transaction = item
-        itemBinding.transactionTime.text =
-            "Date Time: ${CommonUtil.convertMillisToString(item.paymentTime.toLong())}"
+        itemBinding.transactionTime.text = "Date Time: ${ CommonUtil.convertMillisToString(item.paymentTime.toLong(), "dd/MM/yyyy HH:mm") }"
+        itemBinding.transactionPaymentMethod.text = if (transaction.paymentType == PaymentType.KONBINI_WALLET.value) "WALLET" else transaction.paymentType
+        var products = ""
+        // get old cart
+        val cart = Gson().fromJson(transaction.details, Array<CartEntity>::class.java).asList()
+        cart.forEach { _menuEntity ->
+            val productItem = "${_menuEntity.productName} x ${_menuEntity.quantity}\n"
+            products += productItem
+        }
+        itemBinding.transactionProducts.text = products
         itemBinding.transactionState.text = item.paymentState
         itemBinding.transactionAmount.text = CommonUtil.formatCurrency(item.amount.toFloat())
-        if (item.syncId > 0) {
+        if (item.syncId > -1) {
             itemBinding.transactionSynced.text = "Synced"
             itemBinding.transactionSyncId.text = "#${item.syncId}"
         } else {
             itemBinding.transactionSynced.text = "Not Sync"
             itemBinding.transactionSyncId.text = ""
+        }
+
+        // Set background color
+        if (position % 2 == 0) {
+            itemBinding.root.setBackgroundResource(R.drawable.item_background_grey)
+        } else {
+            itemBinding.root.setBackgroundResource(R.drawable.item_background_white)
         }
     }
 

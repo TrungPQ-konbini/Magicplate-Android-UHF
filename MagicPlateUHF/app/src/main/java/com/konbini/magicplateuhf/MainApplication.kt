@@ -70,7 +70,7 @@ class MainApplication : Application() {
                 val current = System.currentTimeMillis()
                 if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
                     if (AppSettings.Options.IgnoreWhenRemovingTags) {
-                        if (AppContainer.CurrentTransaction.listEPC.size < AppContainer.GlobalVariable.listEPC.size) {
+                        if (AppContainer.CurrentTransaction.listEPC.size < AppContainer.GlobalVariable.listEPC.size || AppContainer.GlobalVariable.listEPC.isEmpty()) {
                             sendBroadcastRefreshTags()
                         }
                     } else {
@@ -103,29 +103,35 @@ class MainApplication : Application() {
         }
 
         private fun sendBroadcastRefreshTags() {
+            Log.e(
+                TAG,
+                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
+            )
             if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success && AppContainer.GlobalVariable.listEPC.isEmpty()) {
                 AppContainer.CurrentTransaction.paymentState = PaymentState.Init
-            } else {
-                Log.e(
-                    TAG,
-                    "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
-                )
-                AppContainer.CurrentTransaction.listEPC.clear()
-                AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
-
-                // Get list tags
-                val listTagEntity =
-                    AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
-                AppContainer.CurrentTransaction.listTagEntity = listTagEntity
-
-                timeTagSizeChanged = 0L
-                AppContainer.CurrentTransaction.refreshCart()
-
-                // Add or Remove items to cart
-                val intent = Intent()
-                intent.action = "REFRESH_TAGS"
-                LocalBroadcastManager.getInstance(instance.applicationContext).sendBroadcast(intent)
+                LogUtils.logInfo("Start new Transaction")
+                return
             }
+            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing) {
+                LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
+                return
+            }
+
+            AppContainer.CurrentTransaction.listEPC.clear()
+            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+
+            // Get list tags
+            val listTagEntity =
+                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+
+            timeTagSizeChanged = 0L
+            AppContainer.CurrentTransaction.refreshCart()
+
+            // Add or Remove items to cart
+            val intent = Intent()
+            intent.action = "REFRESH_TAGS"
+            LocalBroadcastManager.getInstance(instance.applicationContext).sendBroadcast(intent)
         }
 
         fun shared(): MainApplication {

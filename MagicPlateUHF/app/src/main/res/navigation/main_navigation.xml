@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_settings">
+    app:startDestination="@+id/nav_menus">
     <fragment
         android:id="@+id/nav_settings"
         android:name="com.konbini.magicplateuhf.ui.settings.SettingsFragment"

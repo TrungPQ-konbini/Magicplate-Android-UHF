@@ -167,11 +167,5 @@ object AppContainer {
                 cartLocked.add(cartEntity)
             }
         }
-
-        fun validateCartIsChanged(): Boolean {
-            if (cartLocked.isNullOrEmpty()) return false
-            if (cart.size != cartLocked.size) return true
-            return false
-        }
     }
 }
