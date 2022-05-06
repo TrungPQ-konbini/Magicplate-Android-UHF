@@ -37,6 +37,9 @@ class RegisterTagsViewModel @Inject constructor(
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
 
+    private val _stateEndSession = MutableStateFlow(State())
+    val stateEndSession: StateFlow<State> = _stateEndSession
+
     private var listPlateModels: MutableList<PlateModelEntity> = mutableListOf()
 
     fun syncPlateModels() {
@@ -87,6 +90,10 @@ class RegisterTagsViewModel @Inject constructor(
         viewModelScope.launch {
             val url = AppSettings.Cloud.Host
 
+            _stateEndSession.value = State(
+                status = Resource.Status.LOADING
+            )
+
             val bodyRequest = SetPlateModelRequest(
                 accessToken = AppContainer.GlobalVariable.currentToken,
                 data = data
@@ -108,12 +115,18 @@ class RegisterTagsViewModel @Inject constructor(
 //                        data = response.data,
 //                        isFinish = true
 //                    )
+
+                    _stateEndSession.value = State(
+                        status = Resource.Status.SUCCESS,
+                        message = resources.getString(R.string.message_success_sync),
+                        data = response.data
+                    )
                 }
             } else {
-//                _state.value = State(
-//                    status = Resource.Status.ERROR,
-//                    message = resources.getString(R.string.message_error_register)
-//                )
+                _stateEndSession.value = State(
+                    status = Resource.Status.ERROR,
+                    message = resources.getString(R.string.message_error_register)
+                )
             }
         }
     }
