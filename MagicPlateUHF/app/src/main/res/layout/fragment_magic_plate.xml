@@ -98,6 +98,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
+                        android:scrollbars="vertical"
+                        android:scrollbarFadeDuration="0"
                         android:textStyle="italic" />
                 </LinearLayout>
 
