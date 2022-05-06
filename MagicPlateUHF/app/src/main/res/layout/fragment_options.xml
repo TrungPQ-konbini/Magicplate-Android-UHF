@@ -363,6 +363,21 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_ignore_when_removing_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_ignore_when_removing_tags"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_ignore_when_removing_tags" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/layout_cancel_payment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

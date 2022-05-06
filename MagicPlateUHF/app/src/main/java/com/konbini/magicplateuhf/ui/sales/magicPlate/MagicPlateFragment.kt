@@ -287,6 +287,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
                         LogUtils.logInfo(_state.message)
+                        AppContainer.CurrentTransaction.paymentState = PaymentState.Success
                         AppContainer.CurrentTransaction.resetTemporaryInfo()
                         // Refresh cart
                         refreshCart()

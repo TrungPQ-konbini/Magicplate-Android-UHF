@@ -73,7 +73,7 @@ object AppContainer {
             countItems = 0
             totalPrice = 0F
             paymentType = null
-            paymentState = PaymentState.Init
+            //paymentState = PaymentState.Init
             listEPC.clear()
             listTagEntity.clear()
             cart.clear()

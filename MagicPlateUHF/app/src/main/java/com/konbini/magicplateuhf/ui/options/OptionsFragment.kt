@@ -197,6 +197,12 @@ class OptionsFragment : Fragment() {
             showMessageSuccess()
         }
 
+        binding.checkboxIgnoreWhenRemovingTags.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.IgnoreWhenRemovingTags", isChecked)
+            LogUtils.logInfo("AppSettings.Options.IgnoreWhenRemovingTags Options: $isChecked")
+            showMessageSuccess()
+        }
+
         binding.checkboxSyncOrderRealtime.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
@@ -287,6 +293,7 @@ class OptionsFragment : Fragment() {
         binding.checkboxAlertSlackActivated.isChecked = AppSettings.Alert.Slack.Activated
 
         binding.checkboxNotAllowWalletNonRfidActivated.isChecked = AppSettings.Options.NotAllowWalletNonRfid
+        binding.checkboxIgnoreWhenRemovingTags.isChecked = AppSettings.Options.IgnoreWhenRemovingTags
 
         binding.checkboxSyncOrderRealtime.isChecked = AppSettings.Options.Sync.SyncOrderRealtime
         binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod
