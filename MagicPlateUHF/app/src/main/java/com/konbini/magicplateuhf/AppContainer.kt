@@ -18,6 +18,7 @@ object AppContainer {
         var listEPC: MutableList<String> = mutableListOf()
 
         var isGettingToken = false
+        var isSyncTransaction = false
         var currentToken: String = ""
         var allowWriteTags = false
         var allowReadTags = true

@@ -75,16 +75,21 @@ object AppSettings {
         var Address = "Singapore- 1093 Lower Delta Rd #02-10 Singapore 169204"
     }
 
+    object Hardware {
+        object Comport {
+            var ReaderUHF = "/dev/ttyS1"
+            var ReaderUHFBaudRate = 115200
+            var IUC = "/dev/ttyS2"
+        }
+    }
+
     object Machine {
         var PinCode = "888888"
         var MacAddress = "20000KONBINI"
         var Source = "Magic Plate"
         var Terminal = "Magic Plate Office Test"
         var Store = "Konbini"
-        var ReaderUHF = "dev/ttyS1"
-        var ReaderUHFBaudRate = 115200
         var LengthEPC = 24 // 12 Bytes
-        var DelayAfterOrderCompleted = 5 // Seconds
     }
 
     object Cloud {
@@ -111,7 +116,14 @@ object AppSettings {
     }
 
     object Timer {
+        var SpecifiedTimeHour = 0
+        var SpecifiedTimeMinute = 0
+        var PeriodicSyncOffline = 10// minutes
         var PeriodicGetToken = 60// minutes
+        var PeriodicSyncTransaction = 60// minutes
+        var xDayStoreLocalOrders = 7
+        var xDayStoreLocalMenus = 7
+        var DelayAfterOrderCompleted = 5 // Seconds
     }
 
     object ReceiptPrinter {
@@ -137,7 +149,6 @@ object AppSettings {
 
     object Options {
         var ConnectHardware = false
-        var SyncOrderRealtime = true
         var AcsReader = AcsReaderType.WHITE.value
         var MachineTypeActivated = MachineType.MAGIC_PLATE.value
         object Payment {
@@ -159,9 +170,16 @@ object AppSettings {
         var NotAllowWalletNonRfid = true
         var AllowAdminCancelPayment = true
         var KeyCodeCancelPayment = ""
+        object Sync {
+            var SyncOrderRealtime = true
+            var SyncOrderPeriodicPerTimePeriod = false
+            var SyncOrderSpecifiedTime = false
+            var NoSyncOrder = false
+        }
     }
 
     object APIs {
+        var useNativeWoo = false
         var ListAllProductCategories = "/wp-json/wc/v3/products/categories"
         var ListAllProducts = "/wp-json/wc/v3/products"
         var GetPlateModelData = "/wp-json/wp/v2/magicplate-web/get-plate-model-data"
@@ -170,6 +188,7 @@ object AppSettings {
         var ListAllMenu = "/wp-json/wp/v2/magicplate-web/get-static-menu-data"
         var ListAllOrderStatus = "/wp-json/wp/v2/kca/get-order-status"
         var CreateAnOrder = "/wp-json/wc/v3/orders"
+        var SubmitTransaction = "/wp-json/wp/v2/kca/submit-txn"
         var Oauth = "/?oauth=token"
         var WalletCredit = "/wp-json/wp/v2/kca/konbi-wallet-credit"
         var WalletDebit = "/wp-json/wp/v2/kca/konbi-wallet-debit"

@@ -27,6 +27,5 @@ data class Resource<out T>(val status: Status, val data: T?, val message: String
 data class State(
     var status: Resource.Status = Resource.Status.NONE,
     var message: String = "",
-    var data: Any? = null,
-    var isFinish: Boolean = false
+    var data: Any? = null
 )

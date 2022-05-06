@@ -7,325 +7,387 @@
     android:layout_margin="@dimen/dimen_16"
     tools:context=".ui.options.OptionsFragment">
 
-    <!--=================Machine Type=================-->
-    <TextView
-        android:id="@+id/title_machine_type"
+    <ScrollView
+        android:id="@+id/scrollViewPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_machine"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/layout_machine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_shadow_white"
-        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_machine_type">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/layout_machine_type"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contentPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <CheckBox
-                android:id="@+id/checkbox_customer_ui"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_customer_ui" />
-
-            <CheckBox
-                android:id="@+id/checkbox_self_kiosk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_self_kiosk" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!--=================Payment=================-->
-    <TextView
-        android:id="@+id/title_payment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/title_payment"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_machine" />
-
-    <LinearLayout
-        android:id="@+id/layout_payment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_shadow_white"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_payment">
-
-        <LinearLayout
-            android:id="@+id/layout_payment_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="4">
-
-            <CheckBox
-                android:id="@+id/checkbox_master_card"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_master_card" />
-
-            <CheckBox
-                android:id="@+id/checkbox_ezlink"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_ez_link" />
-
-            <CheckBox
-                android:id="@+id/checkbox_wallet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_wallet" />
-
-            <CheckBox
-                android:id="@+id/checkbox_pay_now"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_pay_now" />
-        </LinearLayout>
-    </LinearLayout>
-
-
-    <!--=================Reader ASC=================-->
-    <TextView
-        android:id="@+id/title_reader_asc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/title_reader_asc"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_payment" />
-
-    <LinearLayout
-        android:id="@+id/layout_reader_color"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_shadow_white"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_reader_asc">
-
-        <LinearLayout
-            android:id="@+id/layout_reader_color_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <CheckBox
-                android:id="@+id/checkbox_black_asc_reader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_black" />
-
-            <CheckBox
-                android:id="@+id/checkbox_white_asc_reader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_white" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!--=================Printer=================-->
-    <TextView
-        android:id="@+id/title_printer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/title_printer"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_reader_color" />
-
-    <LinearLayout
-        android:id="@+id/layout_printer_connection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_shadow_white"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_printer">
-
-        <LinearLayout
-            android:id="@+id/layout_printer_connection_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <CheckBox
-                android:id="@+id/checkbox_printer_ble"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_bluetooth" />
-
-            <CheckBox
-                android:id="@+id/checkbox_printer_tcp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_tcp" />
-
-            <CheckBox
-                android:id="@+id/checkbox_printer_usb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_usb" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!--=================Alert=================-->
-    <TextView
-        android:id="@+id/title_alert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/title_alert"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_printer_connection" />
-
-    <LinearLayout
-        android:id="@+id/layout_alert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_shadow_white"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_alert">
-
-        <LinearLayout
-            android:id="@+id/layout_alert_activated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <CheckBox
-                android:id="@+id/checkbox_alert_telegram_activated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_alert_telegram" />
-
-            <CheckBox
-                android:id="@+id/checkbox_alert_slack_activated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_alert_slack" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!--=================Customize=================-->
-    <TextView
-        android:id="@+id/title_customize"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/title_customize"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_alert" />
-
-    <LinearLayout
-        android:id="@+id/layout_customize"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/card_shadow_white"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_customize">
-
-        <LinearLayout
-            android:id="@+id/layout_customize_activated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1">
-
-            <CheckBox
-                android:id="@+id/checkbox_not_allow_wallet_non_rfid_activated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_not_allow_wallet_non_rfid" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_sync_order"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1">
-
-            <CheckBox
-                android:id="@+id/checkbox_sync_order_realtime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_sync_order_realtime" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_cancel_payment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <CheckBox
-                android:id="@+id/checkbox_cancel_payment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_admin_cancel_payment" />
-
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <!--=================Machine Type=================-->
             <TextView
-                android:id="@+id/keyCodeCancelPayment"
+                android:id="@+id/title_machine_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/smoke"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
+                android:text="@string/title_machine"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/layout_machine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_machine_type">
+
+                <LinearLayout
+                    android:id="@+id/layout_machine_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_customer_ui"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_customer_ui" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_self_kiosk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_self_kiosk" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--=================Payment=================-->
+            <TextView
+                android:id="@+id/title_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/title_payment"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_machine" />
+
+            <LinearLayout
+                android:id="@+id/layout_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_payment">
+
+                <LinearLayout
+                    android:id="@+id/layout_payment_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_master_card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_master_card" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_ezlink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_ez_link" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_wallet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_wallet" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_pay_now"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_pay_now" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <!--=================Reader ASC=================-->
+            <TextView
+                android:id="@+id/title_reader_asc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_reader_asc"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_payment" />
+
+            <LinearLayout
+                android:id="@+id/layout_reader_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_reader_asc">
+
+                <LinearLayout
+                    android:id="@+id/layout_reader_color_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_black_asc_reader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_black" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_white_asc_reader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_white" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--=================Printer=================-->
+            <TextView
+                android:id="@+id/title_printer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_printer"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_reader_color" />
+
+            <LinearLayout
+                android:id="@+id/layout_printer_connection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_printer">
+
+                <LinearLayout
+                    android:id="@+id/layout_printer_connection_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_printer_ble"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_bluetooth" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_printer_tcp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_tcp" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_printer_usb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_usb" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--=================Alert=================-->
+            <TextView
+                android:id="@+id/title_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_alert"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_printer_connection" />
+
+            <LinearLayout
+                android:id="@+id/layout_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_alert">
+
+                <LinearLayout
+                    android:id="@+id/layout_alert_activated"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_alert_telegram_activated"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_alert_telegram" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_alert_slack_activated"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_alert_slack" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--=================Sync Offline Data=================-->
+            <TextView
+                android:id="@+id/title_sync_transactions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_sync_transactions"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_alert" />
+
+            <LinearLayout
+                android:id="@+id/layout_sync_transactions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_sync_transactions">
+
+                <LinearLayout
+                    android:id="@+id/layout_sync_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_sync_order_realtime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_sync_order_realtime" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_sync_order_periodic_per_time_period"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_sync_order_periodic_per_time_period" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_sync_specified_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_sync_order_specific_time" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_no_sync_order"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_no_sync_orders" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--=================Customize=================-->
+            <TextView
+                android:id="@+id/title_customize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_customize"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_sync_transactions" />
+
+            <LinearLayout
+                android:id="@+id/layout_customize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_customize">
+
+                <LinearLayout
+                    android:id="@+id/layout_customize_activated"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_not_allow_wallet_non_rfid_activated"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_not_allow_wallet_non_rfid" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_cancel_payment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_cancel_payment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_admin_cancel_payment" />
+
+                    <TextView
+                        android:id="@+id/keyCodeCancelPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/smoke"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

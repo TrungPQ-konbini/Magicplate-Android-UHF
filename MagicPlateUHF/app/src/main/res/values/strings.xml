@@ -106,6 +106,21 @@
     <string name="title_custom_price">Custom Price</string>
     <string name="title_not_allow_wallet_non_rfid">Do not allow wallet payments with non-RFID</string>
     <string name="title_count_n_tags">Counts: %s Tags</string>
+    <string name="title_sync_transactions">Sync Transactions</string>
+    <string name="title_sync_order_periodic_per_time_period">Sync Orders Periodic per time period</string>
+    <string name="title_sync_order_specific_time">Sync Orders with Specific Time</string>
+    <string name="title_no_sync_orders">No Sync Orders</string>
+    <string name="title_hardware">Hardware</string>
+    <string name="title_iuc">IUC</string>
+    <string name="title_native_port">Native Port</string>
+    <string name="title_timer">Timer</string>
+    <string name="title_hour">Hour</string>
+    <string name="title_minute">Minute</string>
+    <string name="title_days">Days</string>
+    <string name="title_x_day_store_local_orders">Store X days of local transactions</string>
+    <string name="title_x_day_store_local_menus">Store X days of expired Menus</string>
+    <string name="title_periodic_get_token">Periodic Get Token</string>
+    <string name="title_uhf_reader">UHF Reader</string>
 
     <!--Category-->
     <string name="title_category_name">Category Name</string>

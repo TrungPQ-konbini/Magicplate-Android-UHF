@@ -185,6 +185,250 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!--Hardware-->
+            <LinearLayout
+                android:id="@+id/hardwarePanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/companyPanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_hardware"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+                <!--UHF Reader-->
+                <LinearLayout
+                    android:id="@+id/hardwareUhfReaderPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_uhf_reader" />
+
+                    <EditText
+                        android:id="@+id/hardwareUhfReader"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_native_port"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+                <!--IUC-->
+                <LinearLayout
+                    android:id="@+id/hardwareIucPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_iuc" />
+
+                    <EditText
+                        android:id="@+id/hardwareIuc"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_native_port"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--Timer-->
+            <LinearLayout
+                android:id="@+id/timerPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hardwarePanel">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_timer"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/dimen_24"
+                    android:textStyle="bold" />
+
+                <!--PeriodicSyncOffline-->
+                <LinearLayout
+                    android:id="@+id/periodicSyncOfflinePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_sync_order_periodic_per_time_period" />
+
+                    <EditText
+                        android:id="@+id/periodicSyncOffline"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_minute"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!--PeriodicSyncOffline-->
+                <LinearLayout
+                    android:id="@+id/syncSpecificTimePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="3"
+                        android:text="@string/title_sync_order_specific_time" />
+
+                    <LinearLayout
+                        android:layout_marginStart="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left">
+
+                        <EditText
+                            android:id="@+id/specificTimeHour"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/card_shadow_grey"
+                            android:gravity="center"
+                            android:inputType="numberSigned"
+                            android:padding="@dimen/dimen_8"
+                            android:text="00"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/dimen_24"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/title_hour"
+                            android:textColor="@color/red"
+                            android:textStyle="italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="@dimen/dimen_4"
+                            android:text=":"
+                            android:textSize="@dimen/dimen_24"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/specificTimeMinute"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/card_shadow_grey"
+                            android:gravity="center"
+                            android:inputType="numberSigned"
+                            android:padding="@dimen/dimen_8"
+                            android:text="00"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/dimen_24"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/title_minute"
+                            android:textColor="@color/red"
+                            android:textStyle="italic" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!--PeriodicGetToken-->
+                <LinearLayout
+                    android:id="@+id/periodicGetTokenPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_periodic_get_token" />
+
+                    <EditText
+                        android:id="@+id/periodicGetToken"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_minute"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!--X day store local orders-->
+                <LinearLayout
+                    android:id="@+id/xDayStoreLocalOrdersPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_x_day_store_local_orders" />
+
+                    <EditText
+                        android:id="@+id/xDayStoreLocalOrders"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_days"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!--X day store local menus-->
+                <LinearLayout
+                    android:id="@+id/xDayStoreLocalMenusPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_x_day_store_local_menus" />
+
+                    <EditText
+                        android:id="@+id/xDayStoreLocalMenus"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_minute"
+                        android:inputType="number" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!--Machine-->
             <LinearLayout
                 android:id="@+id/machinePanel"
@@ -194,7 +438,7 @@
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/companyPanel">
+                app:layout_constraintTop_toBottomOf="@id/timerPanel">
 
                 <TextView
                     android:layout_width="match_parent"

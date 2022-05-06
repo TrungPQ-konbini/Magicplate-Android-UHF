@@ -1,6 +1,8 @@
 package com.konbini.magicplateuhf.data.repository
 
+import android.util.Log
 import com.google.gson.Gson
+import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.data.entities.OfflineDataEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
@@ -20,7 +22,9 @@ class OfflineDataRepository @Inject constructor(
     private val localTransactionDataSource: TransactionDao,
     private val transactionRemoteDataSource: TransactionRemoteDataSource
 ) {
-    private val gson = Gson()
+    companion object {
+        private const val TAG = "OfflineDataRepository"
+    }
 
     fun insert(offlineData: Any) {
         val calendar = Calendar.getInstance()
@@ -101,6 +105,9 @@ class OfflineDataRepository @Inject constructor(
                     }
                     delay(5000)
                 }
+                LogUtils.logOffline("Finish Sync")
+                Log.e(TAG,"Finish Sync")
+                AppContainer.GlobalVariable.isSyncTransaction = false
             }
         }
     }

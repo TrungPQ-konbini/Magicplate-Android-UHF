@@ -19,5 +19,7 @@ class MenuRepository @Inject constructor(
     suspend fun insert(menuEntity: MenuEntity) =
         localMenuDataSource.insert(menuEntity)
 
+    suspend fun deleteByMenuDate(menuDate: String) = localMenuDataSource.deleteByMenuDate(menuDate)
+
     suspend fun deleteAll() = localMenuDataSource.deleteAll()
 }

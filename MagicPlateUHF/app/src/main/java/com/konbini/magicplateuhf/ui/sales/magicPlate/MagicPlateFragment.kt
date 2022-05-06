@@ -280,55 +280,36 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         timeout = AppSettings.Options.Payment.Timeout
 
                         displayMessage(_state.message)
-                        AudioManager.instance.soundProcessingPayment()
+                        LogUtils.logInfo(_state.message)
                         AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                     }
                     Resource.Status.SUCCESS -> {
-//                        // Reset custom price and add paid date and session date
-//                        dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
-//                        AppContainer.GlobalVariable.allowWriteTags = true
-//                        writeTags(0)
-
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
+                        LogUtils.logInfo(_state.message)
                         AppContainer.CurrentTransaction.resetTemporaryInfo()
                         // Refresh cart
                         refreshCart()
 
-                        if (AppSettings.Options.SyncOrderRealtime) {
-                            if (!_state.isFinish) {
-                                // Print Receipt
-                                printReceipt(AppContainer.CurrentTransaction.cartLocked)
-                                AudioManager.instance.soundPaymentSuccess()
-                            }
-                        } else {
+                        if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
                             // Print Receipt
+                            LogUtils.logInfo("Start Print receipt")
                             printReceipt(AppContainer.CurrentTransaction.cartLocked)
                             AudioManager.instance.soundPaymentSuccess()
                         }
 
-                        if (_state.isFinish) {
-                            val message = getString(R.string.message_put_plate_on_the_tray)
-                            resetMessage(message, 0)
+                        val message = getString(R.string.message_put_plate_on_the_tray)
+                        resetMessage(message, 0)
 
-                            if (AppSettings.Machine.DelayAfterOrderCompleted > 0) {
-                                val timeMillis =
-                                    AppSettings.Machine.DelayAfterOrderCompleted.toLong() * 1000
-                                delay(timeMillis)
-                                AppContainer.GlobalVariable.allowReadTags = true
-                                // Start reading UHF
-                                MainApplication.mReaderUHF.realTimeInventory(
-                                    0xff.toByte(),
-                                    0x01.toByte()
-                                )
-                            } else {
-                                AppContainer.GlobalVariable.allowReadTags = true
-                                // Start reading UHF
-                                MainApplication.mReaderUHF.realTimeInventory(
-                                    0xff.toByte(),
-                                    0x01.toByte()
-                                )
-                            }
+                        if (AppSettings.Timer.DelayAfterOrderCompleted > 0) {
+                            val timeMillis =
+                                AppSettings.Timer.DelayAfterOrderCompleted.toLong() * 1000
+
+                            delay(timeMillis)
+
+                            MainApplication.startRealTimeInventory()
+                        } else {
+                            MainApplication.startRealTimeInventory()
                         }
                     }
                     Resource.Status.ERROR -> {
@@ -1251,56 +1232,4 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[C]<font size='tall'>Address: ${AppSettings.Company.Address}</font>\n" +
                 "[C]<font size='tall'>Thank you!!!</font>\n"
     }
-
-//    private fun writeTags(position: Int) {
-//        lifecycleScope.launch {
-//            try {
-//                if (position < dataTags.size) {
-//                    val tag = dataTags[position]
-//                    val epcValue = tag.strEPC ?: ""
-//                    if (epcValue.isEmpty()) return@launch
-//
-//                    // Select tag
-//                    UhfUtil.setAccessEpcMatch(
-//                        epcValue,
-//                        requireContext(),
-//                        getString(R.string.message_error_param_unknown_error)
-//                    )
-//
-//                    val newEPC = setNewEPC(epcValue)
-//                    delay(100)
-//                    UhfUtil.writeTag(
-//                        newEPC,
-//                        requireContext(),
-//                        getString(R.string.message_error_write_data_format)
-//                    )
-//
-//                    delay(100)
-//                    writeTags(position + 1)
-//                } else {
-//                    AppContainer.GlobalVariable.allowWriteTags = false
-//                    // Start reading UHF
-//                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-//                }
-//
-//            } catch (ex: Exception) {
-//                LogUtils.logError(ex)
-//            }
-//        }
-//    }
-//
-//    private fun setNewEPC(oldEPC: String): String {
-//        val calendar = Calendar.getInstance()
-//        val newPaidDate =
-//            "%02X".format(calendar.get(Calendar.DAY_OF_MONTH)) // TODO: Double check day of month + 1
-//        var newPaidSession = "%02X".format(0)
-//        if (AppContainer.GlobalVariable.currentTimeBock != null) {
-//            newPaidSession = "%02X".format(AppContainer.GlobalVariable.currentTimeBock?.id)
-//        }
-//        val newCustomPrice = "%06X".format(0)
-//
-//        return oldEPC.replace(oldEPC.substring(14, 16), newPaidDate)
-//            .replace(oldEPC.substring(16, 18), newPaidSession)
-//            .replace(oldEPC.substring(18), newCustomPrice)
-//    }
 }
