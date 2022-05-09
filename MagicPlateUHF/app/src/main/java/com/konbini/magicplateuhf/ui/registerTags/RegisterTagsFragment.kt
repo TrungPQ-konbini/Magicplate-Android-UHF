@@ -57,15 +57,12 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private val changeTagReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                //!AppContainer.GlobalVariable.allowWriteTags
                 "REFRESH_TAGS" -> {
-                    if (true) {
-                        // Refresh tags
-                        dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
-                        dataTags.sortBy { tagEntity -> tagEntity.strEPC }
-                        adapter.setItems(dataTags)
-                        setTitleButtonRegister()
-                    }
+                    // Refresh tags
+                    dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
+                    dataTags.sortBy { tagEntity -> tagEntity.strEPC }
+                    adapter.setItems(dataTags)
+                    setTitleButtonRegister()
                 }
             }
         }
@@ -82,14 +79,12 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.syncPlateModels()
+        //viewModel.syncPlateModels()
         setupSpinner()
         setupRecyclerView()
         setupObservers()
         setupActions()
         setTitleButtonRegister()
-
-
     }
 
     override fun onStart() {
@@ -102,7 +97,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     override fun onStop() {
-        AppContainer.GlobalVariable.allowReadTags = true
+        MainApplication.startRealTimeInventory()
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(changeTagReceiver)
         super.onStop()
     }
@@ -158,14 +153,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         //AlertDialogUtil.showSuccess(_state.message, requireContext())
                         LogUtils.logInfo("Sync Plate Models success")
 
-                        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList().reversed()
+                        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList()
                         if (listPlatesModel.isNotEmpty()) {
                             val  pos = binding.spinnerPlateModelCode.getSpinner().selectedItemPosition
                             // p0?.getItemIdAtPosition(position)
                             selectedPlateModel = listPlatesModel[pos]
                             val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
                             lastSerialNumber = selectedPlateModel.lastPlateSerial
-                            binding.txtLastSerialNumber.setText(Html.fromHtml(text))
+                            binding.txtLastSerialNumber.text = Html.fromHtml(text)
                         }
 
 
@@ -192,7 +187,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     Resource.Status.SUCCESS -> {
                         LogUtils.logInfo("End Session success")
                         showHideLoading(false)
-                        viewModel.syncPlateModels()
+                        //viewModel.syncPlateModels()
                     }
                     Resource.Status.ERROR -> {
                         showHideLoading(false)
@@ -293,13 +288,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList().reversed()
+        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList()
         if (listPlatesModel.isNotEmpty()) {
            // p0?.getItemIdAtPosition(position)
             selectedPlateModel = listPlatesModel[position]
             val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
             lastSerialNumber = selectedPlateModel.lastPlateSerial
-            binding.txtLastSerialNumber.setText(Html.fromHtml(text))
+            binding.txtLastSerialNumber.text = Html.fromHtml(text)
+            binding.txtCurrentLastSerial.text = Html.fromHtml(text)
         }
     }
 
@@ -327,8 +323,6 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private fun writeTags(position: Int) {
         lifecycleScope.launch {
             try {
-
-
                 if (position < dataTags.size) {
                     val tag = dataTags[position]
                     val epcValue = tag.strEPC ?: ""
@@ -359,10 +353,10 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     showHideLoading(false)
 
                     val t1 = "Tag Written:<b> ${listSetPlateModelDataRequest.count()}</b>"
-                    binding.txtTagWritten.setText(Html.fromHtml(t1))
+                    binding.txtTagWritten.text = Html.fromHtml(t1)
 
                     val t2 = "Current Last Serial:<b> ${listSetPlateModelDataRequest.last().lastPlateSerial}</b> "
-                    binding.txtCurrentLastSerial.setText(Html.fromHtml(t2))
+                    binding.txtCurrentLastSerial.text = Html.fromHtml(t2)
                     if (dataTags.size == listSetPlateModelDataRequest.size) {
 
 //                        AlertDialogUtil.showSuccess(

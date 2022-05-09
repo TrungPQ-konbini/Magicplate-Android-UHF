@@ -77,38 +77,38 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/searchTags">
 
-<!--            <com.dev.materialspinner.MaterialSpinner-->
-<!--                android:id="@+id/spinnerPlateModelCode"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="2"-->
-<!--                android:gravity="center"-->
-<!--                android:hint="@string/title_cloud_order_status"-->
-<!--                android:spinnerMode="dialog"-->
-<!--                android:textColor="@color/smoke" />-->
+            <!--            <com.dev.materialspinner.MaterialSpinner-->
+            <!--                android:id="@+id/spinnerPlateModelCode"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_weight="2"-->
+            <!--                android:gravity="center"-->
+            <!--                android:hint="@string/title_cloud_order_status"-->
+            <!--                android:spinnerMode="dialog"-->
+            <!--                android:textColor="@color/smoke" />-->
 
-<!--            <androidx.appcompat.widget.AppCompatButton-->
-<!--                android:id="@+id/buttonRegisterTags"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:layout_weight="3"-->
-<!--                android:background="@drawable/custom_button_green_10"-->
-<!--                android:gravity="center"-->
-<!--                android:layout_marginLeft="@dimen/dimen_24"-->
-<!--                android:layout_marginRight="@dimen/dimen_24"-->
-<!--                android:layout_marginTop="@dimen/dimen_8"-->
-<!--                android:layout_marginBottom="@dimen/dimen_8"-->
-<!--                android:text="@string/title_register_tags"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textStyle="bold" />-->
+            <!--            <androidx.appcompat.widget.AppCompatButton-->
+            <!--                android:id="@+id/buttonRegisterTags"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:layout_weight="3"-->
+            <!--                android:background="@drawable/custom_button_green_10"-->
+            <!--                android:gravity="center"-->
+            <!--                android:layout_marginLeft="@dimen/dimen_24"-->
+            <!--                android:layout_marginRight="@dimen/dimen_24"-->
+            <!--                android:layout_marginTop="@dimen/dimen_8"-->
+            <!--                android:layout_marginBottom="@dimen/dimen_8"-->
+            <!--                android:text="@string/title_register_tags"-->
+            <!--                android:textColor="@color/white"-->
+            <!--                android:textStyle="bold" />-->
 
 
             <LinearLayout
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_8"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content">
+                android:orientation="vertical">
 
                 <com.dev.materialspinner.MaterialSpinner
                     android:id="@+id/spinnerPlateModelCode"
@@ -120,69 +120,70 @@
                     android:textColor="@color/smoke" />
 
                 <TextView
-                    android:textSize="@dimen/dimen_16"
                     android:id="@+id/txtLastSerialNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/dimen_8"
                     android:text="Last Serial Number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:textSize="@dimen/dimen_16">
 
                 </TextView>
 
             </LinearLayout>
+
             <Button
                 android:id="@+id/btnGetLastNumber"
-                android:layout_weight="1"
-                android:layout_marginEnd="@dimen/dimen_8"
-
-                android:text="Get Last Serial number"
                 android:layout_width="150dp"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="1"
+                android:text="Get Last Serial number">
 
             </Button>
+
             <Button
 
                 android:id="@+id/btnStartScan"
-                android:layout_marginEnd="@dimen/dimen_8"
-                android:text="Start Registration Scan"
                 android:layout_width="200dp"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:text="Start Registration Scan">
 
             </Button>
 
             <Button
                 android:id="@+id/btnStartWriting"
-                android:layout_weight="1"
-                android:layout_marginEnd="@dimen/dimen_8"
-                android:text="Start Registration Writing"
                 android:layout_width="200dp"
-                android:layout_height="match_parent">
-            </Button>
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="1"
+                android:text="Start Registration Writing"></Button>
 
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_8"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:orientation="vertical">
 
                 <TextView
-                    android:textSize="@dimen/dimen_16"
                     android:id="@+id/txtTagWritten"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="@dimen/dimen_8"
                     android:text="Tag Written"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp">
+                    android:textSize="@dimen/dimen_16">
 
                 </TextView>
 
                 <TextView
-                    android:textSize="@dimen/dimen_16"
                     android:id="@+id/txtCurrentLastSerial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/dimen_8"
                     android:text="Current Last Serial"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:textSize="@dimen/dimen_16">
 
                 </TextView>
 
@@ -190,12 +191,11 @@
 
             <Button
                 android:id="@+id/btnEndSession"
-                android:layout_weight="0.3"
-                android:layout_marginEnd="@dimen/dimen_8"
-                android:text="End Session(Upload Current Last Serial)"
                 android:layout_width="200dp"
-                android:layout_height="match_parent">
-            </Button>
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="0.3"
+                android:text="End Session(Upload Current Last Serial)"></Button>
 
         </LinearLayout>
 

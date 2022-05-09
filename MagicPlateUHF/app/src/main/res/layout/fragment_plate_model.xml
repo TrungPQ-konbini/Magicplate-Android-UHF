@@ -89,13 +89,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:weightSum="7">
+                android:weightSum="9">
 
                 <TextView
                     android:id="@+id/titleHeaderCode"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="5"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="@string/title_plate_code"
                     android:textColor="@color/black"
@@ -105,9 +105,19 @@
                     android:id="@+id/titleHeaderName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="@string/title_plate_name"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/titleHeaderSerialNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/title_plate_last_serial_number"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </LinearLayout>

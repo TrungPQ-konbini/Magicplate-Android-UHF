@@ -58,6 +58,7 @@ class PlateModelViewHolder(
         itemBinding.tvIndex.text = "${position + 1}"
         itemBinding.tvPlateCode.text = item.plateModelCode
         itemBinding.tvPlateName.text = item.plateModelTitle
+        itemBinding.tvLastSerialNumber.text = if (item.lastPlateSerial.isNullOrEmpty()) "N/A" else item.lastPlateSerial.toInt(16).toString()
 
         // Set background color
         if (position % 2 == 0) {

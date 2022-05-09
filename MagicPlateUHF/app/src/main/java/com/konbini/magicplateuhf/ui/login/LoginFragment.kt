@@ -13,6 +13,7 @@ import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.enum.MachineType
+import com.konbini.magicplateuhf.data.enum.PaymentState
 import com.konbini.magicplateuhf.databinding.FragmentLoginBinding
 import com.konbini.magicplateuhf.ui.MainActivity
 import com.konbini.magicplateuhf.utils.AlertDialogUtil
@@ -47,6 +48,7 @@ class LoginFragment : Fragment() {
         setupObservers()
         setupActions()
         AppContainer.CurrentTransaction.resetTemporaryInfo()
+        AppContainer.CurrentTransaction.paymentState = PaymentState.Init
     }
 
     private fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {

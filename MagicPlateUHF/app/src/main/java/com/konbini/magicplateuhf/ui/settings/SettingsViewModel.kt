@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
@@ -204,6 +205,7 @@ class SettingsViewModel @Inject constructor(
                         listPlateModels.add(plateModelEntity)
                         plateModelRepository.insert(plateModelEntity)
                     }
+                    AppContainer.GlobalVariable.listPlatesModel = listPlateModels
                 }
 
                 syncTimeBlocks.await().data?.let { response ->

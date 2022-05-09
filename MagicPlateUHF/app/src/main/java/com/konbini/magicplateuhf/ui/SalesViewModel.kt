@@ -54,7 +54,7 @@ class SalesViewModel @Inject constructor(
                 // Store X days of local transactions, delete the rest
                 val listAllTransactions = transactionRepository.getAll()
                 listAllTransactions.forEach { transactionEntity ->
-                    Log.e("STORE_X_DAY_LOCAL_DATA", "${Date(transactionEntity.paymentTime)}")
+                    Log.e("STORE_X_DAY_LOCAL_DATA", "${Date(transactionEntity.paymentTime.toLong())}")
                     if (comparisonDate.time > transactionEntity.paymentTime.toLong()) {
                         val logContent = "[STORE_X_DAY_LOCAL_DATA] Delete transaction date: ${Date(transactionEntity.paymentTime)} | uuid: ${transactionEntity.uuid}"
                         Log.e("STORE_X_DAY_LOCAL_DATA", logContent)

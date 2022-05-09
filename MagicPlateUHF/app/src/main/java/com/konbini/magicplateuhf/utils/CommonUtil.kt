@@ -164,7 +164,7 @@ class CommonUtil {
             return SubmitTransactionRequest(
                 accessToken = AppContainer.GlobalVariable.currentToken,
                 macAddress = AppSettings.Machine.MacAddress,
-                txnDateTime = formatterTime.format(Date(transactionEntity.dateCreated)),
+                txnDateTime = formatterTime.format(Date(transactionEntity.dateCreated.toLong())),
                 txnUniqueId = transactionEntity.uuid,
                 paymentType = if (transactionEntity.paymentType == PaymentType.KONBINI_WALLET.value) "KONBI_WALLET" else transactionEntity.paymentType,
                 cardNumber = transactionEntity.cardNumber,
