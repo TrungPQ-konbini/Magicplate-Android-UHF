@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -40,6 +41,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private var serialNumber = 0
+    private var lastSerialNumber = ""
+
     private var processing = false
     private lateinit var selectedPlateModel: PlateModelEntity
     private lateinit var adapter: RegisterTagsAdapter
@@ -54,8 +57,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private val changeTagReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                //!AppContainer.GlobalVariable.allowWriteTags
                 "REFRESH_TAGS" -> {
-                    if (!AppContainer.GlobalVariable.allowWriteTags) {
+                    if (true) {
                         // Refresh tags
                         dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
                         dataTags.sortBy { tagEntity -> tagEntity.strEPC }
@@ -78,15 +82,19 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.syncPlateModels()
         setupSpinner()
         setupRecyclerView()
         setupObservers()
         setupActions()
         setTitleButtonRegister()
+
+
     }
 
     override fun onStart() {
         super.onStart()
+        AppContainer.GlobalVariable.allowReadTags = false
         val filterIntent = IntentFilter()
         filterIntent.addAction("REFRESH_TAGS")
         LocalBroadcastManager.getInstance(requireContext())
@@ -94,6 +102,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     override fun onStop() {
+        AppContainer.GlobalVariable.allowReadTags = true
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(changeTagReceiver)
         super.onStop()
     }
@@ -145,14 +154,50 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     Resource.Status.SUCCESS -> {
                         listPLateModelsSync = _state.data as MutableList<PlateModelEntity>
                         AppContainer.GlobalVariable.listPlatesModel = listPLateModelsSync
-                        writeTags()
+                        //writeTags()
                         //AlertDialogUtil.showSuccess(_state.message, requireContext())
                         LogUtils.logInfo("Sync Plate Models success")
+
+                        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList().reversed()
+                        if (listPlatesModel.isNotEmpty()) {
+                            val  pos = binding.spinnerPlateModelCode.getSpinner().selectedItemPosition
+                            // p0?.getItemIdAtPosition(position)
+                            selectedPlateModel = listPlatesModel[pos]
+                            val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
+                            lastSerialNumber = selectedPlateModel.lastPlateSerial
+                            binding.txtLastSerialNumber.setText(Html.fromHtml(text))
+                        }
+
+
+                        showHideLoading(false)
                     }
                     Resource.Status.ERROR -> {
                         showHideLoading(false)
                         AlertDialogUtil.showError(_state.message, requireContext())
                         LogUtils.logInfo("Sync Plate Models error")
+                    }
+                    else -> {}
+                }
+            }
+
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+
+            viewModel.stateEndSession.collect() { _state ->
+                when (_state.status) {
+                    Resource.Status.LOADING -> {
+                        showHideLoading(true)
+                    }
+                    Resource.Status.SUCCESS -> {
+                        LogUtils.logInfo("End Session success")
+                        showHideLoading(false)
+                        viewModel.syncPlateModels()
+                    }
+                    Resource.Status.ERROR -> {
+                        showHideLoading(false)
+                        AlertDialogUtil.showError(_state.message, requireContext())
+                        LogUtils.logInfo("End Session error")
                     }
                     else -> {}
                 }
@@ -163,8 +208,30 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private fun setupActions() {
         binding.searchTags.setOnQueryTextListener(this)
 
-        binding.buttonRegisterTags.setSafeOnClickListener {
+//        binding.buttonRegisterTags.setSafeOnClickListener {
+//            viewModel.syncPlateModels()
+//        }
+
+        binding.btnGetLastNumber.setSafeOnClickListener {
             viewModel.syncPlateModels()
+        }
+
+        binding.btnEndSession.setSafeOnClickListener {
+            viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
+        }
+
+        binding.btnStartWriting.setSafeOnClickListener {
+            writeTags()
+        }
+
+        binding.btnStartScan.setSafeOnClickListener {
+            AppContainer.GlobalVariable.allowReadTags = false
+
+            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            Log.e(
+                MainApplication.TAG,
+                "==========Start command reading UHF=========="
+            )
         }
     }
 
@@ -178,6 +245,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         }
         if (dataTags.isNotEmpty()) {
             try {
+                showHideLoading(true)
+                listSetPlateModelDataRequest.clear()
                 AppContainer.GlobalVariable.allowWriteTags = true
                 writeTags(0)
             } catch (ex: Exception) {
@@ -194,10 +263,10 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private fun setTitleButtonRegister() {
         if (dataTags.isEmpty()) {
             val titleButton = getString(R.string.title_register_tags).replace(" %s", "")
-            binding.buttonRegisterTags.text = titleButton
+           // binding.buttonRegisterTags.text = titleButton
         } else {
             val titleButton = String.format(getString(R.string.title_register_tags), dataTags.size)
-            binding.buttonRegisterTags.text = titleButton
+           // binding.buttonRegisterTags.text = titleButton
         }
     }
 
@@ -224,9 +293,13 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
+        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList().reversed()
         if (listPlatesModel.isNotEmpty()) {
+           // p0?.getItemIdAtPosition(position)
             selectedPlateModel = listPlatesModel[position]
+            val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
+            lastSerialNumber = selectedPlateModel.lastPlateSerial
+            binding.txtLastSerialNumber.setText(Html.fromHtml(text))
         }
     }
 
@@ -254,6 +327,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private fun writeTags(position: Int) {
         lifecycleScope.launch {
             try {
+
+
                 if (position < dataTags.size) {
                     val tag = dataTags[position]
                     val epcValue = tag.strEPC ?: ""
@@ -261,14 +336,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
                     // Select tag
                     val epcMatch = UhfUtil.setAccessEpcMatch(epcValue, requireContext(), getString(R.string.message_error_param_unknown_error))
-                    Log.e(TAG, "[epcMatch] | $epcMatch")
+                    LogUtils.logInfo("[epcMatch] | $epcMatch")
                     if (epcMatch != -1) {
                         val newEPC = setNewEPC(epcValue)
                         LogUtils.logInfo("New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
-                        Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
+                        //Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
                         delay(150)
                         val writeTag = UhfUtil.writeTag(newEPC, requireContext(), getString(R.string.message_error_write_data_format))
-                        Log.e(TAG, "[writeTag] | $writeTag")
+                        LogUtils.logInfo("[writeTag] | $writeTag")
                         if (writeTag != -1) {
                             // Add serials for submit to server
                             val data = Data(
@@ -282,28 +357,36 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     writeTags(position + 1)
                 } else {
                     showHideLoading(false)
+
+                    val t1 = "Tag Written:<b> ${listSetPlateModelDataRequest.count()}</b>"
+                    binding.txtTagWritten.setText(Html.fromHtml(t1))
+
+                    val t2 = "Current Last Serial:<b> ${listSetPlateModelDataRequest.last().lastPlateSerial}</b> "
+                    binding.txtCurrentLastSerial.setText(Html.fromHtml(t2))
                     if (dataTags.size == listSetPlateModelDataRequest.size) {
 
-                        AlertDialogUtil.showSuccess(
-                            getString(R.string.message_success_register_tags),
-                            requireContext()
-                        )
+//                        AlertDialogUtil.showSuccess(
+//                            getString(R.string.message_success_register_tags),
+//                            requireContext()
+//                        )
 
                         // Sync last serial to server
-                        viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
+                        //viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
                     } else {
-                        AlertDialogUtil.showError(
-                            getString(R.string.message_error_some_tag_write_error),
-                            requireContext(),
-                            getString(R.string.title_register_failed)
-                        )
+//                        AlertDialogUtil.showError(
+//                            getString(R.string.message_error_some_tag_write_error),
+//                            requireContext(),
+//                            getString(R.string.title_register_failed)
+//                        )
                         serialNumber = 0
-                        listSetPlateModelDataRequest.clear()
+                        //listSetPlateModelDataRequest.clear()
                     }
 
-                    delay(1000)
+                    delay(300)
                     // Start reading UHF
-                    MainApplication.startRealTimeInventory()
+                    //MainApplication.startRealTimeInventory()
+
+                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
 
             } catch (ex: Exception) {
