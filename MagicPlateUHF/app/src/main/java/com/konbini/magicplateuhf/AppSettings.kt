@@ -95,7 +95,7 @@ object AppSettings {
     object Cloud {
         var Host = "https://gleneagles.whew.life"
         var ConsumerKey = "ck_c19a45488414efe7a89c407d5aa167da2c135ad2"
-        var ConsumerSecret = "cs_af3d5413a62a039fd8a4e6d1c0d4c14b354ad6a44"
+        var ConsumerSecret = "cs_af3d5413a62a039fd8a4e6d1c0d4c14b354ad6a4"
         var ClientId = "7xVVr5CoxH7rLT6GNV9Xu1JfARKGNRxQzBiTdgj6"
         var ClientSecret = "UgWmwqG44HvO0ByNmQSmt7TvuEZrBlwQU6isYowg"
         var OrderStatus = "completed"
@@ -109,10 +109,10 @@ object AppSettings {
     }
 
     object MQTT {
-        var Host = "tcp://dev.ineedfood.today:1883"
+        var Host = "tcp://gleneagles.whew.life:1883"
         var UserName = "konbini"
         var Password = "k0nbini"
-        var Topic = "shimanotest"
+        var Topic = "magicplate"
     }
 
     object Timer {
