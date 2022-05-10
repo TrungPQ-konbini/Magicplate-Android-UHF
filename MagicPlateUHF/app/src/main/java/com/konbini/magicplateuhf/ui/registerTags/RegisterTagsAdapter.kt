@@ -64,7 +64,7 @@ class RegisterTagsViewHolder(
         if(item.serialNumber == "N/A" || item.serialNumber.isNullOrEmpty()) {
             itemBinding.tvSerialNumber.text = "N/A"
         }else {
-            itemBinding.tvSerialNumber.text = item.serialNumber
+            itemBinding.tvSerialNumber.text = "%06X".format(item.serialNumber!!.toInt())
         }
 
         // Set background color

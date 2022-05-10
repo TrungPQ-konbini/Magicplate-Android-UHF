@@ -46,7 +46,6 @@ class MainApplication : Application() {
         lateinit var instance: MainApplication
         lateinit var mPermissionIntent: PendingIntent
 
-// TODO: ABC
         lateinit var mReaderUHF: RFIDReaderHelper
         var connector: ModuleConnector = ReaderConnector()
 
@@ -55,7 +54,7 @@ class MainApplication : Application() {
 
         var tagSizeOld = 0
         var timeTagSizeChanged = 0L
-// TODO: ABC
+
         private var rxObserver: RXObserver = object : RXObserver() {
             override fun onInventoryTag(tag: RXInventoryTag) {
                 Log.e(TAG, tag.strEPC)
@@ -141,7 +140,6 @@ class MainApplication : Application() {
 
         fun startRealTimeInventory() {
             AppContainer.GlobalVariable.allowReadTags = true
-// TODO: ABC
             mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
         }
 
@@ -169,7 +167,6 @@ class MainApplication : Application() {
          */
         fun initRFIDReaderUHF() {
             try {
-// TODO: ABC
                 if (connector.connectCom(
                         AppSettings.Hardware.Comport.ReaderUHF,
                         AppSettings.Hardware.Comport.ReaderUHFBaudRate

@@ -23,12 +23,11 @@ class UhfUtil {
                 )
                 return - 1
             }
-            // TODO: ABC
-//            return MainApplication.mReaderUHF.setAccessEpcMatch(
-//                0x01,
-//                (btAryEpc.size and 0xFF).toByte(), btAryEpc
-//            )
-            return 0
+
+            return MainApplication.mReaderUHF.setAccessEpcMatch(
+                0x01,
+                (btAryEpc.size and 0xFF).toByte(), btAryEpc
+            )
         }
 
         fun writeTag(tag: String, context: Context, errorMessage: String): Int {
@@ -60,16 +59,15 @@ class UhfUtil {
                 AlertDialogUtil.showError(errorMessage, context)
                 return -1
             }
-            // TODO: ABC
-//            return MainApplication.mReaderUHF.writeTag(
-//                0x01,
-//                btAryPassWord,
-//                btMemBank,
-//                btWordAdd,
-//                btWordCnt,
-//                btAryData
-//            )
-            return 0
+
+            return MainApplication.mReaderUHF.writeTag(
+                0x01,
+                btAryPassWord,
+                btMemBank,
+                btWordAdd,
+                btWordCnt,
+                btAryData
+            )
         }
     }
 }
