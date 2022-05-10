@@ -48,7 +48,6 @@ import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -69,8 +68,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private var orderNumber = 0
     private val gson = Gson()
-//    private var processing = false
-//    private var dataTags: ArrayList<TagEntity> = ArrayList()
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -297,19 +294,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             AudioManager.instance.soundPaymentSuccess()
                         }
 
+                        MainApplication.startRealTimeInventory()
+
                         val message = getString(R.string.message_put_plate_on_the_tray)
                         resetMessage(message, 0)
-
-                        if (AppSettings.Timer.DelayAfterOrderCompleted > 0) {
-                            val timeMillis =
-                                AppSettings.Timer.DelayAfterOrderCompleted.toLong() * 1000
-
-                            delay(timeMillis)
-
-                            MainApplication.startRealTimeInventory()
-                        } else {
-                            MainApplication.startRealTimeInventory()
-                        }
                     }
                     Resource.Status.ERROR -> {
                         setBlink(AlarmType.ERROR)
@@ -367,8 +355,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
 
         binding.rfidItemCount.setOnClickListener {
-            // TODO for test only
-            gotoLogin()
             binding.rfidItemCount.blink(Color.RED, 1, 50L)
             clickedTitleModel += 1
             Log.e(TAG, "Clicked Title Model-$clickedTitleModel")
@@ -403,7 +389,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         // TODO: Start TrungPQ add to test
         binding.spinKitMessage.setSafeOnClickListener {
             AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
-            AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
             viewModel.debit()
         }
         // TODO: End TrungPQ add to test
@@ -706,19 +691,21 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param voice
      */
     private fun resetMessage(message: String, voice: Int) {
-        object : CountDownTimer(1500, 500) {
-            override fun onTick(millisUntilFinished: Long) {}
-
-            override fun onFinish() {
-                displayMessage(message)
-                when (voice) {
-                    R.raw.please_tap_card_again -> {
-                        AudioManager.instance.soundPleaseTapCardAgain()
-                    }
-                }
-                cancel()
+        displayMessage(message)
+        when (voice) {
+            R.raw.please_tap_card_again -> {
+                AudioManager.instance.soundPleaseTapCardAgain()
             }
-        }.start()
+        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            delay(1000)
+//            displayMessage(message)
+//            when (voice) {
+//                R.raw.please_tap_card_again -> {
+//                    AudioManager.instance.soundPleaseTapCardAgain()
+//                }
+//            }
+//        }
     }
 
     /**

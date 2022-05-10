@@ -110,7 +110,6 @@ class MainApplication : Application() {
             if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success && AppContainer.GlobalVariable.listEPC.isEmpty()) {
                 AppContainer.CurrentTransaction.paymentState = PaymentState.Init
                 LogUtils.logInfo("Start new Transaction")
-                return
             }
             if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing) {
                 LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
