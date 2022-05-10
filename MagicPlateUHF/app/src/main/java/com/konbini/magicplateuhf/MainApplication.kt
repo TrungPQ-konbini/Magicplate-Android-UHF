@@ -14,9 +14,9 @@ import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.acs.smartcard.Reader
 import com.google.gson.Gson
-import com.konbini.im30.hardware.IM30Interface
 import com.konbini.magicplateuhf.base.MessageMQTT
 import com.konbini.magicplateuhf.data.enum.PaymentState
+import com.konbini.magicplateuhf.hardware.IM30Interface
 import com.konbini.magicplateuhf.ui.SalesActivity
 import com.konbini.magicplateuhf.utils.AudioManager
 import com.konbini.magicplateuhf.utils.LogUtils
@@ -46,6 +46,7 @@ class MainApplication : Application() {
         lateinit var instance: MainApplication
         lateinit var mPermissionIntent: PendingIntent
 
+// TODO: ABC
         lateinit var mReaderUHF: RFIDReaderHelper
         var connector: ModuleConnector = ReaderConnector()
 
@@ -54,7 +55,7 @@ class MainApplication : Application() {
 
         var tagSizeOld = 0
         var timeTagSizeChanged = 0L
-
+// TODO: ABC
         private var rxObserver: RXObserver = object : RXObserver() {
             override fun onInventoryTag(tag: RXInventoryTag) {
                 Log.e(TAG, tag.strEPC)
@@ -140,29 +141,25 @@ class MainApplication : Application() {
 
         fun startRealTimeInventory() {
             AppContainer.GlobalVariable.allowReadTags = true
+// TODO: ABC
             mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
         }
 
         fun initIM30() {
-            IM30Interface(instance)
-            val ports = IM30Interface.instance.port.getDevicesList().toList()
-            IM30Interface.instance.setLogger { log ->
-                Log.d("IM30", log)
-                LogUtils.logInfo(log)
-            }
-
-            ports.forEach { _port ->
-                LogUtils.logInfo(_port.second.productName.toString())
-                if (_port.second.productName == "USB Serial Converter"
-                    || _port.second.productName == "Serrial device - FTDI"
-                    || _port.second.productName == "FTDI"
-                ) {
-                    LogUtils.logInfo("payment _ name _ ${_port.second.productName}")
-                    if (IM30Interface.instance.isInit) {
-                        LogUtils.logInfo("IUC opened _ ${_port.second.productName}")
-                        IM30Interface.instance.open(_port.second.deviceName)
+            try {
+                IM30Interface(shared())
+                val comportIuc = AppSettings.Hardware.Comport.IUC
+                if (comportIuc.isNotEmpty() && comportIuc.contains("/dev/ttyS")) {
+                    val opened = IM30Interface.instance.open(comportIuc)
+                    IM30Interface.instance.setLogger { log ->
+                        Log.e("IM30", log)
+                        LogUtils.logInfo(log)
                     }
+                    Log.e("IUC OPEN: ", opened.toString())
+                    LogUtils.logInfo("Open IUC port: $opened")
                 }
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
             }
         }
 
@@ -172,6 +169,7 @@ class MainApplication : Application() {
          */
         fun initRFIDReaderUHF() {
             try {
+// TODO: ABC
                 if (connector.connectCom(
                         AppSettings.Hardware.Comport.ReaderUHF,
                         AppSettings.Hardware.Comport.ReaderUHFBaudRate

@@ -93,7 +93,7 @@ class OptionsFragment : Fragment() {
         }
 
         binding.checkboxEzlink.setOnCheckedChangeListener { buttonView, isChecked ->
-            PrefUtil.setBoolean("AppSettings.Options.Payment.Ezlink", isChecked)
+            PrefUtil.setBoolean("AppSettings.Options.Payment.EzLink", isChecked)
             LogUtils.logInfo("Payment mode Options: $isChecked")
             showMessageSuccess()
         }

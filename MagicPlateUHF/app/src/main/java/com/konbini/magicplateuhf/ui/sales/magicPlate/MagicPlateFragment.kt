@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Parcelable
@@ -33,17 +32,16 @@ import com.dantsu.escposprinter.connection.tcp.TcpConnection
 import com.dantsu.escposprinter.connection.usb.UsbConnection
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
 import com.google.gson.Gson
-import com.konbini.im30.hardware.IM30Interface
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.*
 import com.konbini.magicplateuhf.data.entities.CartEntity
-import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
 import com.konbini.magicplateuhf.data.enum.*
 import com.konbini.magicplateuhf.databinding.FragmentMagicPlateBinding
+import com.konbini.magicplateuhf.hardware.IM30Interface
 import com.konbini.magicplateuhf.ui.settings.SettingsViewModel
 import com.konbini.magicplateuhf.utils.*
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
@@ -610,6 +608,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         // Reset temporary info
         AppContainer.CurrentTransaction.resetTemporaryInfo()
+        AppContainer.CurrentTransaction.paymentState = PaymentState.Init
 
         // Refresh cart
         refreshCart()
@@ -1154,7 +1153,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 requireContext(),
                 0,
                 Intent(ACTION_USB_PERMISSION),
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0
+                0
             )
             val filter = IntentFilter(ACTION_USB_PERMISSION)
             requireActivity().registerReceiver(usbReceiver, filter)

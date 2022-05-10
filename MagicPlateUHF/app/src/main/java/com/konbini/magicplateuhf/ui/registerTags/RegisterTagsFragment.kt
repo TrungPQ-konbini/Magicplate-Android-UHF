@@ -221,8 +221,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
         binding.btnStartScan.setSafeOnClickListener {
             AppContainer.GlobalVariable.allowReadTags = false
-
-            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+// TODO: ABC
+//            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
             Log.e(
                 MainApplication.TAG,
                 "==========Start command reading UHF=========="
@@ -379,8 +379,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     delay(300)
                     // Start reading UHF
                     //MainApplication.startRealTimeInventory()
-
-                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+// TODO: ABC
+//                    MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                 }
 
             } catch (ex: Exception) {
