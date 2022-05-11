@@ -831,12 +831,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         setBlink(AlarmType.ERROR)
         displayMessage(ErrorCodeIM30.handleMessageIuc(_message, requireContext()))
         AudioManager.instance.soundBuzzer()
-        AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
+        AppContainer.CurrentTransaction.paymentState = PaymentState.Init
 
-        val message = getString(R.string.message_please_tap_card_again)
-        val voice = R.raw.please_tap_card_again
-        resetMessage(message, voice)
-        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+        val message = getString(R.string.message_put_plate_on_the_tray)
+        resetMessage(message, 0)
     }
 
     /**
@@ -903,7 +901,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 }, { _message ->
                     // Callback
                     activity?.runOnUiThread {
-                        if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                        if (_message.lowercase().contains("REMOVE CARD".lowercase())) {
                             // Reset countdown timeout payment
                             timerTimeoutPayment.cancel()
                             timeout = AppSettings.Options.Payment.Timeout
