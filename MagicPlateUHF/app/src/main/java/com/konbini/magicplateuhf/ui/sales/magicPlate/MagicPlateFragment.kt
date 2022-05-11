@@ -48,6 +48,7 @@ import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -691,21 +692,21 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param voice
      */
     private fun resetMessage(message: String, voice: Int) {
-        displayMessage(message)
-        when (voice) {
-            R.raw.please_tap_card_again -> {
-                AudioManager.instance.soundPleaseTapCardAgain()
-            }
-        }
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            delay(1000)
-//            displayMessage(message)
-//            when (voice) {
-//                R.raw.please_tap_card_again -> {
-//                    AudioManager.instance.soundPleaseTapCardAgain()
-//                }
+//        displayMessage(message)
+//        when (voice) {
+//            R.raw.please_tap_card_again -> {
+//                AudioManager.instance.soundPleaseTapCardAgain()
 //            }
 //        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(500)
+            displayMessage(message)
+            when (voice) {
+                R.raw.please_tap_card_again -> {
+                    AudioManager.instance.soundPleaseTapCardAgain()
+                }
+            }
+        }
     }
 
     /**
