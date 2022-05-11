@@ -717,6 +717,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val cart = AppContainer.CurrentTransaction.cart
         cart.sortBy { tagEntity -> tagEntity.strEPC }
         cartAdapter.setItems(ArrayList(cart))
+        LogUtils.logInfo("Display Cart: ${gson.toJson(cart)}")
     }
 
     /**
@@ -813,6 +814,12 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         AppContainer.CurrentTransaction.resetTemporaryInfo()
         // Refresh cart
         refreshCart()
+
+        if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
+            // Print Receipt
+            LogUtils.logInfo("Start Print receipt")
+            printReceipt(AppContainer.CurrentTransaction.cartLocked)
+        }
     }
 
     /**
@@ -854,10 +861,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     // Callback
                     activity?.runOnUiThread {
                         if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                            // Reset countdown timeout payment
+                            timerTimeoutPayment.cancel()
+                            timeout = AppSettings.Options.Payment.Timeout
+
                             AudioManager.instance.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
+                        LogUtils.logInfo(_message)
                         displayMessage(_message)
                     }
                 }, {
@@ -892,10 +904,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     // Callback
                     activity?.runOnUiThread {
                         if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                            // Reset countdown timeout payment
+                            timerTimeoutPayment.cancel()
+                            timeout = AppSettings.Options.Payment.Timeout
+
                             AudioManager.instance.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
+                        LogUtils.logInfo(_message)
                         displayMessage(_message)
                     }
                 }, {
@@ -930,10 +947,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     // Callback
                     activity?.runOnUiThread {
                         if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                            // Reset countdown timeout payment
+                            timerTimeoutPayment.cancel()
+                            timeout = AppSettings.Options.Payment.Timeout
+
                             AudioManager.instance.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
+                        LogUtils.logInfo(_message)
                         displayMessage(_message)
                     }
                 }, {
