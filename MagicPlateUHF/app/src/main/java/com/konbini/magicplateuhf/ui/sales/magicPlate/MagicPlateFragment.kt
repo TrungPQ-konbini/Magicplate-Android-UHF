@@ -828,6 +828,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param _message
      */
     private fun handlePaymentError(_message: String) {
+        // Reset countdown timeout payment
+        timerTimeoutPayment.cancel()
+        timeout = AppSettings.Options.Payment.Timeout
+
         setBlink(AlarmType.ERROR)
         displayMessage(ErrorCodeIM30.handleMessageIuc(_message, requireContext()))
         AudioManager.instance.soundBuzzer()
