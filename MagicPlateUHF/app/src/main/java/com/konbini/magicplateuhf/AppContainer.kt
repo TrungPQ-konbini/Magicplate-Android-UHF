@@ -28,6 +28,7 @@ object AppContainer {
         var listProducts: MutableList<ProductEntity> = mutableListOf()
         var listTimeBlocks: MutableList<TimeBlockEntity> = mutableListOf()
         var listPlatesModel: MutableList<PlateModelEntity> = mutableListOf()
+        var listUsers: MutableList<UserEntity> = mutableListOf()
 
         fun getListTagEntity(listEPC: List<String>): MutableList<TagEntity> {
             val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
@@ -54,6 +55,8 @@ object AppContainer {
     }
 
     object CurrentTransaction {
+        var ccwId1: String = ""
+        var currentDiscount: Float = 0F
         var cardNFC = ""
         var barcode = ""
         var countItems = 0
@@ -68,12 +71,13 @@ object AppContainer {
         var option: Option = Option()
 
         fun resetTemporaryInfo() {
+            ccwId1 = ""
             cardNFC = ""
             barcode = ""
             countItems = 0
             totalPrice = 0F
             paymentType = null
-            //paymentState = PaymentState.Init
+            currentDiscount = 0F
             listEPC.clear()
             listTagEntity.clear()
             cart.clear()
@@ -94,6 +98,7 @@ object AppContainer {
                     }
                     if (menuEntity != null) {
                         val customPrice = _tagEntity.customPrice
+                        val findProduct = findProduct(menuEntity.productId.toInt())
                         val cartEntity = CartEntity(
                             uuid = UUID.randomUUID().toString(),
                             strEPC = _tagEntity.strEPC ?: "",
@@ -105,6 +110,7 @@ object AppContainer {
                                     customPrice
                                 ) || customPrice == "0"
                             ) menuEntity.price else (customPrice.toFloat() / 100).toString(),
+                            salePrice = "0",
                             productName = menuEntity.productName,
                             plateModelName = menuEntity.plateModelName,
                             plateModelCode = menuEntity.plateModelCode,
@@ -114,6 +120,11 @@ object AppContainer {
                         )
 
                         var itemPrice = cartEntity.price.toFloat()
+
+                        if (currentDiscount > 0) {
+                            cartEntity.salePrice = findProduct?.salePrice ?: "0"
+                            itemPrice = cartEntity.salePrice.toFloat()
+                        }
 
                         if (!cartEntity.options.isNullOrEmpty()) {
                             val collectionType: Type =
@@ -146,6 +157,12 @@ object AppContainer {
             }
         }
 
+        private fun findProduct(productId: Int): ProductEntity? {
+            return GlobalVariable.listProducts.find { productEntity ->
+                productEntity.syncId == productId && productEntity.salePrice.isNotEmpty()
+            }
+        }
+
         fun cartLocked() {
             cartLocked.clear()
             cart.forEach { _cartEntity ->
@@ -157,6 +174,7 @@ object AppContainer {
                     productId = _cartEntity.productId,
                     plateModelId = _cartEntity.plateModelId,
                     price = _cartEntity.price,
+                    salePrice = _cartEntity.salePrice,
                     productName = _cartEntity.productName,
                     plateModelName = _cartEntity.plateModelName,
                     plateModelCode = _cartEntity.plateModelCode,

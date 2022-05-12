@@ -2,6 +2,9 @@ package com.konbini.magicplateuhf.ui.sales.magicPlate
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StrikethroughSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.enum.ActionCart
@@ -16,6 +20,7 @@ import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.databinding.ItemCartBinding
 import com.konbini.magicplateuhf.utils.CommonUtil
 import java.lang.reflect.Type
+
 
 class CartAdapter(
     private val context: Context,
@@ -79,7 +84,15 @@ class CartViewHolder(
         itemBinding.tvIndex.text = "${position + 1}"
         itemBinding.tvProductName.text = cartEntity.productName
         itemBinding.tvProductQuantity.text = cartEntity.quantity.toString()
-        itemBinding.tvProductPrice.text = CommonUtil.formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+        val price = CommonUtil.formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+        if (AppContainer.CurrentTransaction.currentDiscount > 0) {
+            val salePrice = CommonUtil.formatCurrency(cartEntity.salePrice.toFloat() * cartEntity.quantity)
+            val strPrice = SpannableString("$price\n$salePrice")
+            strPrice.setSpan(StrikethroughSpan(), 0, price.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            itemBinding.tvProductPrice.text = strPrice
+        } else {
+            itemBinding.tvProductPrice.text = price
+        }
 
         if (cartEntity.plateModelCode.isEmpty()) {
             itemBinding.iconMinus.visibility = View.VISIBLE

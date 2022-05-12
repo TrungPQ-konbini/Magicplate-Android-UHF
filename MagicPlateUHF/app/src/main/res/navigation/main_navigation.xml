@@ -45,6 +45,16 @@
         android:label="@string/menu_options"
         tools:layout="@layout/fragment_options" />
     <fragment
+        android:id="@+id/nav_users"
+        android:name="com.konbini.magicplateuhf.ui.users.UsersFragment"
+        android:label="@string/menu_users"
+        tools:layout="@layout/fragment_users" />
+    <fragment
+        android:id="@+id/nav_discounts"
+        android:name="com.konbini.magicplateuhf.ui.discount.DiscountFragment"
+        android:label="@string/menu_discounts"
+        tools:layout="@layout/fragment_discount" />
+    <fragment
         android:id="@+id/nav_write_tags"
         android:name="com.konbini.magicplateuhf.ui.writeTags.WriteTagsFragment"
         android:label="@string/menu_write_tags"

@@ -8,6 +8,7 @@ data class CartEntity(
     val productId: String = "",
     val plateModelId: String = "",
     val price: String = "",
+    var salePrice: String = "",
     var productName: String = "",
     val plateModelName: String = "",
     val plateModelCode: String = "",

@@ -48,41 +48,54 @@ class OptionsFragment : Fragment() {
     }
 
     private fun setupActions() {
-        binding.checkboxCustomerUi.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.checkboxMagicPlateMode.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 PrefUtil.setString(
                     "AppSettings.Options.MachineTypeActivated",
-                    MachineType.MAGIC_PLATE.value
+                    MachineType.MAGIC_PLATE_MODE.value
                 )
-                binding.checkboxCustomerUi.isChecked = true
-                binding.checkboxSelfKiosk.isChecked = false
+                binding.checkboxMagicPlateMode.isChecked = true
+                binding.checkboxSelfKioskMode.isChecked = false
+                binding.checkboxDiscountMode.isChecked = false
 
                 // Reset
                 AppContainer.CurrentTransaction.resetTemporaryInfo()
 
                 showMessageSuccess()
-            } else {
-                binding.checkboxCustomerUi.isChecked = false
-                binding.checkboxSelfKiosk.isChecked = true
             }
         }
 
-        binding.checkboxSelfKiosk.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.checkboxSelfKioskMode.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 PrefUtil.setString(
                     "AppSettings.Options.MachineTypeActivated",
-                    MachineType.SELF_KIOSK.value
+                    MachineType.SELF_KIOSK_MODE.value
                 )
-                binding.checkboxCustomerUi.isChecked = false
-                binding.checkboxSelfKiosk.isChecked = true
+                binding.checkboxMagicPlateMode.isChecked = false
+                binding.checkboxSelfKioskMode.isChecked = true
+                binding.checkboxDiscountMode.isChecked = false
 
                 // Reset
                 AppContainer.CurrentTransaction.resetTemporaryInfo()
 
                 showMessageSuccess()
-            } else {
-                binding.checkboxCustomerUi.isChecked = true
-                binding.checkboxSelfKiosk.isChecked = false
+            }
+        }
+
+        binding.checkboxDiscountMode.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setString(
+                    "AppSettings.Options.MachineTypeActivated",
+                    MachineType.DISCOUNT_MODE.value
+                )
+                binding.checkboxMagicPlateMode.isChecked = false
+                binding.checkboxSelfKioskMode.isChecked = false
+                binding.checkboxDiscountMode.isChecked = true
+
+                // Reset
+                AppContainer.CurrentTransaction.resetTemporaryInfo()
+
+                showMessageSuccess()
             }
         }
 
@@ -107,6 +120,12 @@ class OptionsFragment : Fragment() {
         binding.checkboxPayNow.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefUtil.setBoolean("AppSettings.Options.Payment.PayNow", isChecked)
             LogUtils.logInfo("Payment PayNow mode Options: $isChecked")
+            showMessageSuccess()
+        }
+
+        binding.checkboxCash.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.Payment.Cash", isChecked)
+            LogUtils.logInfo("Payment Cash mode Options: $isChecked")
             showMessageSuccess()
         }
 
@@ -176,6 +195,26 @@ class OptionsFragment : Fragment() {
                 if (!binding.checkboxPrinterBle.isChecked && !binding.checkboxPrinterTcp.isChecked) {
                     binding.checkboxPrinterUsb.isChecked = true
                 }
+            }
+        }
+
+        binding.checkboxNfc.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setBoolean("AppSettings.Options.Discount.NFC", true)
+                PrefUtil.setBoolean("AppSettings.Options.Discount.Barcode", false)
+                binding.checkboxNfc.isChecked = true
+                binding.checkboxBarcode.isChecked = false
+                showMessageSuccess()
+            }
+        }
+
+        binding.checkboxBarcode.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setBoolean("AppSettings.Options.Discount.NFC", false)
+                PrefUtil.setBoolean("AppSettings.Options.Discount.Barcode", true)
+                binding.checkboxNfc.isChecked = false
+                binding.checkboxBarcode.isChecked = true
+                showMessageSuccess()
             }
         }
 
@@ -256,15 +295,22 @@ class OptionsFragment : Fragment() {
 
     private fun initData() {
         when (AppSettings.Options.MachineTypeActivated) {
-            MachineType.MAGIC_PLATE.value -> {
-                binding.checkboxCustomerUi.isChecked = true
-                binding.checkboxSelfKiosk.isChecked = false
+            MachineType.MAGIC_PLATE_MODE.value -> {
+                binding.checkboxMagicPlateMode.isChecked = true
+                binding.checkboxSelfKioskMode.isChecked = false
+                binding.checkboxDiscountMode.isChecked = false
             }
-            MachineType.SELF_KIOSK.value -> {
-                binding.checkboxCustomerUi.isChecked = false
-                binding.checkboxSelfKiosk.isChecked = true
+            MachineType.SELF_KIOSK_MODE.value -> {
+                binding.checkboxMagicPlateMode.isChecked = false
+                binding.checkboxSelfKioskMode.isChecked = true
+                binding.checkboxDiscountMode.isChecked = false
             }
-            MachineType.POS.value -> {
+            MachineType.DISCOUNT_MODE.value -> {
+                binding.checkboxMagicPlateMode.isChecked = false
+                binding.checkboxSelfKioskMode.isChecked = false
+                binding.checkboxDiscountMode.isChecked = true
+            }
+            MachineType.POS_MODE.value -> {
 
             }
         }
@@ -273,6 +319,7 @@ class OptionsFragment : Fragment() {
         binding.checkboxEzlink.isChecked = AppSettings.Options.Payment.EzLink
         binding.checkboxWallet.isChecked = AppSettings.Options.Payment.Wallet
         binding.checkboxPayNow.isChecked = AppSettings.Options.Payment.PayNow
+        binding.checkboxCash.isChecked = AppSettings.Options.Payment.Cash
 
         when (AppSettings.Options.AcsReader) {
             AcsReaderType.WHITE.value -> {
@@ -288,6 +335,9 @@ class OptionsFragment : Fragment() {
         binding.checkboxPrinterBle.isChecked = AppSettings.Options.Printer.Bluetooth
         binding.checkboxPrinterTcp.isChecked = AppSettings.Options.Printer.TCP
         binding.checkboxPrinterUsb.isChecked = AppSettings.Options.Printer.USB
+
+        binding.checkboxNfc.isChecked = AppSettings.Options.Discount.NFC
+        binding.checkboxBarcode.isChecked = AppSettings.Options.Discount.Barcode
 
         binding.checkboxAlertTelegramActivated.isChecked = AppSettings.Alert.Telegram.Activated
         binding.checkboxAlertSlackActivated.isChecked = AppSettings.Alert.Slack.Activated

@@ -32,7 +32,7 @@ class LoginFragment : Fragment() {
     }
 
     private var binding: FragmentLoginBinding by autoCleared()
-    private val viewModel: LoginViewModel  by viewModels()
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,7 +61,7 @@ class LoginFragment : Fragment() {
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.state.collect() { _state ->
-                when(_state.status) {
+                when (_state.status) {
                     Resource.Status.SUCCESS -> {
                         val intent = Intent(activity, MainActivity::class.java)
                         startActivity(intent)
@@ -144,17 +144,18 @@ class LoginFragment : Fragment() {
 
     private fun cancelHandle() {
         when (AppSettings.Options.MachineTypeActivated) {
-            MachineType.MAGIC_PLATE.value -> {
+            MachineType.MAGIC_PLATE_MODE.value,
+            MachineType.DISCOUNT_MODE.value -> {
                 view?.post {
                     findNavController().navigate(
                         R.id.action_loginFragment_to_magicPlateFragment
                     )
                 }
             }
-            MachineType.SELF_KIOSK.value -> {
+            MachineType.SELF_KIOSK_MODE.value -> {
 
             }
-            MachineType.POS.value -> {
+            MachineType.POS_MODE.value -> {
 
             }
         }

@@ -150,7 +150,7 @@ object AppSettings {
     object Options {
         var ConnectHardware = false
         var AcsReader = AcsReaderType.WHITE.value
-        var MachineTypeActivated = MachineType.MAGIC_PLATE.value
+        var MachineTypeActivated = MachineType.MAGIC_PLATE_MODE.value
         object Payment {
             var Timeout = 60L
             var EzLink = true
@@ -161,12 +161,22 @@ object AppSettings {
             var pathImageWallet = ""
             var PayNow = false
             var pathImagePayNow = ""
+            var Cash = false
+            var pathImageCash = ""
+            var Discount = false
+            var pathImageDiscount = ""
         }
         object Printer {
             var Bluetooth = true
             var TCP = false
             var USB = false
         }
+        object Discount {
+            var NFC = false
+            var Barcode = true
+        }
+        var DiscountList = ""
+        var RolesList = "administrator"
         var NotAllowWalletNonRfid = true
         var AllowAdminCancelPayment = true
         var IgnoreWhenRemovingTags = false
@@ -193,5 +203,6 @@ object AppSettings {
         var Oauth = "/?oauth=token"
         var WalletCredit = "/wp-json/wp/v2/kca/konbi-wallet-credit"
         var WalletDebit = "/wp-json/wp/v2/kca/konbi-wallet-debit"
+        var GetAllUser = "/wp-json/wp/v2/kca/get-all-users"
     }
 }

@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_categories,
                 R.id.nav_products,
                 R.id.nav_transactions,
+                R.id.nav_users,
+                R.id.nav_discounts,
                 R.id.nav_options_setting,
                 R.id.nav_settings,
                 R.id.nav_write_tags,

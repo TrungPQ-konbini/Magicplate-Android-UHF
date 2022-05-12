@@ -76,6 +76,11 @@ class ProductViewHolder(
         } else {
             itemBinding.productPrice.text = "N/A"
         }
+        if (item.salePrice.isNotEmpty()) {
+            itemBinding.productSalePrice.text = CommonUtil.formatCurrency(item.salePrice.toFloat())
+        } else {
+            itemBinding.productSalePrice.text = "N/A"
+        }
         itemBinding.productBarcode.text = item.barcode
 
         // Set background color

@@ -50,21 +50,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <CheckBox
-                        android:id="@+id/checkbox_customer_ui"
+                        android:id="@+id/checkbox_magic_plate_mode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/title_customer_ui" />
+                        android:text="@string/title_magic_plate_mode" />
 
                     <CheckBox
-                        android:id="@+id/checkbox_self_kiosk"
+                        android:id="@+id/checkbox_self_kiosk_mode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/title_self_kiosk" />
+                        android:text="@string/title_self_kiosk_mode" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_discount_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_discount_mode" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -96,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="4">
+                    android:weightSum="5">
 
                     <CheckBox
                         android:id="@+id/checkbox_master_card"
@@ -125,6 +132,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/title_pay_now" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_cash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_cash" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -199,7 +213,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <CheckBox
                         android:id="@+id/checkbox_printer_ble"
@@ -224,6 +238,50 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!--=================Discount=================-->
+            <TextView
+                android:id="@+id/title_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_discount"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_printer_connection" />
+
+            <LinearLayout
+                android:id="@+id/layout_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_discount">
+
+                <LinearLayout
+                    android:id="@+id/layout_discount_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_nfc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_nfc" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_barcode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_barcode" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!--=================Alert=================-->
             <TextView
                 android:id="@+id/title_alert"
@@ -233,7 +291,7 @@
                 android:textSize="25sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_printer_connection" />
+                app:layout_constraintTop_toBottomOf="@id/layout_discount" />
 
             <LinearLayout
                 android:id="@+id/layout_alert"

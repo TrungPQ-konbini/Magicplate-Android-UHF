@@ -37,7 +37,8 @@ class MagicPlateViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val walletRepository: WalletRepository,
     private val transactionRepository: TransactionRepository,
-    private val offlineDataRepository: OfflineDataRepository
+    private val offlineDataRepository: OfflineDataRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     companion object {
         const val TAG = "MagicPlateViewModel"
@@ -48,6 +49,8 @@ class MagicPlateViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
+
+    suspend fun getAllUsers() = userRepository.getAll()
 
     suspend fun getLastTransactionId() = transactionRepository.getLastTransactionId()
 
