@@ -111,10 +111,14 @@ class MainApplication : Application() {
             }
 
             if (AppSettings.Options.IgnoreWhenRemovingTags) {
-                AppContainer.GlobalVariable.listEPC.forEach { _epc ->
-                    if (AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-                        AppContainer.CurrentTransaction.listEPC.add(_epc)
+                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+                    AppContainer.GlobalVariable.listEPC.forEach { _epc ->
+                        if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
+                            AppContainer.CurrentTransaction.listEPC.add(_epc)
+                        }
                     }
+                } else {
+                    AppContainer.CurrentTransaction.listEPC.clear()
                 }
             } else {
                 AppContainer.CurrentTransaction.listEPC.clear()
@@ -123,7 +127,7 @@ class MainApplication : Application() {
 
             // Get list tags
             val listTagEntity =
-                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+                AppContainer.GlobalVariable.getListTagEntity(AppContainer.CurrentTransaction.listEPC)
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
 
             timeTagSizeChanged = 0L
