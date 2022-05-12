@@ -79,16 +79,18 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             when (intent?.action) {
                 "REFRESH_TAGS" -> {
                     when (AppContainer.CurrentTransaction.paymentState) {
-//                        TODO: Boss said remove alert to check change cart
-//                        PaymentState.ReadyToPay,
-//                        PaymentState.InProgress -> {
-//                            // Check Cart Locked Change
-//                            val isChanged = checkCartLockedChange()
-//                            if (isChanged) {
-//                                AudioManager.instance.soundBuzzer()
-//                                setBlink(AlarmType.ERROR)
-//                            }
-//                        }
+                        /**
+                         * TODO: The reason we had ALARM last time was because people press Payment then walk away.
+                         *       Can we have the Alarm, but make it ring only if we detect all tags/plates removed while we are still in PAYMENT mode.
+                         */
+                        PaymentState.ReadyToPay,
+                        PaymentState.InProgress -> {
+                            // Check Cart Locked Change
+                            if (AppContainer.CurrentTransaction.listEPC.isEmpty()) {
+                                AudioManager.instance.soundBuzzer()
+                                setBlink(AlarmType.ERROR)
+                            }
+                        }
                         PaymentState.Init,
                         PaymentState.Preparing -> {
                             // Refresh cart
@@ -289,9 +291,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         timerTimeoutPayment.cancel()
                         timeout = AppSettings.Options.Payment.Timeout
 
+                        AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+
                         displayMessage(_state.message)
                         LogUtils.logInfo(_state.message)
-                        AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                     }
                     Resource.Status.SUCCESS -> {
                         setBlink(AlarmType.SUCCESS)
@@ -320,10 +323,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         AudioManager.instance.soundBuzzer()
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Error
 
-                        val message = getString(R.string.message_please_tap_card_again)
-                        val voice = R.raw.please_tap_card_again
-                        resetMessage(message, voice)
-                        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+//                        val message = getString(R.string.message_please_tap_card_again)
+//                        val voice = R.raw.please_tap_card_again
+//                        resetMessage(message, voice)
+//                        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+                        val message = getString(R.string.message_put_plate_on_the_tray)
+                        resetMessage(message, 0)
+                        AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
                     }
                     else -> {
 
@@ -402,31 +408,32 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
 
         // TODO: Start TrungPQ add to test
-//        binding.spinKitMessage.setSafeOnClickListener {
-//            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
-//            viewModel.debit()
-//        }
-//
-//        binding.rfidMessageTitle.setSafeOnClickListener {
-//            AppContainer.GlobalVariable.listEPC.clear()
-//            AppContainer.GlobalVariable.listEPC.add("01800000020300108CCFB14E")
-//
-//            AppContainer.CurrentTransaction.listEPC.clear()
-//            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
-//
-//            // Get list tags
-//            val listTagEntity =
-//                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
-//            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
-//
-//            MainApplication.timeTagSizeChanged = 0L
-//            AppContainer.CurrentTransaction.refreshCart()
-//
-//            // Add or Remove items to cart
-//            val intent = Intent()
-//            intent.action = "REFRESH_TAGS"
-//            LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
-//        }
+        binding.spinKitMessage.setSafeOnClickListener {
+            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
+            viewModel.debit()
+        }
+
+        binding.rfidMessageTitle.setSafeOnClickListener {
+            AppContainer.GlobalVariable.listEPC.clear()
+            AppContainer.GlobalVariable.listEPC.add("01800000020300108CCFB14E")
+            AppContainer.GlobalVariable.listEPC.add("04800000020300108CCFB14E")
+
+            AppContainer.CurrentTransaction.listEPC.clear()
+            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+
+            // Get list tags
+            val listTagEntity =
+                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+
+            MainApplication.timeTagSizeChanged = 0L
+            AppContainer.CurrentTransaction.refreshCart()
+
+            // Add or Remove items to cart
+            val intent = Intent()
+            intent.action = "REFRESH_TAGS"
+            LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
+        }
         // TODO: End TrungPQ add to test
     }
 
@@ -479,6 +486,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 val validate = validateSelectPayment()
                 if (!validate) return
 
+                changeColorWhenSelectPayment()
+
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
                 AudioManager.instance.soundProcessingPayment()
@@ -498,6 +507,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 val validate = validateSelectPayment()
                 if (!validate) return
 
+                changeColorWhenSelectPayment()
+
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
                 AudioManager.instance.soundProcessingPayment()
@@ -515,6 +526,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             PaymentType.PAY_NOW.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
+
+                changeColorWhenSelectPayment()
 
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
@@ -534,6 +547,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 val validate = validateSelectPayment()
                 if (!validate) return
 
+                changeColorWhenSelectPayment()
+
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
                 AudioManager.instance.soundPleaseTapCard()
@@ -548,6 +563,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             PaymentType.CASH.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
+
+                changeColorWhenSelectPayment()
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.Success
@@ -794,18 +811,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param voice
      */
     private fun resetMessage(message: String, voice: Int) {
-//        displayMessage(message)
-//        when (voice) {
-//            R.raw.please_tap_card_again -> {
-//                AudioManager.instance.soundPleaseTapCardAgain()
-//            }
-//        }
         viewLifecycleOwner.lifecycleScope.launch {
             delay(500)
             displayMessage(message)
             when (voice) {
                 R.raw.please_tap_card_again -> {
                     AudioManager.instance.soundPleaseTapCardAgain()
+
                 }
             }
         }
@@ -873,6 +885,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             }
         }
     }
+
+    /**
+     * Change color when select payment
+     *
+     */
+    private fun changeColorWhenSelectPayment() {
+        binding.rfidProducts.setBackgroundResource(R.color.yellow)
+    }
     // endregion
 
     // region ================ASC Reader Functions================
@@ -935,10 +955,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         AudioManager.instance.soundBuzzer()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
 
-        val message = getString(R.string.message_please_tap_card_again)
-        val voice = R.raw.please_tap_card_again
-        resetMessage(message, voice)
-        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+//        val message = getString(R.string.message_please_tap_card_again)
+//        val voice = R.raw.please_tap_card_again
+//        resetMessage(message, voice)
+//        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+        val message = getString(R.string.message_put_plate_on_the_tray)
+        resetMessage(message, 0)
+        AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
     }
 
     /**
@@ -1229,58 +1252,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             AppContainer.CurrentTransaction.ccwId1 == userEntity.ccwId1
         }
     }
-
-    private fun updateTotalAndCount() {
-        var totalPrice = 0F
-        var itemCount = 0
-
-        AppContainer.CurrentTransaction.cart.forEach { _menuEntity ->
-            var itemPrice = 0F
-            try {
-                itemPrice = _menuEntity.price.toFloat()
-            } catch (ex: Exception) {
-                LogUtils.logError(ex)
-            }
-
-            // Calculate with discount
-            val discount = AppContainer.CurrentTransaction.currentDiscount
-            if (discount > 0) {
-                val findProductEntity: ProductEntity? = AppContainer.GlobalVariable.listProducts.find { productEntity ->
-                    productEntity.syncId == _menuEntity.productId.toInt() && productEntity.salePrice.isNotEmpty()
-                }
-                if (findProductEntity != null) {
-                    try {
-                        val tempPrice = findProductEntity.salePrice.toFloat()
-                        if (tempPrice > 0)
-                            itemPrice = tempPrice
-                    } catch (ex: Exception) {
-                        LogUtils.logError(ex)
-                    }
-                }
-            }
-
-            if (!_menuEntity.options.isNullOrEmpty()) {
-                val collectionType: Type = object : TypeToken<Collection<Option?>?>() {}.type
-                val options: Collection<Option> = gson.fromJson(_menuEntity.options, collectionType)
-                options.forEach { _option ->
-                    _option.options?.forEach { _optionItem ->
-                        if (_optionItem.isChecked) {
-                            var price = 0F
-                            if (!_optionItem.price.isNullOrEmpty())
-                                price = _optionItem.price.toFloat()
-                            itemPrice += price
-                        }
-                    }
-                }
-            }
-
-            itemCount += _menuEntity.quantity
-            totalPrice += (itemPrice * _menuEntity.quantity.toFloat())
-        }
-
-        binding.rfidTotalCount.text = formatCurrency(totalPrice)
-        binding.rfidItemCount.text = itemCount.toString()
-    }
     // endregion
 
     // region ================Validation Functions================
@@ -1310,18 +1281,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             resetMessage(message, 0)
         }
         return !validate
-    }
-
-    /**
-     * Check cart locked change
-     *
-     * @return
-     */
-    private fun checkCartLockedChange(): Boolean {
-        val cart = AppContainer.CurrentTransaction.cart
-        val cartLocked = AppContainer.CurrentTransaction.cartLocked
-
-        return cart.size != cartLocked.size
     }
     // endregion
 

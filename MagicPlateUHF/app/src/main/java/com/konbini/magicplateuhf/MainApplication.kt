@@ -118,11 +118,17 @@ class MainApplication : Application() {
                         }
                     }
                 } else {
+                    AppContainer.CurrentTransaction.resetTemporaryInfo()
                     AppContainer.CurrentTransaction.listEPC.clear()
                 }
             } else {
-                AppContainer.CurrentTransaction.listEPC.clear()
-                AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                    AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                } else {
+                    AppContainer.CurrentTransaction.resetTemporaryInfo()
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                }
             }
 
             // Get list tags
