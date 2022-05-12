@@ -1028,7 +1028,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 }, { _message ->
                     // Callback
                     activity?.runOnUiThread {
-                        if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                        if (_message.lowercase().contains("REMOVE CARD".lowercase())) {
                             // Reset countdown timeout payment
                             timerTimeoutPayment.cancel()
                             timeout = AppSettings.Options.Payment.Timeout
