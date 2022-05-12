@@ -597,6 +597,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                             pDialog.dismiss()
                                         }
                                     }
+                                    AppContainer.CurrentTransaction.ccwId1 = barcode
                                     listenerDiscount()
                                     barcode = ""
                                 }
@@ -606,9 +607,9 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     })
                 }
 
-                // TODO: TrungPQ test
-                AppContainer.CurrentTransaction.ccwId1 = "8d2ed739"
-                listenerDiscount()
+                // TODO: Start TrungPQ add to test
+                // AppContainer.CurrentTransaction.ccwId1 = "8d2ed739"
+                // listenerDiscount()
             }
         }
     }

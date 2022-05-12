@@ -117,7 +117,11 @@ class MainApplication : Application() {
             }
 
             AppContainer.CurrentTransaction.listEPC.clear()
-            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+            AppContainer.GlobalVariable.listEPC.forEach { _epc ->
+                if (AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
+                    AppContainer.CurrentTransaction.listEPC.add(_epc)
+                }
+            }
 
             // Get list tags
             val listTagEntity =
@@ -138,8 +142,13 @@ class MainApplication : Application() {
         }
 
         fun startRealTimeInventory() {
-            AppContainer.GlobalVariable.allowReadTags = true
-            mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            try {
+                AppContainer.GlobalVariable.allowReadTags = true
+                if (this::mReaderUHF.isInitialized)
+                    mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
+            }
         }
 
         fun initIM30() {
