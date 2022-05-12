@@ -33,6 +33,7 @@ import com.developer.kalert.KAlertDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.konbini.magicplateuhf.AppContainer
+import com.konbini.magicplateuhf.AppContainer.CurrentTransaction.getListEpcLocked
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
@@ -87,6 +88,19 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         PaymentState.InProgress -> {
                             // Check Cart Locked Change
                             if (AppContainer.CurrentTransaction.listEPC.isEmpty()) {
+                                AudioManager.instance.soundBuzzer()
+                                setBlink(AlarmType.ERROR)
+                                return
+                            }
+
+                            val listEpcLocked = getListEpcLocked()
+                            var hasOtherTag = false
+                            AppContainer.GlobalVariable.listEPC.forEach { epc ->
+                                if (!listEpcLocked.contains(epc)) {
+                                    hasOtherTag = true
+                                }
+                            }
+                            if (hasOtherTag) {
                                 AudioManager.instance.soundBuzzer()
                                 setBlink(AlarmType.ERROR)
                             }
@@ -831,7 +845,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val cart = AppContainer.CurrentTransaction.cart
         cart.sortBy { tagEntity -> tagEntity.strEPC }
         cartAdapter.setItems(ArrayList(cart))
-        LogUtils.logInfo("Display Cart: ${gson.toJson(cart)}")
+        //LogUtils.logInfo("Display Cart: ${gson.toJson(cart)}")
     }
 
     /**

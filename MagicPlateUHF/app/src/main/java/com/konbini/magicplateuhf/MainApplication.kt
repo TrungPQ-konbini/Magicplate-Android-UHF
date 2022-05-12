@@ -109,7 +109,7 @@ class MainApplication : Application() {
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
             ) {
-                LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
+                //LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
                 return
             }
 
