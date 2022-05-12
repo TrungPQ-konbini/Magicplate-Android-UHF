@@ -69,20 +69,14 @@ class MainApplication : Application() {
 
                 val current = System.currentTimeMillis()
                 if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
-                    if (AppSettings.Options.IgnoreWhenRemovingTags) {
-                        if (AppContainer.CurrentTransaction.listEPC.size < AppContainer.GlobalVariable.listEPC.size || AppContainer.GlobalVariable.listEPC.isEmpty()) {
-                            sendBroadcastRefreshTags()
-                        }
+                    if (timeTagSizeChanged == 0L) {
+                        timeTagSizeChanged = current
                     } else {
-                        if (timeTagSizeChanged == 0L) {
-                            timeTagSizeChanged = current
+                        val offset = current - timeTagSizeChanged
+                        if (offset < 500) {
+                            Log.e(TAG, "$current | $offset => Ignore")
                         } else {
-                            val offset = current - timeTagSizeChanged
-                            if (offset < 500) {
-                                Log.e(TAG, "$current | $offset => Ignore")
-                            } else {
-                                sendBroadcastRefreshTags()
-                            }
+                            sendBroadcastRefreshTags()
                         }
                     }
                 } else {
@@ -116,11 +110,15 @@ class MainApplication : Application() {
                 return
             }
 
-            AppContainer.CurrentTransaction.listEPC.clear()
-            AppContainer.GlobalVariable.listEPC.forEach { _epc ->
-                if (AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-                    AppContainer.CurrentTransaction.listEPC.add(_epc)
+            if (AppSettings.Options.IgnoreWhenRemovingTags) {
+                AppContainer.GlobalVariable.listEPC.forEach { _epc ->
+                    if (AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
+                        AppContainer.CurrentTransaction.listEPC.add(_epc)
+                    }
                 }
+            } else {
+                AppContainer.CurrentTransaction.listEPC.clear()
+                AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
             }
 
             // Get list tags
