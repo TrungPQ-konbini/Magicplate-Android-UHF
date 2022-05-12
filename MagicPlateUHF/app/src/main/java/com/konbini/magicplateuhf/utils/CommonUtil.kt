@@ -173,7 +173,7 @@ class CommonUtil {
                     productId = _cartEntity.productId.toInt(),
                     productQuantity = _cartEntity.quantity,
                     isCustomPrice = true,
-                    customPrice = if (_cartEntity.salePrice == "0") _cartEntity.price.toDouble() else _cartEntity.salePrice.toDouble()
+                    customPrice = if (_cartEntity.salePrice.isEmpty()) _cartEntity.price.toDouble() else _cartEntity.salePrice.toDouble()
                 )
                 listProducts.add(product)
             }

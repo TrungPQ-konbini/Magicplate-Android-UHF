@@ -84,9 +84,9 @@ class CartViewHolder(
         itemBinding.tvIndex.text = "${position + 1}"
         itemBinding.tvProductName.text = cartEntity.productName
         itemBinding.tvProductQuantity.text = cartEntity.quantity.toString()
-        val price = CommonUtil.formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+        val price = if (cartEntity.price.isNotEmpty()) CommonUtil.formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity) else "N/A"
         if (AppContainer.CurrentTransaction.currentDiscount > 0) {
-            val salePrice = CommonUtil.formatCurrency(cartEntity.salePrice.toFloat() * cartEntity.quantity)
+            val salePrice = if (cartEntity.salePrice.isNotEmpty()) CommonUtil.formatCurrency(cartEntity.salePrice.toFloat() * cartEntity.quantity) else price
             val strPrice = SpannableString("$price\n$salePrice")
             strPrice.setSpan(StrikethroughSpan(), 0, price.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             itemBinding.tvProductPrice.text = strPrice

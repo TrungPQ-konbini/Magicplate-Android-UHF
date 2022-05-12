@@ -135,9 +135,9 @@ class SettingsViewModel @Inject constructor(
         return ProductEntity(
             id = productResponse.id,
             name = productResponse.name,
-            price = productResponse.price ?: "0",
-            regularPrice = productResponse.regularPrice ?: "0",
-            salePrice = productResponse.salePrice ?: "0",
+            price = productResponse.price ?: "",
+            regularPrice = productResponse.regularPrice ?: "",
+            salePrice = productResponse.salePrice ?: "",
             parentId = productResponse.parentId.toString(),
             categories = productResponse.categories!!.map { it.id }.joinToString(separator = ","),
             images = productResponse.images!!.map { it.src }.joinToString(separator = ","),

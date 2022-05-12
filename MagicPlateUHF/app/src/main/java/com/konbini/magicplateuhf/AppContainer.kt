@@ -108,9 +108,9 @@ object AppContainer {
                             plateModelId = menuEntity.plateModelId,
                             price = if (customPrice.isNullOrEmpty() || !CommonUtil.isNumber(
                                     customPrice
-                                ) || customPrice == "0"
+                                ) || customPrice == ""
                             ) menuEntity.price else (customPrice.toFloat() / 100).toString(),
-                            salePrice = "0",
+                            salePrice = "",
                             productName = menuEntity.productName,
                             plateModelName = menuEntity.plateModelName,
                             plateModelCode = menuEntity.plateModelCode,
@@ -122,8 +122,8 @@ object AppContainer {
                         var itemPrice = cartEntity.price.toFloat()
 
                         if (currentDiscount > 0) {
-                            cartEntity.salePrice = findProduct?.salePrice ?: "0"
-                            itemPrice = cartEntity.salePrice.toFloat()
+                            cartEntity.salePrice = findProduct?.salePrice ?: ""
+                            itemPrice = if (cartEntity.salePrice.isNotEmpty()) cartEntity.salePrice.toFloat() else cartEntity.price.toFloat()
                         }
 
                         if (!cartEntity.options.isNullOrEmpty()) {
