@@ -105,7 +105,10 @@ class MainApplication : Application() {
                 AppContainer.CurrentTransaction.paymentState = PaymentState.Init
                 LogUtils.logInfo("Start new Transaction")
             }
-            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing) {
+            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init
+                && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
+                && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
+            ) {
                 LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
                 return
             }
