@@ -147,6 +147,8 @@
     <string name="title_nfc">NFC</string>
     <string name="title_discount">Discount</string>
     <string name="title_discount_mode">Discount Mode</string>
+    <string name="title_add_picture">Add Picture</string>
+    <string name="title_remove_picture">Remove Picture</string>
 
     <!--Category-->
     <string name="title_category_name">Category Name</string>
