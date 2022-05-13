@@ -50,21 +50,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <CheckBox
-                        android:id="@+id/checkbox_customer_ui"
+                        android:id="@+id/checkbox_magic_plate_mode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/title_customer_ui" />
+                        android:text="@string/title_magic_plate_mode" />
 
                     <CheckBox
-                        android:id="@+id/checkbox_self_kiosk"
+                        android:id="@+id/checkbox_self_kiosk_mode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/title_self_kiosk" />
+                        android:text="@string/title_self_kiosk_mode" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_discount_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_discount_mode" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -96,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="4">
+                    android:weightSum="5">
 
                     <CheckBox
                         android:id="@+id/checkbox_master_card"
@@ -125,6 +132,284 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/title_pay_now" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_cash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_cash" />
+                </LinearLayout>
+
+                <!--Payment Icon-->
+                <LinearLayout
+                    android:id="@+id/layout_payment_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:id="@+id/layout_payment_icon_left"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="5">
+
+                            <ImageView
+                                android:id="@+id/imageMasterCardDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_mastercard" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImageMasterCard"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImageMasterCard"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="5">
+
+                            <ImageView
+                                android:id="@+id/imageEzLinkDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_ez_link" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImageEzlink"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImageEzlink"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="5">
+
+                            <ImageView
+                                android:id="@+id/imagePayNowDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_pay_now" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImagePayNow"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImagePayNow"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_payment_icon_right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="5">
+
+                            <ImageView
+                                android:id="@+id/imageWalletDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/logo" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImageWallet"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImageWallet"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="5">
+
+                            <ImageView
+                                android:id="@+id/imageCashDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_money" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImageCash"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImageCash"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="5">
+
+                            <ImageView
+                                android:id="@+id/imageDiscountDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_discounts" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImageDiscount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImageDiscount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -199,7 +484,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <CheckBox
                         android:id="@+id/checkbox_printer_ble"
@@ -224,6 +509,50 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!--=================Discount=================-->
+            <TextView
+                android:id="@+id/title_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_discount"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_printer_connection" />
+
+            <LinearLayout
+                android:id="@+id/layout_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_discount">
+
+                <LinearLayout
+                    android:id="@+id/layout_discount_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_nfc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_nfc" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_barcode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_barcode" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!--=================Alert=================-->
             <TextView
                 android:id="@+id/title_alert"
@@ -233,7 +562,7 @@
                 android:textSize="25sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_printer_connection" />
+                app:layout_constraintTop_toBottomOf="@id/layout_discount" />
 
             <LinearLayout
                 android:id="@+id/layout_alert"

@@ -16,5 +16,7 @@ data class ProductEntity(
     @ColumnInfo(name = "options") val options: String,
     @ColumnInfo(name = "quantity") var quantity: Int,
     @ColumnInfo(name = "price") val price: String,
+    @ColumnInfo(name = "regular_price") val regularPrice: String,
+    @ColumnInfo(name = "sale_price") val salePrice: String,
     @ColumnInfo(name = "menu_order") val menuOrder: Int
 ) : BaseEntity()

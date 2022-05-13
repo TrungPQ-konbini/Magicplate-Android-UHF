@@ -6,7 +6,7 @@ data class TagEntity(
     var plateModelTitle: String? = null,
     var serialNumber: String? = null,
     var paidDate: String? = null,
-    var paidSession: String? = null,
+    var timestamp: String? = null,
     var customPrice: String = "",
     var lastUpdate: Long = 0
 ) {

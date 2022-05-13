@@ -67,6 +67,11 @@ object AppSettings {
             }
         }
     }
+
+    object UHFStructure {
+        var CustomPrice = "FF"
+    }
+
     object Company {
         var Logo = ""
         var Name = "Konbini"
@@ -100,6 +105,7 @@ object AppSettings {
         var ClientSecret = "UgWmwqG44HvO0ByNmQSmt7TvuEZrBlwQU6isYowg"
         var OrderStatus = "completed"
         var AllOrderStatus = ""
+        var ProductIdForCustomPrice = 0
     }
 
     object Wallet {
@@ -150,7 +156,7 @@ object AppSettings {
     object Options {
         var ConnectHardware = false
         var AcsReader = AcsReaderType.WHITE.value
-        var MachineTypeActivated = MachineType.MAGIC_PLATE.value
+        var MachineTypeActivated = MachineType.MAGIC_PLATE_MODE.value
         object Payment {
             var Timeout = 60L
             var EzLink = true
@@ -161,12 +167,22 @@ object AppSettings {
             var pathImageWallet = ""
             var PayNow = false
             var pathImagePayNow = ""
+            var Cash = false
+            var pathImageCash = ""
+            var Discount = false
+            var pathImageDiscount = ""
         }
         object Printer {
             var Bluetooth = true
             var TCP = false
             var USB = false
         }
+        object Discount {
+            var NFC = false
+            var Barcode = true
+        }
+        var DiscountList = ""
+        var RolesList = "administrator"
         var NotAllowWalletNonRfid = true
         var AllowAdminCancelPayment = true
         var IgnoreWhenRemovingTags = false
@@ -180,7 +196,7 @@ object AppSettings {
     }
 
     object APIs {
-        var useNativeWoo = false
+        var UseNativeWoo = false
         var ListAllProductCategories = "/wp-json/wc/v3/products/categories"
         var ListAllProducts = "/wp-json/wc/v3/products"
         var GetPlateModelData = "/wp-json/wp/v2/magicplate-web/get-plate-model-data"
@@ -193,5 +209,6 @@ object AppSettings {
         var Oauth = "/?oauth=token"
         var WalletCredit = "/wp-json/wp/v2/kca/konbi-wallet-credit"
         var WalletDebit = "/wp-json/wp/v2/kca/konbi-wallet-debit"
+        var GetAllUser = "/wp-json/wp/v2/kca/get-all-users"
     }
 }

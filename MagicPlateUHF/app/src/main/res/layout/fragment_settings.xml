@@ -702,6 +702,29 @@
                         android:hint="@string/title_cloud_order_status"
                         android:spinnerMode="dialog" />
                 </LinearLayout>
+
+                <!--Product ID for custom price-->
+                <LinearLayout
+                    android:id="@+id/cloudProductIdFroCustomPricePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_product_id_for_custom_price" />
+
+                    <EditText
+                        android:id="@+id/cloudProductIdFroCustomPrice"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_native_port"
+                        android:inputType="textNoSuggestions|number" />
+                </LinearLayout>
             </LinearLayout>
 
             <!--Wallet-->

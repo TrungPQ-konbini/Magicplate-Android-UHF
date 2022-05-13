@@ -89,13 +89,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:weightSum="11">
+                android:weightSum="20">
 
                 <TextView
                     android:id="@+id/titleHeaderImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="@string/title_image"
                     android:textColor="@color/black"
@@ -105,7 +105,7 @@
                     android:id="@+id/titleHeaderId"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="@string/title_id"
                     android:textColor="@color/black"
@@ -115,7 +115,7 @@
                     android:id="@+id/titleHeaderName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center"
                     android:text="@string/title_product_name"
                     android:textColor="@color/black"
@@ -125,7 +125,7 @@
                     android:id="@+id/titleHeaderCategory"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="@string/title_category"
                     android:textColor="@color/black"
@@ -135,9 +135,19 @@
                     android:id="@+id/titleHeaderPrice"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="@string/title_price"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/titleHeaderSalePrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/title_sale_price"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -145,7 +155,7 @@
                     android:id="@+id/titleHeaderBarcode"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="@string/title_barcode"
                     android:textColor="@color/black"

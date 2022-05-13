@@ -35,13 +35,14 @@ object AlertDialogUtil {
         pDialog.show()
     }
 
-    fun showProgress(msg: String, context: Context) {
+    fun showProgress(msg: String, context: Context): KAlertDialog {
         val pDialog = KAlertDialog(context, KAlertDialog.PROGRESS_TYPE)
         pDialog.progressHelper.barColor = context.getColor(R.color.grey)
-        pDialog.titleText = "Info"
+        pDialog.titleText = "Processing..."
         pDialog.contentText = msg
         pDialog.setCancelable(false)
         pDialog.setCanceledOnTouchOutside(true)
         pDialog.show()
+        return pDialog
     }
 }

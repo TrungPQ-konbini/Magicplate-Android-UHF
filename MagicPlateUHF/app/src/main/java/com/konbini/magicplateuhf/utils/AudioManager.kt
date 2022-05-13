@@ -36,6 +36,7 @@ class AudioManager(private val context: Context) {
     private var mpPleaseTapCardAgain: MediaPlayer? = null
     private var mpCartIsEmpty: MediaPlayer? = null
     private var mpPleaseLookIntoCamera: MediaPlayer? = null
+    private var mpEnterDiscount: MediaPlayer? = null
 
     fun soundCartIsEmpty() {
         if (mpCartIsEmpty == null) {
@@ -189,5 +190,14 @@ class AudioManager(private val context: Context) {
             mpPleaseLookIntoCamera = MediaPlayer.create(context, R.raw.please_look_into_camera);
         }
         mpPleaseLookIntoCamera?.start()
+    }
+
+    fun soundEnterDiscount() {
+        mpEnterDiscount = MediaPlayer.create(context, R.raw.enter_discount)
+        mpEnterDiscount?.setOnCompletionListener {
+            mpEnterDiscount?.release()
+            mpEnterDiscount = null
+        }
+        mpEnterDiscount?.start()
     }
 }

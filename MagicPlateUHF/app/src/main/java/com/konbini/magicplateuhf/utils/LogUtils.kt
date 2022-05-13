@@ -51,6 +51,16 @@ object LogUtils {
         writeLog(message, MainApplication.shared().applicationContext, "MagicPlate")
     }
 
+    fun logCrash(r: Throwable) {
+        val ste = r.stackTrace
+        val stacktrace = StringWriter().also { r.printStackTrace(PrintWriter(it)) }.toString().trim()
+
+        val message = "[" + ste[1].fileName + ":" + ste[1].lineNumber + ":" + ste[1].methodName + "()] " + stacktrace
+        Log.e("Crash", message)
+
+        writeLog(message, MainApplication.shared().applicationContext, "Crash")
+    }
+
     fun logOffline(log: String) {
         val ste = Throwable().stackTrace
         val message = "[" + ste[1].fileName + ":" + ste[1].lineNumber + ":" + ste[1].methodName + "()] " + log

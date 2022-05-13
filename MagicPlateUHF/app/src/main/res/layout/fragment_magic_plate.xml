@@ -336,12 +336,15 @@
                     android:layout_height="match_parent"
                     android:layout_weight="4"
                     android:gravity="center"
+                    android:scrollbars="none"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
                     android:orientation="vertical">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewPayments"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
