@@ -51,10 +51,11 @@ object AppContainer {
                             // Check timestamp
                             currentTimeBock?.let {
                                 if (currentTimeBock!!.fromHour.isNotEmpty() && currentTimeBock!!.toHour.isNotEmpty()) {
+                                    val timestamp = tagEntity.timestamp?.toLong()!! * 1000
                                     val startTimeBlock = currentTimeBock?.fromHour?.toInt()?.let { CommonUtil.atTimeOfDay(it) }
                                     val endTimeBlock = currentTimeBock?.toHour?.toInt()?.let { CommonUtil.atTimeOfDay(it) }
 
-                                    if (tagEntity.timestamp?.toLong()!! >= startTimeBlock!! && tagEntity.timestamp?.toLong()!! <= endTimeBlock!!) {
+                                    if (timestamp >= startTimeBlock!! && timestamp <= endTimeBlock!!) {
                                         tagEntity.plateModelTitle = MainApplication.instance.resources.getString(R.string.title_custom_price)
                                     } else {
                                         tagEntity.customPrice = "000000"
