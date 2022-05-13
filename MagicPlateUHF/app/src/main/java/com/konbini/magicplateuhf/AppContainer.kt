@@ -16,6 +16,7 @@ object AppContainer {
         var tagSizeOld = 0
         var timeTagSizeChanged = 0L
         var listEPC: MutableList<String> = mutableListOf()
+        var strEpc = ""
 
         var isGettingToken = false
         var isSyncTransaction = false

@@ -34,8 +34,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
-    AdapterView.OnItemSelectedListener {
+class DiagnosticTagsFragment : Fragment() {
 
     companion object {
         const val TAG = "DiagnosticTagsFragment"
@@ -50,7 +49,7 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     private var listSetPlateModelDataRequest: MutableList<Data> = mutableListOf()
     private var listPLateModelsSync: MutableList<PlateModelEntity> = mutableListOf()
-    private var dataTags: ArrayList<TagEntity> = ArrayList()
+    private var dataTags: ArrayList<String> = ArrayList()
 
     private var binding: FragmentDiagnosticTagsBinding by autoCleared()
     private val viewModel: DiagnosticTagsViewModel by viewModels()
@@ -58,10 +57,16 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private val changeTagReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                "REFRESH_TAGS" -> {
+                "REFRESH_READER_TAGS" -> {
                     // Refresh tags
-                    dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
-                    dataTags.sortBy { tagEntity -> tagEntity.strEPC }
+                    //AppContainer.GlobalVariable.listEPC
+//                    dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
+//                    dataTags.sortBy { tagEntity -> tagEntity.strEPC }
+//                    adapter.setItems(dataTags)
+//                    setTitleButtonRegister()
+
+                    dataTags = ArrayList(AppContainer.GlobalVariable.listEPC)
+                    dataTags.sortBy { tagEntity -> tagEntity }
                     adapter.setItems(dataTags)
                     setTitleButtonRegister()
                 }
@@ -90,9 +95,9 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onStart() {
         super.onStart()
-        AppContainer.GlobalVariable.allowReadTags = false
+
         val filterIntent = IntentFilter()
-        filterIntent.addAction("REFRESH_TAGS")
+        filterIntent.addAction("REFRESH_READER_TAGS")
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(changeTagReceiver, IntentFilter(filterIntent))
     }
@@ -116,14 +121,11 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         listPlatesModel.forEach { _plateModelEntity ->
             listPlatesCode.add("${_plateModelEntity.plateModelCode} - ${_plateModelEntity.plateModelTitle}")
         }
-        binding.spinnerPlateModelCode.setLabel(getString(R.string.title_plate_code))
 
         val adapterSpinner =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listPlatesCode)
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerPlateModelCode.setAdapter(adapterSpinner)
 
-        binding.spinnerPlateModelCode.getSpinner().onItemSelectedListener = this
     }
 
     private fun setupRecyclerView() {
@@ -155,22 +157,7 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         LogUtils.logInfo("Sync Plate Models success")
 
                         val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList()
-                        if (listPlatesModel.isNotEmpty()) {
-                            val sel =
-                                binding.spinnerPlateModelCode.getSpinner().selectedItem
 
-                            listPlatesModel.forEach { m->
-                                val item = "${m.plateModelCode} - ${m.plateModelTitle}"
-                                if(sel == item) {
-                                    selectedPlateModel = m
-                                    val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
-                                    lastSerialNumber = selectedPlateModel.lastPlateSerial
-                                    binding.txtLastSerialNumber.text = Html.fromHtml(text)
-                                    binding.txtCurrentLastSerial.text = Html.fromHtml(text)
-                                }
-                            }
-
-                        }
 
 
                         showHideLoading(false)
@@ -212,83 +199,11 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private fun setupActions() {
-        binding.searchTags.setOnQueryTextListener(this)
 
-        binding.btnGetLastNumber.setSafeOnClickListener {
-            viewModel.syncPlateModels()
-        }
-
-        binding.btnEndSession.setSafeOnClickListener {
-            viewModel.setPlateModelData(ArrayList(listSetPlateModelDataRequest))
-        }
-
-        binding.btnStartWriting.setSafeOnClickListener {
-            writeTags()
-        }
-
-        binding.btnStartScan.setSafeOnClickListener {
-            AppContainer.GlobalVariable.allowReadTags = false
-            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-            Log.e(
-                MainApplication.TAG,
-                "==========Start command reading UHF=========="
-            )
-        }
-
-        binding.txtLastSerialNumber.setSafeOnClickListener {
-            writeTags2()
-        }
     }
 
-    private fun writeTags() {
-        if (!::selectedPlateModel.isInitialized) {
-            AlertDialogUtil.showWarning(
-                getString(R.string.message_warning_new_plate_code_required),
-                requireContext()
-            )
-            return
-        }
-        if (dataTags.isNotEmpty()) {
-            try {
-                showHideLoading(true)
-                listSetPlateModelDataRequest.clear()
-                AppContainer.GlobalVariable.allowWriteTags = true
-                writeTags(0)
-            } catch (ex: Exception) {
-                showHideLoading(false)
-                AlertDialogUtil.showError(
-                    ex.message.toString(),
-                    requireContext()
-                )
-                LogUtils.logError(ex)
-            }
-        }
-    }
 
-    private fun writeTags2() {
-        if (!::selectedPlateModel.isInitialized) {
-            AlertDialogUtil.showWarning(
-                getString(R.string.message_warning_new_plate_code_required),
-                requireContext()
-            )
-            return
-        }
-        if (dataTags.isNotEmpty()) {
-            try {
-                showHideLoading(true)
-                listSetPlateModelDataRequest.clear()
-                AppContainer.GlobalVariable.allowWriteTags = true
-                writeTags2(0)
-            } catch (ex: Exception) {
-                showHideLoading(false)
-                AlertDialogUtil.showError(
-                    ex.message.toString(),
-                    requireContext()
-                )
-                LogUtils.logError(ex)
-            }
-        }
-    }
+
 
     private fun setTitleButtonRegister() {
         if (dataTags.isEmpty()) {
@@ -300,16 +215,6 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         }
     }
 
-    override fun onQueryTextSubmit(p0: String?): Boolean {
-        return false
-    }
-
-    override fun onQueryTextChange(searchText: String): Boolean {
-        viewLifecycleOwner.lifecycleScope.launch {
-            adapter.customFilter(searchText, ArrayList(dataTags))
-        }
-        return false
-    }
 
     private fun showHideLoading(show: Boolean) {
         if (show) {
@@ -322,189 +227,8 @@ class DiagnosticTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         processing = show
     }
 
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel.toList()
-        if (listPlatesModel.isNotEmpty()) {
-            // p0?.getItemIdAtPosition(position)
-
-            val sel = p0?.selectedItem
-            val selId = p0?.selectedItemId
-
-            listPlatesModel.forEach { m->
-                val item = "${m.plateModelCode} - ${m.plateModelTitle}"
-                if(sel == item) {
-                    selectedPlateModel = m
-                    val text = "Last Serial Number: <b>${selectedPlateModel.lastPlateSerial}</b>"
-                    lastSerialNumber = selectedPlateModel.lastPlateSerial
-                    binding.txtLastSerialNumber.text = Html.fromHtml(text)
-                    binding.txtCurrentLastSerial.text = Html.fromHtml(text)
-                }
-            }
-        }
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {}
-
-    private fun setNewEPC(oldEPC: String): String {
-        if (serialNumber == 0) {
-            val lastPlateSerial = selectedPlateModel.lastPlateSerial.toInt(16)
-            serialNumber = lastPlateSerial + 1
-        } else {
-            serialNumber += 1
-        }
-
-        val newPlateModel = "%02X".format(selectedPlateModel.plateModelCode.toInt())
-        val newSerialNumber = "%06X".format(serialNumber)
-
-        val replaceNewPlateModel = oldEPC.replaceRange(0, 2, newPlateModel)
-        val replaceNewSerialNumber =  replaceNewPlateModel.replaceRange(4, 10, newSerialNumber)
-
-        return replaceNewSerialNumber
-    }
-
-    private fun writeTags(position: Int) {
-        lifecycleScope.launch {
-            try {
-                if (position < dataTags.size) {
-                    val tag = dataTags[position]
-                    val epcValue = tag.strEPC ?: ""
-                    if (epcValue.isEmpty()) return@launch
-
-                    // Select tag
-                    val epcMatch = UhfUtil.setAccessEpcMatch(
-                        epcValue,
-                        requireContext(),
-                        getString(R.string.message_error_param_unknown_error)
-                    )
-                    LogUtils.logInfo("[epcMatch] | $epcMatch")
-                    if (epcMatch != -1) {
-                        val newEPC = setNewEPC(epcValue)
-                        LogUtils.logInfo(
-                            "Old EPC: $epcValue | New EPC: $newEPC | ${
-                                newEPC.substring(0, 2).toInt(16)
-                            } | ${newEPC.substring(4, 10).toInt(16)}"
-                        )
-                        //Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
-                        delay(200)
-                        val writeTag = UhfUtil.writeTag(
-                            newEPC,
-                            requireContext(),
-                            getString(R.string.message_error_write_data_format)
-                        )
-                        LogUtils.logInfo("[writeTag] | $writeTag")
-                        if (writeTag != -1) {
-                            // Add serials for submit to server
-                            val data = Data(
-                                plateModelId = selectedPlateModel.plateModelId.toInt(),
-                                lastPlateSerial = newEPC.substring(4, 10)
-                            )
-                            listSetPlateModelDataRequest.add(data)
-                        }
-                    }
-                    delay(200)
-                    writeTags(position + 1)
-                } else {
-                    showHideLoading(false)
-
-                    val t1 = "Tag Written:<b> ${listSetPlateModelDataRequest.count()}</b>"
-                    binding.txtTagWritten.text = Html.fromHtml(t1)
-
-                    val t2 =
-                        "Current Last Serial:<b> ${listSetPlateModelDataRequest.last().lastPlateSerial}</b> "
-                    binding.txtCurrentLastSerial.text = Html.fromHtml(t2)
-
-                    delay(300)
-                    serialNumber = 0
-
-                    // Start reading UHF
-                    MainApplication.startRealTimeInventory()
-                }
-
-            } catch (ex: Exception) {
-                LogUtils.logError(ex)
-            }
-        }
-    }
-
-    private fun setNewEPC2(oldEPC: String): String {
-        if (serialNumber == 0) {
-            val lastPlateSerial = selectedPlateModel.lastPlateSerial.toInt(16)
-            serialNumber = lastPlateSerial + 1
-        } else {
-            serialNumber += 1
-        }
 
 
-       // serialNumber =  (1..5000).random()
-        serialNumber =  0
 
-        val newPlateModel = "%02X".format(selectedPlateModel.plateModelCode.toInt())
-        val newSerialNumber = "%06X".format(serialNumber)
 
-        return oldEPC.replace(oldEPC.substring(0, 2), newPlateModel)
-            .replace(oldEPC.substring(4, 10), newSerialNumber)
-    }
-
-    private fun writeTags2(position: Int) {
-        lifecycleScope.launch {
-            try {
-                if (position < dataTags.size) {
-                    val tag = dataTags[position]
-                    val epcValue = tag.strEPC ?: ""
-                    if (epcValue.isEmpty()) return@launch
-
-                    // Select tag
-                    val epcMatch = UhfUtil.setAccessEpcMatch(
-                        epcValue,
-                        requireContext(),
-                        getString(R.string.message_error_param_unknown_error)
-                    )
-                    LogUtils.logInfo("[epcMatch] | $epcMatch")
-                    if (epcMatch != -1) {
-                        val newEPC = setNewEPC2(epcValue)
-                        LogUtils.logInfo(
-                            "Old EPC: $epcValue | New EPC: $newEPC | ${
-                                newEPC.substring(0, 2).toInt(16)
-                            } | ${newEPC.substring(4, 10).toInt(16)}"
-                        )
-                        //Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
-                        delay(200)
-                        val writeTag = UhfUtil.writeTag(
-                            newEPC,
-                            requireContext(),
-                            getString(R.string.message_error_write_data_format)
-                        )
-                        LogUtils.logInfo("[writeTag] | $writeTag")
-                        if (writeTag != -1) {
-                            // Add serials for submit to server
-                            val data = Data(
-                                plateModelId = selectedPlateModel.plateModelId.toInt(),
-                                lastPlateSerial = newEPC.substring(4, 10)
-                            )
-                            listSetPlateModelDataRequest.add(data)
-                        }
-                    }
-                    delay(200)
-                    writeTags2(position + 1)
-                } else {
-                    showHideLoading(false)
-
-                    val t1 = "Tag Written:<b> ${listSetPlateModelDataRequest.count()}</b>"
-                    binding.txtTagWritten.text = Html.fromHtml(t1)
-
-                    val t2 =
-                        "Current Last Serial:<b> ${listSetPlateModelDataRequest.last().lastPlateSerial}</b> "
-                    binding.txtCurrentLastSerial.text = Html.fromHtml(t2)
-
-                    delay(300)
-                    serialNumber = 0
-                    // Start reading UHF
-                    MainApplication.startRealTimeInventory()
-                }
-
-            } catch (ex: Exception) {
-                LogUtils.logError(ex)
-            }
-        }
-    }
 }

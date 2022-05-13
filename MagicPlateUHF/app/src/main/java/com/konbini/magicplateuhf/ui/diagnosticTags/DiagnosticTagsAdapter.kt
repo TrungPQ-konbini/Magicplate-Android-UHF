@@ -2,6 +2,7 @@ package com.konbini.magicplateuhf.ui.diagnosticTags
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.konbini.magicplateuhf.R
@@ -11,9 +12,9 @@ import com.konbini.magicplateuhf.utils.CommonUtil
 
 class DiagnosticTagsAdapter : RecyclerView.Adapter<RegisterTagsViewHolder>() {
 
-    private val items = ArrayList<TagEntity>()
+    private val items = ArrayList<String>()
 
-    fun setItems(items: ArrayList<TagEntity>) {
+    fun setItems(items: ArrayList<String>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -30,16 +31,16 @@ class DiagnosticTagsAdapter : RecyclerView.Adapter<RegisterTagsViewHolder>() {
 
     override fun getItemCount(): Int = items.size
 
-    fun customFilter(charText: String, tags: ArrayList<TagEntity>) {
+    fun customFilter(charText: String, tags: ArrayList<String>) {
         if (tags.isEmpty()) return
         charText.lowercase()
         items.clear()
         if (charText.isEmpty()) {
             items.addAll(tags)
         } else {
-            for (tag: TagEntity in tags) {
-                if (tag.strEPC!!.lowercase()
-                        .contains(charText) || tag.plateModel!!.lowercase()
+            for (tag: String in tags) {
+                if (tag!!.lowercase()
+                        .contains(charText) || tag.lowercase()
                         .contains(charText)
                 ) {
                     items.add(tag)
@@ -55,17 +56,18 @@ class RegisterTagsViewHolder(
 ) : RecyclerView.ViewHolder(itemBinding.root) {
 
     @SuppressLint("SetTextI18n")
-    fun bind(item: TagEntity, position: Int) {
+    fun bind(item: String, position: Int) {
         itemBinding.tvIndex.text = "${position + 1}"
-        itemBinding.tvEPC.text = item.strEPC
-        itemBinding.tvPlateCode.text = "%02d".format(item.plateModel?.toInt())
-        itemBinding.tvPlateName.text = item.plateModelTitle ?: "N/A"
+        itemBinding.tvEPC.text = item
+        itemBinding.tvPlateCode.visibility = View.GONE
+        itemBinding.tvPlateName.visibility = View.GONE
+        itemBinding.tvSerialNumber.visibility = View.GONE
 
-        if(item.serialNumber == "N/A" || item.serialNumber.isNullOrEmpty()) {
-            itemBinding.tvSerialNumber.text = "N/A"
-        }else {
-            itemBinding.tvSerialNumber.text = "%06X".format(item.serialNumber!!.toInt())
-        }
+//        if(item.serialNumber == "N/A" || item.serialNumber.isNullOrEmpty()) {
+//            itemBinding.tvSerialNumber.text = "N/A"
+//        }else {
+//            itemBinding.tvSerialNumber.text = "%06X".format(item.serialNumber!!.toInt())
+//        }
 
         // Set background color
         if (position % 2 == 0) {

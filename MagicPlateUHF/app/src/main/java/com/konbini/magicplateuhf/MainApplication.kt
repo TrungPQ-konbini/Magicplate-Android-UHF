@@ -58,14 +58,23 @@ class MainApplication : Application() {
         private var rxObserver: RXObserver = object : RXObserver() {
             override fun onInventoryTag(tag: RXInventoryTag) {
                 Log.e(TAG, tag.strEPC)
+                AppContainer.GlobalVariable.strEpc = tag.strEPC
                 AppContainer.GlobalVariable.listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
+
             }
 
             override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
+
+                val intent = Intent()
+                intent.action = "REFRESH_READER_TAGS"
+                LocalBroadcastManager.getInstance(instance.applicationContext).sendBroadcast(intent)
+
                 Log.e(
                     TAG,
                     "==========End command reading UHF=========="
                 )
+
+
 
                 val current = System.currentTimeMillis()
                 if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
@@ -97,6 +106,8 @@ class MainApplication : Application() {
                         "==========Start command reading UHF=========="
                     )
                 }
+
+
 
                 AppContainer.GlobalVariable.listEPC.clear()
             }

@@ -359,29 +359,36 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             binding.rfidItemCount.blink(Color.RED, 1, 50L)
             clickedTitleModel += 1
             Log.e(TAG, "Clicked Title Model-$clickedTitleModel")
-            if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
+
+            if (clickedTitleModel >= 5) {
                 clickedTitleModel = 0
-                clickedTitleTotal = 0
                 // Goto Login
                 gotoLogin()
-            } else {
-                if (clickedTitleModel > 3) clickedTitleModel = 0
             }
+
+//            if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
+//                clickedTitleModel = 0
+//                clickedTitleTotal = 0
+//                // Goto Login
+//                gotoLogin()
+//            } else {
+//                if (clickedTitleModel > 3) clickedTitleModel = 0
+//            }
         }
 
-        binding.rfidTotalCount.setOnClickListener {
-            binding.rfidTotalCount.blink(Color.RED, 1, 50L)
-            clickedTitleTotal += 1
-            Log.e(TAG, "Clicked Title Total-$clickedTitleTotal")
-            if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
-                clickedTitleModel = 0
-                clickedTitleTotal = 0
-                // Goto Login
-                gotoLogin()
-            } else {
-                if (clickedTitleTotal > 3) clickedTitleTotal = 0
-            }
-        }
+//        binding.rfidTotalCount.setOnClickListener {
+//            binding.rfidTotalCount.blink(Color.RED, 1, 50L)
+//            clickedTitleTotal += 1
+//            Log.e(TAG, "Clicked Title Total-$clickedTitleTotal")
+//            if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
+//                clickedTitleModel = 0
+//                clickedTitleTotal = 0
+//                // Goto Login
+//                gotoLogin()
+//            } else {
+//                if (clickedTitleTotal > 3) clickedTitleTotal = 0
+//            }
+//        }
 
         binding.rfidCancelPayment.setSafeOnClickListener {
             cancelPayment()
