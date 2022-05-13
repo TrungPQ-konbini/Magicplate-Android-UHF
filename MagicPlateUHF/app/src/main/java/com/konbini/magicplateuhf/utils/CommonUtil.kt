@@ -44,7 +44,10 @@ class CommonUtil {
                     dateJob = Date(jobLocalTime)
                 } else {
                     // Tomorrow's Job
-                    calendarJob.set(Calendar.DAY_OF_MONTH, calendarJob.get(Calendar.DAY_OF_MONTH) + 1)
+                    calendarJob.set(
+                        Calendar.DAY_OF_MONTH,
+                        calendarJob.get(Calendar.DAY_OF_MONTH) + 1
+                    )
                     jobLocalTime = calendarJob.timeInMillis
                     dateJob = Date(jobLocalTime)
                 }
@@ -63,7 +66,20 @@ class CommonUtil {
         }
 
         fun theMonth(month: Int): String {
-            val monthNames = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+            val monthNames = arrayOf(
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December"
+            )
             return monthNames[month]
         }
 
@@ -119,6 +135,14 @@ class CommonUtil {
             return calendar.timeInMillis
         }
 
+        fun atTimeOfDay(hour: Int): Long {
+            val calendar = Calendar.getInstance()
+            calendar[Calendar.HOUR_OF_DAY] = hour
+            calendar[Calendar.MINUTE] = 0
+            calendar[Calendar.SECOND] = 0
+            return calendar.timeInMillis
+        }
+
         fun convertStringToMillis(date: String, format: String = "dd/M/yyyy"): Long {
             val calendar = Calendar.getInstance()
             val date = SimpleDateFormat(format, Locale.getDefault()).parse(date)
@@ -147,7 +171,8 @@ class CommonUtil {
             val formatterTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
             // get old cart
-            val cart = Gson().fromJson(transactionEntity.details, Array<CartEntity>::class.java).asList()
+            val cart =
+                Gson().fromJson(transactionEntity.details, Array<CartEntity>::class.java).asList()
 
             val listProducts: MutableList<SubmitTransactionRequestProducts> = mutableListOf()
 
@@ -156,7 +181,7 @@ class CommonUtil {
                     productId = _cartEntity.productId.toInt(),
                     productQuantity = _cartEntity.quantity,
                     isCustomPrice = true,
-                    customPrice = _cartEntity.price.toDouble()
+                    customPrice = if (_cartEntity.salePrice.isEmpty()) _cartEntity.price.toDouble() else _cartEntity.salePrice.toDouble()
                 )
                 listProducts.add(product)
             }
@@ -175,9 +200,9 @@ class CommonUtil {
                 others = "",
                 slotId = "",
                 discountType = "0",
-                ccwId1= "",
-                ccwId2= "",
-                ccwId3= "",
+                ccwId1 = "",
+                ccwId2 = "",
+                ccwId3 = "",
                 products = ArrayList(listProducts)
             )
         }
@@ -185,7 +210,7 @@ class CommonUtil {
         fun formatCreateAnOrderRequest(transactionEntity: TransactionEntity): OrderRequest {
             // get old cart
             val cart =
-                Gson().fromJson(transactionEntity.details, Array<MenuEntity>::class.java).asList()
+                Gson().fromJson(transactionEntity.details, Array<CartEntity>::class.java).asList()
 
             // format meta data
             val metaData = formatMetaData(transactionEntity)
@@ -259,15 +284,19 @@ class CommonUtil {
             return metaData
         }
 
-        private fun formatLineItems(cart: List<MenuEntity>): MutableList<LineItem> {
+        private fun formatLineItems(cart: List<CartEntity>): MutableList<LineItem> {
             val lineItems: MutableList<LineItem> = mutableListOf()
-            cart.forEach { _menuEntity ->
-                var total = _menuEntity.price?.toDouble()?.times(_menuEntity.quantity!!)
+            cart.forEach { _cartEntity ->
+                var total = _cartEntity.price?.toDouble()?.times(_cartEntity.quantity!!)
+                if (_cartEntity.salePrice != "0") {
+                    total = _cartEntity.salePrice?.toDouble()?.times(_cartEntity.quantity!!)
+                }
                 val metaData: MutableList<Any> = mutableListOf()
                 var metaDataOptions: MetaDataOption
 
-                if (!_menuEntity.options.isNullOrEmpty()) {
-                    val options = Gson().fromJson(_menuEntity.options, Array<Option>::class.java).asList()
+                if (!_cartEntity.options.isNullOrEmpty()) {
+                    val options =
+                        Gson().fromJson(_cartEntity.options, Array<Option>::class.java).asList()
                     options.forEach { _option ->
                         val listExOptions: MutableList<ExOptions> = mutableListOf()
                         _option.options?.forEach { _optionItem ->
@@ -290,7 +319,7 @@ class CommonUtil {
                                     )
                                     metaData.add(metaDataItem)
 
-                                    total += if (_optionItem.price.isNullOrEmpty()) 0.00 else _optionItem.price.toDouble() * _menuEntity.quantity!!
+                                    total += if (_optionItem.price.isNullOrEmpty()) 0.00 else _optionItem.price.toDouble() * _cartEntity.quantity!!
                                 }
                             }
                         }
@@ -303,8 +332,8 @@ class CommonUtil {
                 }
 
                 val lineItem = LineItem(
-                    productId = _menuEntity.productId?.toInt(),
-                    quantity = _menuEntity.quantity,
+                    productId = _cartEntity.productId?.toInt(),
+                    quantity = _cartEntity.quantity,
                     subtotal = total.toString(),
                     total = total.toString(),
                     subtotalTax = "0.00",
@@ -320,17 +349,15 @@ class CommonUtil {
 
         fun convertEpcToTagEntity(strEPC: String): TagEntity? {
             if (strEPC.length != AppSettings.Machine.LengthEPC) return null
-            //var customPrice = "000000"
-           //customPrice = strEPC.substring(18).toInt(16).toString()
+            var customPrice = "000000"
+            customPrice = strEPC.substring(18).toInt(16).toString()
 
             return TagEntity(
                 strEPC = strEPC,
                 plateModel = strEPC.substring(0, 2).toInt(16).toString(),
                 serialNumber = strEPC.substring(4, 10).toInt(16).toString(),
-                //paidDate = strEPC.substring(14, 16).toInt(16).toString(),
-                //paidSession = strEPC.substring(16, 18).toInt(16).toString(),
-                //customPrice = customPrice,
-                //lastUpdate = System.currentTimeMillis()
+                timestamp = strEPC.substring(10, 18).toInt(16).toString(),
+                customPrice = customPrice
             )
         }
 

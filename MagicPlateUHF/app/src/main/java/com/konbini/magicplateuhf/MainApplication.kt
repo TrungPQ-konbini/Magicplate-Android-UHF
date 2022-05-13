@@ -69,20 +69,14 @@ class MainApplication : Application() {
 
                 val current = System.currentTimeMillis()
                 if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
-                    if (AppSettings.Options.IgnoreWhenRemovingTags) {
-                        if (AppContainer.CurrentTransaction.listEPC.size < AppContainer.GlobalVariable.listEPC.size || AppContainer.GlobalVariable.listEPC.isEmpty()) {
-                            sendBroadcastRefreshTags()
-                        }
+                    if (timeTagSizeChanged == 0L) {
+                        timeTagSizeChanged = current
                     } else {
-                        if (timeTagSizeChanged == 0L) {
-                            timeTagSizeChanged = current
+                        val offset = current - timeTagSizeChanged
+                        if (offset < 500) {
+                            Log.e(TAG, "$current | $offset => Ignore")
                         } else {
-                            val offset = current - timeTagSizeChanged
-                            if (offset < 500) {
-                                Log.e(TAG, "$current | $offset => Ignore")
-                            } else {
-                                sendBroadcastRefreshTags()
-                            }
+                            sendBroadcastRefreshTags()
                         }
                     }
                 } else {
@@ -111,17 +105,38 @@ class MainApplication : Application() {
                 AppContainer.CurrentTransaction.paymentState = PaymentState.Init
                 LogUtils.logInfo("Start new Transaction")
             }
-            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing) {
-                LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
+            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init
+                && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
+                && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
+            ) {
+                //LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
                 return
             }
 
-            AppContainer.CurrentTransaction.listEPC.clear()
-            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+            if (AppSettings.Options.IgnoreWhenRemovingTags) {
+                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+                    AppContainer.GlobalVariable.listEPC.forEach { _epc ->
+                        if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
+                            AppContainer.CurrentTransaction.listEPC.add(_epc)
+                        }
+                    }
+                } else {
+                    AppContainer.CurrentTransaction.currentDiscount = 0F
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                }
+            } else {
+                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                    AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                } else {
+                    AppContainer.CurrentTransaction.currentDiscount = 0F
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                }
+            }
 
             // Get list tags
             val listTagEntity =
-                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+                AppContainer.GlobalVariable.getListTagEntity(AppContainer.CurrentTransaction.listEPC)
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
 
             timeTagSizeChanged = 0L
@@ -138,8 +153,13 @@ class MainApplication : Application() {
         }
 
         fun startRealTimeInventory() {
-            AppContainer.GlobalVariable.allowReadTags = true
-            mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            try {
+                AppContainer.GlobalVariable.allowReadTags = true
+                if (this::mReaderUHF.isInitialized)
+                    mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
+            }
         }
 
         fun initIM30() {
@@ -230,6 +250,13 @@ class MainApplication : Application() {
     }
 
     override fun onCreate() {
+        Thread.setDefaultUncaughtExceptionHandler { thread, e ->
+            handleUncaughtException(
+                thread,
+                e
+            )
+        }
+
         LogUtils.logInfo("Start App")
         initSetting()
         mainAppInit?.invoke()
@@ -241,6 +268,10 @@ class MainApplication : Application() {
         initRFIDReaderUHF()
         initIM30()
         super.onCreate()
+    }
+
+    private fun handleUncaughtException(thread: Thread, e: Throwable) {
+        LogUtils.logCrash(e)
     }
 
     private fun initSetting() {

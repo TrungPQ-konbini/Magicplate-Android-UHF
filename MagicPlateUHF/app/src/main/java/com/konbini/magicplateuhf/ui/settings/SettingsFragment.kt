@@ -158,6 +158,7 @@ class SettingsFragment : Fragment() {
         binding.cloudClientId.setText(AppSettings.Cloud.ClientId)
         binding.cloudClientSecret.setText(AppSettings.Cloud.ClientSecret)
         bindOrderStatus()
+        binding.cloudProductIdFroCustomPrice.setText(AppSettings.Cloud.ProductIdForCustomPrice.toString())
     }
 
     private fun bindOrderStatus() {
@@ -217,6 +218,7 @@ class SettingsFragment : Fragment() {
         val cloudConsumerSecret = binding.cloudConsumerSecret.text.toString().trim()
         val cloudClientId = binding.cloudClientId.text.toString().trim()
         val cloudClientSecret = binding.cloudClientSecret.text.toString().trim()
+        val cloudProductIdFroCustomPrice = binding.cloudProductIdFroCustomPrice.text.toString().trim()
 
         val walletHost = binding.walletHost.text.toString().trim()
         val walletClientId = binding.walletClientId.text.toString().trim()
@@ -289,6 +291,7 @@ class SettingsFragment : Fragment() {
         PrefUtil.setString("AppSettings.Cloud.ClientId", cloudClientId)
         PrefUtil.setString("AppSettings.Cloud.ClientSecret", cloudClientSecret)
         PrefUtil.setString("AppSettings.Cloud.OrderStatus", binding.cloudOrderStatus.selectedItem.toString())
+        PrefUtil.setInt("AppSettings.Cloud.ProductIdForCustomPrice", cloudProductIdFroCustomPrice.toInt())
 
         PrefUtil.setString("AppSettings.Wallet.Host", walletHost)
         PrefUtil.setString("AppSettings.Wallet.ClientId", walletClientId)

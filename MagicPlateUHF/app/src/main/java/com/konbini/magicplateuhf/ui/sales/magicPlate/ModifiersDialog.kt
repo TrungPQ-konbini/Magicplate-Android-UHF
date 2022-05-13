@@ -23,7 +23,7 @@ import java.lang.reflect.Type
 
 class ModifiersDialog(
     private val cartEntity: CartEntity,
-    private val cartType: String = MachineType.MAGIC_PLATE.value
+    private val cartType: String = MachineType.MAGIC_PLATE_MODE.value
 ) : DialogFragment() {
 
     companion object {
@@ -74,7 +74,7 @@ class ModifiersDialog(
             val changedCart: MutableList<CartEntity> = mutableListOf()
 
             val changedOptions: MutableList<Option> = mutableListOf()
-            if (MachineType.SELF_KIOSK.value == cartType) {
+            if (MachineType.SELF_KIOSK_MODE.value == cartType) {
                 changedOptions.addAll(options)
             } else {
                 if (!cartEntity.options.isNullOrEmpty()) {
@@ -92,7 +92,7 @@ class ModifiersDialog(
 
             cartEntity.options = gson.toJson(changedOptions)
 
-            if (MachineType.SELF_KIOSK.value == cartType) {
+            if (MachineType.SELF_KIOSK_MODE.value == cartType) {
                 var cartExist = false
                 AppContainer.CurrentTransaction.cart.forEach currentCart@{ _cartEntity ->
                     if (_cartEntity.uuid == cartEntity.uuid

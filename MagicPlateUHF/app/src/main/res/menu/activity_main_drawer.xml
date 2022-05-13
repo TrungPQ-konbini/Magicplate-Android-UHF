@@ -29,6 +29,14 @@
             android:icon="@drawable/ic_transaction"
             android:title="@string/menu_transactions" />
         <item
+            android:id="@+id/nav_users"
+            android:icon="@drawable/ic_user"
+            android:title="@string/menu_users" />
+        <item
+            android:id="@+id/nav_discounts"
+            android:icon="@drawable/ic_discounts"
+            android:title="@string/menu_discounts" />
+        <item
             android:id="@+id/nav_options_setting"
             android:icon="@drawable/ic_options"
             android:title="@string/menu_options" />

@@ -23,6 +23,8 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_write_tags">Write Tags</string>
     <string name="menu_register_tags">Register Tags</string>
+    <string name="menu_users">Users</string>
+    <string name="menu_discounts">Discount</string>
 
     <string name="title_company">Company</string>
     <string name="title_company_logo">Logo</string>
@@ -65,12 +67,13 @@
     <string name="title_alert_slack_webhook">Webhook</string>
 
     <string name="title_pos">POS</string>
-    <string name="title_customer_ui">CustomerUI</string>
-    <string name="title_self_kiosk">Self Kiosk</string>
+    <string name="title_magic_plate_mode">Magic Plate Mode</string>
+    <string name="title_self_kiosk_mode">Self Kiosk Mode</string>
     <string name="title_payment">Payment</string>
     <string name="title_ez_link">EzLink</string>
     <string name="title_master_card">MasterCard</string>
     <string name="title_pay_now">PayNow</string>
+    <string name="title_cash">Cash</string>
     <string name="title_reader_asc">Reader ASC</string>
     <string name="title_black">Black</string>
     <string name="title_white">White</string>
@@ -88,6 +91,7 @@
     <string name="title_product_name">Product Name</string>
     <string name="title_category">Category</string>
     <string name="title_price">Price</string>
+    <string name="title_sale_price">Sale Price</string>
     <string name="title_barcode">Barcode</string>
     <string name="title_epc">EPC</string>
     <string name="title_plate_code">Plate Code</string>
@@ -106,6 +110,7 @@
     <string name="title_register_tags">Register %s Tags</string>
     <string name="title_register_failed">Register failed</string>
     <string name="title_custom_price">Custom Price</string>
+    <string name="title_expired_custom_price">Expired custom price</string>
     <string name="title_not_allow_wallet_non_rfid">Do not allow wallet payments with non-RFID</string>
     <string name="title_count_n_tags">Counts: %s Tags</string>
     <string name="title_sync_transactions">Sync Transactions</string>
@@ -123,6 +128,29 @@
     <string name="title_x_day_store_local_menus">Store X days of expired Menus</string>
     <string name="title_periodic_get_token">Periodic Get Token</string>
     <string name="title_uhf_reader">UHF Reader</string>
+    <string name="title_display_name">Display Name</string>
+    <string name="title_role">Role</string>
+    <string name="title_roles">Roles</string>
+    <string name="title_ccw_id1">CCW ID1</string>
+    <string name="title_ccw_id2">CCW ID2</string>
+    <string name="title_ccw_id3">CCW ID3</string>
+    <string name="title_add_new">Add New</string>
+    <string name="title_discount_type">Discount Type</string>
+    <string name="title_roles_will_apply_discounts">Roles will apply discounts</string>
+    <string name="title_bluetooth">Bluetooth</string>
+    <string name="title_serial_number">Serial Number</string>
+    <string name="title_ignore_when_removing_tags">Ignore when removing tags</string>
+    <string name="title_plate_last_serial_number">Last Serial Number</string>
+    <string name="title_receipt_width_paper">Receipt Width Paper</string>
+    <string name="title_receipt_content">Receipt Content</string>
+    <string name="title_printer">Receipt Printer</string>
+    <string name="title_tcp">TCP</string>
+    <string name="title_usb">USB</string>
+    <string name="title_nfc">NFC</string>
+    <string name="title_discount">Discount</string>
+    <string name="title_discount_mode">Discount Mode</string>
+    <string name="title_add_picture">Add Picture</string>
+    <string name="title_remove_picture">Remove Picture</string>
 
     <!--Category-->
     <string name="title_category_name">Category Name</string>
@@ -145,6 +173,7 @@
     <string name="message_success_sync">Sync Success !!!</string>
     <string name="message_success_register">Register Success !!!</string>
     <string name="message_success_login">Login Success !!!</string>
+    <string name="message_success_payment">Payment Success !!!</string>
     <string name="message_success_payment_balance">Payment Success !!! \n Balance: %s</string>
     <string name="message_success_sync_order">Sync Order #%s Success !!!</string>
 
@@ -165,14 +194,12 @@
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>
-    <string name="title_receipt_width_paper">Receipt Width Paper</string>
-    <string name="title_receipt_content">Receipt Content</string>
-    <string name="title_printer">Receipt Printer</string>
-    <string name="title_tcp">TCP</string>
-    <string name="title_usb">USB</string>
     <string name="message_error_TCP_is_empty">TCP is empty!!!</string>
-    <string name="title_bluetooth">Bluetooth</string>
-    <string name="title_serial_number">Serial Number</string>
-    <string name="title_ignore_when_removing_tags">Ignore when removing tags</string>
-    <string name="title_plate_last_serial_number">Last Serial Number</string>
+    <string name="message_warning_role_is_required">Please select Role!!!</string>
+    <string name="message_warning_discount_type_is_required">Please select discount type!!!</string>
+    <string name="message_error_exists">This record already exists!!!</string>
+    <string name="message_please_scan_barcode">Please Scan Barcode !!!</string>
+    <string name="message_please_tap_membership_card">Please Tap Membership Card !!!</string>
+    <string name="message_error_user_not_found">User not found!!!</string>
+    <string name="title_product_id_for_custom_price">Product ID for custom price</string>
 </resources>

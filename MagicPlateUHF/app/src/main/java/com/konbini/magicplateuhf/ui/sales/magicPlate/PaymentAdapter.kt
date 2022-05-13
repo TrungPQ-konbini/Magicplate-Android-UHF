@@ -123,6 +123,38 @@ class PaymentViewHolder(
                     )
                 }
             }
+            PaymentType.CASH.value -> {
+                if (AppSettings.Options.Payment.pathImageCash.isNotEmpty()) {
+                    val imgFile = File(AppSettings.Options.Payment.pathImageCash)
+                    if (imgFile.exists()) {
+                        val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                        itemBinding.btnCardType.setImageBitmap(imgBitmap)
+                    }
+                } else {
+                    itemBinding.btnCardType.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            itemView.context,
+                            R.drawable.ic_money
+                        )
+                    )
+                }
+            }
+            PaymentType.DISCOUNT.value -> {
+                if (AppSettings.Options.Payment.pathImageDiscount.isNotEmpty()) {
+                    val imgFile = File(AppSettings.Options.Payment.pathImageDiscount)
+                    if (imgFile.exists()) {
+                        val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                        itemBinding.btnCardType.setImageBitmap(imgBitmap)
+                    }
+                } else {
+                    itemBinding.btnCardType.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            itemView.context,
+                            R.drawable.ic_discounts
+                        )
+                    )
+                }
+            }
             else -> {
                 itemBinding.btnCardType.setImageDrawable(
                     ContextCompat.getDrawable(

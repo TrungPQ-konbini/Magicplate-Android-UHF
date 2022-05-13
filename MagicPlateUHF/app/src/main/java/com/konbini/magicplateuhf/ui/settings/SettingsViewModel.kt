@@ -1,5 +1,6 @@
 package com.konbini.magicplateuhf.ui.settings
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -18,6 +19,7 @@ import com.konbini.magicplateuhf.data.remote.product.request.ProductsRequest
 import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.data.remote.product.response.ProductResponse
 import com.konbini.magicplateuhf.data.remote.timeBlock.response.TimeBlock
+import com.konbini.magicplateuhf.data.remote.user.request.GetAllUserRequest
 import com.konbini.magicplateuhf.data.repository.*
 import com.konbini.magicplateuhf.utils.PrefUtil
 import com.konbini.magicplateuhf.utils.Resource
@@ -37,7 +39,8 @@ class SettingsViewModel @Inject constructor(
     private val plateModelRepository: PlateModelRepository,
     private val timeBlockRepository: TimeBlockRepository,
     private val menuRepository: MenuRepository,
-    private val orderStatusRepository: OrderStatusRepository
+    private val orderStatusRepository: OrderStatusRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     companion object {
         const val TAG = "SettingsViewModel"
@@ -132,7 +135,9 @@ class SettingsViewModel @Inject constructor(
         return ProductEntity(
             id = productResponse.id,
             name = productResponse.name,
-            price = productResponse.price ?: "0",
+            price = productResponse.price ?: "",
+            regularPrice = productResponse.regularPrice ?: "",
+            salePrice = productResponse.salePrice ?: "",
             parentId = productResponse.parentId.toString(),
             categories = productResponse.categories!!.map { it.id }.joinToString(separator = ","),
             images = productResponse.images!!.map { it.src }.joinToString(separator = ","),
@@ -300,7 +305,65 @@ class SettingsViewModel @Inject constructor(
                     message
                 )
             }
+
+            // Sync All User
+            val getAllUsersRequest = formatGetAllUsers()
+            Log.e(TAG, gson.toJson(getAllUsersRequest))
+            val syncUsers = async {
+                userRepository.getAllUsers(url, getAllUsersRequest)
+            }
+
+            Log.e(TAG, syncUsers.await().status.toString())
+            Log.e(TAG, gson.toJson(syncUsers.await().data))
+            if (syncUsers.await().status == Resource.Status.SUCCESS) {
+                syncUsers.await().data?.let { response ->
+                    if (response.success) {
+                        // Delete old Users
+                        userRepository.deleteAll()
+
+                        // Save new Users
+                        val listUsers: MutableList<UserEntity> = mutableListOf()
+                        val listRoles: MutableList<String> = mutableListOf()
+                        response.data.forEach { _userResponse ->
+                            val userEntity = UserEntity(
+                                id = _userResponse.id.toInt(),
+                                displayName = _userResponse.displayName,
+                                roles = if (_userResponse.roles.isNotEmpty()) _userResponse.roles.joinToString(separator = ", ") else "",
+                                ccwId1 = if (_userResponse.ccwId1.isEmpty()) "" else _userResponse.ccwId1,
+                                ccwId2 = if (_userResponse.ccwId2.isEmpty()) "" else _userResponse.ccwId2,
+                                ccwId3 = if (_userResponse.ccwId3.isEmpty()) "" else _userResponse.ccwId3
+                            )
+                            listUsers.add(userEntity)
+
+                            if (_userResponse.roles.isNotEmpty()) {
+                                _userResponse.roles.forEach { _role ->
+                                    if (!listRoles.contains(_role)) {
+                                        listRoles.add(_role)
+                                    }
+                                }
+                            }
+                        }
+                        if (listUsers.isNotEmpty())
+                            userRepository.insertAll(listUsers.toList())
+
+                        if (listRoles.isNotEmpty()) {
+                            PrefUtil.setString("AppSettings.Options.RolesList", listRoles.joinToString(separator = ","))
+
+                            // Refresh Configuration
+                            AppSettings.getAllSetting()
+                        }
+                    }
+                }
+            } else {
+                Log.e(TAG, syncUsers.await().message.toString())
+            }
         }
+    }
+
+    private fun formatGetAllUsers(): GetAllUserRequest {
+        return GetAllUserRequest(
+            AppContainer.GlobalVariable.currentToken
+        )
     }
 
     private fun formatSyncCategories(): CategoriesRequest {
