@@ -67,6 +67,11 @@ object AppSettings {
             }
         }
     }
+
+    object UHFStructure {
+        var CustomPrice = "FF"
+    }
+
     object Company {
         var Logo = ""
         var Name = "Konbini"
@@ -100,6 +105,7 @@ object AppSettings {
         var ClientSecret = "UgWmwqG44HvO0ByNmQSmt7TvuEZrBlwQU6isYowg"
         var OrderStatus = "completed"
         var AllOrderStatus = ""
+        var ProductIdForCustomPrice = 0
     }
 
     object Wallet {
@@ -190,7 +196,7 @@ object AppSettings {
     }
 
     object APIs {
-        var useNativeWoo = false
+        var UseNativeWoo = false
         var ListAllProductCategories = "/wp-json/wc/v3/products/categories"
         var ListAllProducts = "/wp-json/wc/v3/products"
         var GetPlateModelData = "/wp-json/wp/v2/magicplate-web/get-plate-model-data"

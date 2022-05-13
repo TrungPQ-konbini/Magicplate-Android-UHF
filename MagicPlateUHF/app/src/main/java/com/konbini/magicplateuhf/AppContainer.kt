@@ -45,6 +45,25 @@ object AppContainer {
                         listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode.toInt() == tagEntity.plateModel?.toInt() }
                     if (plateModelEntity != null) {
                         tagEntity.plateModelTitle = plateModelEntity.plateModelTitle
+                    } else {
+                        if (tagEntity.plateModel == AppSettings.UHFStructure.CustomPrice.toInt(16).toString()) {
+                            // Check timestamp
+                            currentTimeBock?.let {
+                                if (currentTimeBock!!.fromHour.isNotEmpty() && currentTimeBock!!.toHour.isNotEmpty()) {
+                                    val startTimeBlock = currentTimeBock?.fromHour?.toInt()?.let { CommonUtil.atTimeOfDay(it) }
+                                    val endTimeBlock = currentTimeBock?.toHour?.toInt()?.let { CommonUtil.atTimeOfDay(it) }
+
+                                    if (tagEntity.timestamp?.toLong()!! >= startTimeBlock!! && tagEntity.timestamp?.toLong()!! <= endTimeBlock!!) {
+                                        tagEntity.plateModelTitle = MainApplication.instance.resources.getString(R.string.title_custom_price)
+                                    } else {
+                                        tagEntity.customPrice = "000000"
+                                        tagEntity.plateModelTitle = MainApplication.instance.resources.getString(R.string.title_expired_custom_price)
+                                    }
+                                }
+                            }
+
+
+                        }
                     }
 
                     listTagEntity.add(tagEntity)
@@ -93,59 +112,84 @@ object AppContainer {
             if (listTagEntity.isNotEmpty()) {
                 totalPrice = 0F
                 listTagEntity.forEach { _tagEntity ->
-                    val menuEntity = GlobalVariable.listMenusToday.find { _menuEntity ->
-                        _menuEntity.plateModelCode.toInt() == _tagEntity.plateModel?.toInt()
-                    }
-                    if (menuEntity != null) {
-                        val customPrice = _tagEntity.customPrice
-                        val findProduct = findProduct(menuEntity.productId.toInt())
-                        val cartEntity = CartEntity(
-                            uuid = UUID.randomUUID().toString(),
-                            strEPC = _tagEntity.strEPC ?: "",
-                            menuDate = menuEntity.menuDate,
-                            timeBlockId = menuEntity.timeBlockId,
-                            productId = menuEntity.productId,
-                            plateModelId = menuEntity.plateModelId,
-                            price = if (customPrice.isNullOrEmpty() || !CommonUtil.isNumber(
-                                    customPrice
-                                ) || customPrice == ""
-                            ) menuEntity.price else (customPrice.toFloat() / 100).toString(),
-                            salePrice = "",
-                            productName = menuEntity.productName,
-                            plateModelName = menuEntity.plateModelName,
-                            plateModelCode = menuEntity.plateModelCode,
-                            timeBlockTitle = menuEntity.timeBlockTitle,
-                            quantity = menuEntity.quantity,
-                            options = menuEntity.options
-                        )
-
-                        var itemPrice = cartEntity.price.toFloat()
-
-                        if (currentDiscount > 0) {
-                            cartEntity.salePrice = findProduct?.salePrice ?: ""
-                            itemPrice = if (cartEntity.salePrice.isNotEmpty()) cartEntity.salePrice.toFloat() else cartEntity.price.toFloat()
+                    when (_tagEntity.plateModel) {
+                        AppSettings.UHFStructure.CustomPrice.toInt(16).toString() -> {
+                            val cartEntity = CartEntity(
+                                uuid = UUID.randomUUID().toString(),
+                                strEPC = _tagEntity.strEPC ?: "",
+                                menuDate = "",
+                                timeBlockId = "",
+                                productId = AppSettings.Cloud.ProductIdForCustomPrice.toString(),
+                                plateModelId = "",
+                                price = (_tagEntity.customPrice.toFloat() / 100).toString(),
+                                salePrice = "",
+                                productName = _tagEntity.plateModelTitle ?: "N/A",
+                                plateModelName = _tagEntity.plateModelTitle ?: "N/A",
+                                plateModelCode = _tagEntity.plateModel ?: "N/A",
+                                timeBlockTitle = "",
+                                quantity = 1,
+                                options = ""
+                            )
+                            val itemPrice = cartEntity.price.toFloat()
+                            totalPrice += (itemPrice * cartEntity.quantity.toFloat())
+                            cart.add(cartEntity)
                         }
+                        else -> {
+                            val menuEntity = GlobalVariable.listMenusToday.find { _menuEntity ->
+                                _menuEntity.plateModelCode.toInt() == _tagEntity.plateModel?.toInt()
+                            }
+                            if (menuEntity != null) {
+                                val findProduct = findProduct(menuEntity.productId.toInt())
+                                val cartEntity = CartEntity(
+                                    uuid = UUID.randomUUID().toString(),
+                                    strEPC = _tagEntity.strEPC ?: "",
+                                    menuDate = menuEntity.menuDate,
+                                    timeBlockId = menuEntity.timeBlockId,
+                                    productId = menuEntity.productId,
+                                    plateModelId = menuEntity.plateModelId,
+                                    price = menuEntity.price,
+                                    //if (customPrice.isNullOrEmpty() || !CommonUtil.isNumber(
+                                    //        customPrice
+                                    //    ) || customPrice == ""
+                                    //) menuEntity.price else (customPrice.toFloat() / 100).toString(),
+                                    salePrice = "",
+                                    productName = menuEntity.productName,
+                                    plateModelName = menuEntity.plateModelName,
+                                    plateModelCode = menuEntity.plateModelCode,
+                                    timeBlockTitle = menuEntity.timeBlockTitle,
+                                    quantity = menuEntity.quantity,
+                                    options = menuEntity.options
+                                )
 
-                        if (!cartEntity.options.isNullOrEmpty()) {
-                            val collectionType: Type =
-                                object : TypeToken<Collection<Option?>?>() {}.type
-                            val options: Collection<Option> =
-                                gson.fromJson(cartEntity.options, collectionType)
+                                var itemPrice = cartEntity.price.toFloat()
 
-                            options.forEach { _option ->
-                                _option.options?.forEach { _optionItem ->
-                                    if (_optionItem.isChecked) {
-                                        var price = 0F
-                                        if (!_optionItem.price.isNullOrEmpty())
-                                            price = _optionItem.price.toFloat()
-                                        itemPrice += price
+                                if (currentDiscount > 0) {
+                                    cartEntity.salePrice = findProduct?.salePrice ?: ""
+                                    itemPrice = if (cartEntity.salePrice.isNotEmpty()) cartEntity.salePrice.toFloat() else cartEntity.price.toFloat()
+                                }
+
+                                if (!cartEntity.options.isNullOrEmpty()) {
+                                    val collectionType: Type =
+                                        object : TypeToken<Collection<Option?>?>() {}.type
+                                    val options: Collection<Option> =
+                                        gson.fromJson(cartEntity.options, collectionType)
+
+                                    options.forEach { _option ->
+                                        _option.options?.forEach { _optionItem ->
+                                            if (_optionItem.isChecked) {
+                                                var price = 0F
+                                                if (!_optionItem.price.isNullOrEmpty())
+                                                    price = _optionItem.price.toFloat()
+                                                itemPrice += price
+                                            }
+                                        }
                                     }
                                 }
+
+                                totalPrice += (itemPrice * cartEntity.quantity.toFloat())
+                                cart.add(cartEntity)
                             }
                         }
-
-                        totalPrice += (itemPrice * cartEntity.quantity.toFloat())
-                        cart.add(cartEntity)
                     }
                 }
                 countItems = cart.size
