@@ -108,6 +108,7 @@
     <string name="title_register_tags">Register %s Tags</string>
     <string name="title_register_failed">Register failed</string>
     <string name="title_custom_price">Custom Price</string>
+    <string name="title_expired_custom_price">Expired custom price</string>
     <string name="title_not_allow_wallet_non_rfid">Do not allow wallet payments with non-RFID</string>
     <string name="title_count_n_tags">Counts: %s Tags</string>
     <string name="title_sync_transactions">Sync Transactions</string>
@@ -196,4 +197,5 @@
     <string name="message_please_scan_barcode">Please Scan Barcode !!!</string>
     <string name="message_please_tap_membership_card">Please Tap Membership Card !!!</string>
     <string name="message_error_user_not_found">User not found!!!</string>
+    <string name="title_product_id_for_custom_price">Product ID for custom price</string>
 </resources>

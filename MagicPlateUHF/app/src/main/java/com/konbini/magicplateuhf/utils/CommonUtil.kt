@@ -135,6 +135,14 @@ class CommonUtil {
             return calendar.timeInMillis
         }
 
+        fun atTimeOfDay(hour: Int): Long {
+            val calendar = Calendar.getInstance()
+            calendar[Calendar.HOUR_OF_DAY] = hour
+            calendar[Calendar.MINUTE] = 0
+            calendar[Calendar.SECOND] = 0
+            return calendar.timeInMillis
+        }
+
         fun convertStringToMillis(date: String, format: String = "dd/M/yyyy"): Long {
             val calendar = Calendar.getInstance()
             val date = SimpleDateFormat(format, Locale.getDefault()).parse(date)
@@ -341,17 +349,15 @@ class CommonUtil {
 
         fun convertEpcToTagEntity(strEPC: String): TagEntity? {
             if (strEPC.length != AppSettings.Machine.LengthEPC) return null
-            //var customPrice = "000000"
-            //customPrice = strEPC.substring(18).toInt(16).toString()
+            var customPrice = "000000"
+            customPrice = strEPC.substring(18).toInt(16).toString()
 
             return TagEntity(
                 strEPC = strEPC,
                 plateModel = strEPC.substring(0, 2).toInt(16).toString(),
                 serialNumber = strEPC.substring(4, 10).toInt(16).toString(),
-                //paidDate = strEPC.substring(14, 16).toInt(16).toString(),
-                //paidSession = strEPC.substring(16, 18).toInt(16).toString(),
-                //customPrice = customPrice,
-                //lastUpdate = System.currentTimeMillis()
+                timestamp = strEPC.substring(10, 18).toInt(16).toString(),
+                customPrice = customPrice
             )
         }
 

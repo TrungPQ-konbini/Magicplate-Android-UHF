@@ -218,7 +218,7 @@ class MagicPlateViewModel @Inject constructor(
                 LogUtils.logInfo("[Insert Offline Transaction] ${gson.toJson(transactionEntity)}")
                 offlineDataRepository.insert(transactionEntity)
             } else {
-                if (AppSettings.APIs.useNativeWoo) {
+                if (AppSettings.APIs.UseNativeWoo) {
                     val bodyRequest = CommonUtil.formatCreateAnOrderRequest(transactionEntity)
                     Log.e(TAG, gson.toJson(bodyRequest))
 

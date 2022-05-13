@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.konbini.magicplateuhf.AppContainer
+import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.enum.ActionCart
@@ -136,6 +137,10 @@ class CartViewHolder(
             }
         } else {
             itemBinding.recyclerViewOptions.visibility = View.GONE
+        }
+
+        if (cartEntity.plateModelName == MainApplication.instance.resources.getString(R.string.title_expired_custom_price)) {
+            itemBinding.root.setBackgroundResource(R.drawable.item_background_grey)
         }
     }
 

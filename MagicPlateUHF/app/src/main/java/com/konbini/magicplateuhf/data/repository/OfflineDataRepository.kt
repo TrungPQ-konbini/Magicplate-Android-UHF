@@ -76,7 +76,7 @@ class OfflineDataRepository @Inject constructor(
                                 TransactionEntity::class.java
                             )
                             if (syncObj.details.isNullOrEmpty()) return@forEachIndexed
-                            if (AppSettings.APIs.useNativeWoo) {
+                            if (AppSettings.APIs.UseNativeWoo) {
                                 val bodyRequest = formatCreateAnOrderRequest(syncObj)
 
                                 val createAnOrder =

@@ -415,8 +415,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         binding.rfidMessageTitle.setSafeOnClickListener {
             AppContainer.GlobalVariable.listEPC.clear()
-            AppContainer.GlobalVariable.listEPC.add("01800000020300108CCFB14E")
-            AppContainer.GlobalVariable.listEPC.add("04800000020300108CCFB14E")
+            AppContainer.GlobalVariable.listEPC.add("FF800000020300108C002F3F")
 
             AppContainer.CurrentTransaction.listEPC.clear()
             AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
@@ -959,6 +958,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 //        val voice = R.raw.please_tap_card_again
 //        resetMessage(message, voice)
 //        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+        timerTimeoutPayment.cancel()
         val message = getString(R.string.message_put_plate_on_the_tray)
         resetMessage(message, 0)
         AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
