@@ -229,5 +229,16 @@ object AppContainer {
                 cartLocked.add(cartEntity)
             }
         }
+
+        /**
+         * get List EPC in cart Locked
+         */
+        fun getListEpcLocked(): MutableList<String> {
+            val result: MutableList<String> = mutableListOf()
+            cartLocked.forEach { cartEntity ->
+                result.add(cartEntity.strEPC)
+            }
+            return result
+        }
     }
 }
