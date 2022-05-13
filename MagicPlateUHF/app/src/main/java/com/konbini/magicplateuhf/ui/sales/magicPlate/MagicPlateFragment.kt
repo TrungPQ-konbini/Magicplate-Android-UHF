@@ -48,6 +48,7 @@ import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -691,21 +692,21 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param voice
      */
     private fun resetMessage(message: String, voice: Int) {
-        displayMessage(message)
-        when (voice) {
-            R.raw.please_tap_card_again -> {
-                AudioManager.instance.soundPleaseTapCardAgain()
-            }
-        }
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            delay(1000)
-//            displayMessage(message)
-//            when (voice) {
-//                R.raw.please_tap_card_again -> {
-//                    AudioManager.instance.soundPleaseTapCardAgain()
-//                }
+//        displayMessage(message)
+//        when (voice) {
+//            R.raw.please_tap_card_again -> {
+//                AudioManager.instance.soundPleaseTapCardAgain()
 //            }
 //        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(500)
+            displayMessage(message)
+            when (voice) {
+                R.raw.please_tap_card_again -> {
+                    AudioManager.instance.soundPleaseTapCardAgain()
+                }
+            }
+        }
     }
 
     /**
@@ -716,6 +717,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val cart = AppContainer.CurrentTransaction.cart
         cart.sortBy { tagEntity -> tagEntity.strEPC }
         cartAdapter.setItems(ArrayList(cart))
+        LogUtils.logInfo("Display Cart: ${gson.toJson(cart)}")
     }
 
     /**
@@ -812,6 +814,12 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         AppContainer.CurrentTransaction.resetTemporaryInfo()
         // Refresh cart
         refreshCart()
+
+        if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
+            // Print Receipt
+            LogUtils.logInfo("Start Print receipt")
+            printReceipt(AppContainer.CurrentTransaction.cartLocked)
+        }
     }
 
     /**
@@ -820,15 +828,17 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param _message
      */
     private fun handlePaymentError(_message: String) {
+        // Reset countdown timeout payment
+        timerTimeoutPayment.cancel()
+        timeout = AppSettings.Options.Payment.Timeout
+
         setBlink(AlarmType.ERROR)
         displayMessage(ErrorCodeIM30.handleMessageIuc(_message, requireContext()))
         AudioManager.instance.soundBuzzer()
-        AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
+        AppContainer.CurrentTransaction.paymentState = PaymentState.Init
 
-        val message = getString(R.string.message_please_tap_card_again)
-        val voice = R.raw.please_tap_card_again
-        resetMessage(message, voice)
-        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+        val message = getString(R.string.message_put_plate_on_the_tray)
+        resetMessage(message, 0)
     }
 
     /**
@@ -853,10 +863,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     // Callback
                     activity?.runOnUiThread {
                         if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                            // Reset countdown timeout payment
+                            timerTimeoutPayment.cancel()
+                            timeout = AppSettings.Options.Payment.Timeout
+
                             AudioManager.instance.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
+                        LogUtils.logInfo(_message)
                         displayMessage(_message)
                     }
                 }, {
@@ -890,11 +905,16 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 }, { _message ->
                     // Callback
                     activity?.runOnUiThread {
-                        if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                        if (_message.lowercase().contains("REMOVE CARD".lowercase())) {
+                            // Reset countdown timeout payment
+                            timerTimeoutPayment.cancel()
+                            timeout = AppSettings.Options.Payment.Timeout
+
                             AudioManager.instance.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
+                        LogUtils.logInfo(_message)
                         displayMessage(_message)
                     }
                 }, {
@@ -929,10 +949,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     // Callback
                     activity?.runOnUiThread {
                         if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                            // Reset countdown timeout payment
+                            timerTimeoutPayment.cancel()
+                            timeout = AppSettings.Options.Payment.Timeout
+
                             AudioManager.instance.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
+                        LogUtils.logInfo(_message)
                         displayMessage(_message)
                     }
                 }, {
