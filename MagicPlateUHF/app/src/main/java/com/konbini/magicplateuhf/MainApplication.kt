@@ -121,7 +121,7 @@ class MainApplication : Application() {
                         }
                     }
                 } else {
-                    AppContainer.CurrentTransaction.resetTemporaryInfo()
+                    AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
                 }
             } else {
@@ -129,7 +129,7 @@ class MainApplication : Application() {
                     AppContainer.CurrentTransaction.listEPC.clear()
                     AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
                 } else {
-                    AppContainer.CurrentTransaction.resetTemporaryInfo()
+                    AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
                 }
             }
@@ -250,6 +250,13 @@ class MainApplication : Application() {
     }
 
     override fun onCreate() {
+        Thread.setDefaultUncaughtExceptionHandler { thread, e ->
+            handleUncaughtException(
+                thread,
+                e
+            )
+        }
+
         LogUtils.logInfo("Start App")
         initSetting()
         mainAppInit?.invoke()
@@ -261,6 +268,10 @@ class MainApplication : Application() {
         initRFIDReaderUHF()
         initIM30()
         super.onCreate()
+    }
+
+    private fun handleUncaughtException(thread: Thread, e: Throwable) {
+        LogUtils.logCrash(e)
     }
 
     private fun initSetting() {
