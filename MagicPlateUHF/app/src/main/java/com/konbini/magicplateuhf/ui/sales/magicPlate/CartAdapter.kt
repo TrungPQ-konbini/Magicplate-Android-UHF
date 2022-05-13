@@ -140,7 +140,7 @@ class CartViewHolder(
         }
 
         if (cartEntity.plateModelName == MainApplication.instance.resources.getString(R.string.title_expired_custom_price)) {
-            itemBinding.root.setBackgroundResource(R.drawable.item_background_grey)
+            itemBinding.root.setBackgroundResource(R.drawable.item_background_red)
         }
     }
 

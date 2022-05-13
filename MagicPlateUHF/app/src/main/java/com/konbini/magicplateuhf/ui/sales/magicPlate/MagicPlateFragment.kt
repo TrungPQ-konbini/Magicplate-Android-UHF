@@ -13,6 +13,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -392,6 +393,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         binding.rfidItemCount.setOnClickListener {
             binding.rfidItemCount.blink(Color.RED, 1, 50L)
             clickedTitleModel += 1
+            Toast.makeText(requireActivity(), clickedTitleModel.toString(), Toast.LENGTH_SHORT).show()
             Log.e(TAG, "Clicked Title Model-$clickedTitleModel")
             if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
                 clickedTitleModel = 0
@@ -406,6 +408,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         binding.rfidTotalCount.setOnClickListener {
             binding.rfidTotalCount.blink(Color.RED, 1, 50L)
             clickedTitleTotal += 1
+            Toast.makeText(requireActivity(), clickedTitleTotal.toString(), Toast.LENGTH_SHORT).show()
             Log.e(TAG, "Clicked Title Total-$clickedTitleTotal")
             if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
                 clickedTitleModel = 0
