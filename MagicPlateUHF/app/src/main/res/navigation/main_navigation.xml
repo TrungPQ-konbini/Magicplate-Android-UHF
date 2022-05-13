@@ -67,6 +67,6 @@
     <fragment
         android:id="@+id/nav_diagnostic_tags"
         android:name="com.konbini.magicplateuhf.ui.diagnosticTags.DiagnosticTagsFragment"
-        android:label="fragment_diagnostic_tags"
+        android:label="Diagnostic"
         tools:layout="@layout/fragment_diagnostic_tags" />
 </navigation>
