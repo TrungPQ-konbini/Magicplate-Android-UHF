@@ -13,6 +13,7 @@ import java.util.*
 
 object AppContainer {
     object GlobalVariable {
+        var isBackend = false
         var tagSizeOld = 0
         var timeTagSizeChanged = 0L
         var listEPC: MutableList<String> = mutableListOf()
@@ -100,6 +101,7 @@ object AppContainer {
             paymentType = null
             currentDiscount = 0F
             listEPC.clear()
+            GlobalVariable.listEPC.clear()
             listTagEntity.clear()
             cart.clear()
             cartLocked.clear()

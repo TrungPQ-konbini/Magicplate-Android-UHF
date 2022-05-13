@@ -71,6 +71,7 @@ class SalesActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        AppContainer.GlobalVariable.isBackend = false
         if (!AppSettings.Options.Sync.NoSyncOrder) {
             if (AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod || AppSettings.Options.Sync.SyncOrderRealtime) {
                 syncTransactions()

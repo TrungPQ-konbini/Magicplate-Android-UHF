@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.ui.*
+import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.databinding.ActivityMainBinding
@@ -83,6 +84,8 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             handled
         }
+
+        AppContainer.GlobalVariable.isBackend = true
     }
 
     private fun logout() {

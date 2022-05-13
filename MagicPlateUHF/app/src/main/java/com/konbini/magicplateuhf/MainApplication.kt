@@ -124,16 +124,19 @@ class MainApplication : Application() {
                 return
             }
 
-            if (AppSettings.Options.IgnoreWhenRemovingTags) {
+            if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+                    Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
                     AppContainer.GlobalVariable.listEPC.forEach { _epc ->
                         if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
+                            Log.e("TrungPQ", "Add Tag | $_epc")
                             AppContainer.CurrentTransaction.listEPC.add(_epc)
                         }
                     }
                 } else {
                     AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
+                    Log.e("TrungPQ", "Clear")
                 }
             } else {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
@@ -147,7 +150,7 @@ class MainApplication : Application() {
 
             // Get list tags
             val listTagEntity =
-                AppContainer.GlobalVariable.getListTagEntity(AppContainer.CurrentTransaction.listEPC)
+                AppContainer.GlobalVariable.getListTagEntity(AppContainer.CurrentTransaction.listEPC.distinct())
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
 
             timeTagSizeChanged = 0L

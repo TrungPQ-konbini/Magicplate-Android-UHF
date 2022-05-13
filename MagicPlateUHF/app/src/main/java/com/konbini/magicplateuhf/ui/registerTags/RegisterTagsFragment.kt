@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.MainApplication
+import com.konbini.magicplateuhf.MainApplication.Companion.mReaderUHF
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.PlateModelEntity
 import com.konbini.magicplateuhf.data.entities.TagEntity
@@ -416,9 +417,12 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     serialNumber = 0
 
                     // Start reading UHF
-                    MainApplication.startRealTimeInventory()
+                    try {
+                        mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                    } catch (ex: Exception) {
+                        LogUtils.logError(ex)
+                    }
                 }
-
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
             }
@@ -497,8 +501,13 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
                     delay(300)
                     serialNumber = 0
+
                     // Start reading UHF
-                    MainApplication.startRealTimeInventory()
+                    try {
+                        mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                    } catch (ex: Exception) {
+                        LogUtils.logError(ex)
+                    }
                 }
 
             } catch (ex: Exception) {
