@@ -416,31 +416,31 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
 
         // TODO: Start TrungPQ add to test
-        binding.spinKitMessage.setSafeOnClickListener {
-            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
-            viewModel.debit()
-        }
+//        binding.spinKitMessage.setSafeOnClickListener {
+//            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
+//            viewModel.debit()
+//        }
 
-        binding.rfidMessageTitle.setSafeOnClickListener {
-            AppContainer.GlobalVariable.listEPC.clear()
-            AppContainer.GlobalVariable.listEPC.add("FF800000020300108C002F3F")
-
-            AppContainer.CurrentTransaction.listEPC.clear()
-            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
-
-            // Get list tags
-            val listTagEntity =
-                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
-            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
-
-            MainApplication.timeTagSizeChanged = 0L
-            AppContainer.CurrentTransaction.refreshCart()
-
-            // Add or Remove items to cart
-            val intent = Intent()
-            intent.action = "REFRESH_TAGS"
-            LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
-        }
+//        binding.rfidMessageTitle.setSafeOnClickListener {
+//            AppContainer.GlobalVariable.listEPC.clear()
+//            AppContainer.GlobalVariable.listEPC.add("FF800000020300108C002F3F")
+//
+//            AppContainer.CurrentTransaction.listEPC.clear()
+//            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+//
+//            // Get list tags
+//            val listTagEntity =
+//                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+//            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+//
+//            MainApplication.timeTagSizeChanged = 0L
+//            AppContainer.CurrentTransaction.refreshCart()
+//
+//            // Add or Remove items to cart
+//            val intent = Intent()
+//            intent.action = "REFRESH_TAGS"
+//            LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
+//        }
         // TODO: End TrungPQ add to test
     }
 
