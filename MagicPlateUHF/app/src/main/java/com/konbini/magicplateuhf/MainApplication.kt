@@ -150,7 +150,7 @@ class MainApplication : Application() {
 
             // Get list tags
             val listTagEntity =
-                AppContainer.GlobalVariable.getListTagEntity(AppContainer.CurrentTransaction.listEPC.distinct())
+                AppContainer.GlobalVariable.getListTagEntity(AppContainer.CurrentTransaction.listEPC)
             AppContainer.CurrentTransaction.listTagEntity = listTagEntity
 
             timeTagSizeChanged = 0L
