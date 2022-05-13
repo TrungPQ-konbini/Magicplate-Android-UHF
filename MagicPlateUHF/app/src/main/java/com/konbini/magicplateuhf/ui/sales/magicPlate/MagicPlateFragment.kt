@@ -93,17 +93,17 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                 return
                             }
 
-                            val listEpcLocked = getListEpcLocked()
-                            var hasOtherTag = false
-                            AppContainer.GlobalVariable.listEPC.forEach { epc ->
-                                if (!listEpcLocked.contains(epc)) {
-                                    hasOtherTag = true
-                                }
-                            }
-                            if (hasOtherTag) {
-                                AudioManager.instance.soundBuzzer()
-                                setBlink(AlarmType.ERROR)
-                            }
+//                            val listEpcLocked = getListEpcLocked()
+//                            var hasOtherTag = false
+//                            AppContainer.GlobalVariable.listEPC.forEach { epc ->
+//                                if (!listEpcLocked.contains(epc)) {
+//                                    hasOtherTag = true
+//                                }
+//                            }
+//                            if (hasOtherTag) {
+//                                AudioManager.instance.soundBuzzer()
+//                                setBlink(AlarmType.ERROR)
+//                            }
                         }
                         PaymentState.Init,
                         PaymentState.Preparing -> {
