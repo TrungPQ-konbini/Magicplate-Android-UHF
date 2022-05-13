@@ -36,6 +36,11 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
             android:title="@string/menu_settings" />
+
+        <item
+            android:id="@+id/nav_diagnostic_tags"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/menu_diagnostic"/>
         <item
             android:id="@+id/nav_write_tags"
             android:icon="@drawable/ic_notes"

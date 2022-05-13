@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_transactions,
                 R.id.nav_options_setting,
                 R.id.nav_settings,
+                R.id.nav_diagnostic_tags,
                 R.id.nav_write_tags,
                 R.id.nav_register_tags,
                 R.id.nav_logout

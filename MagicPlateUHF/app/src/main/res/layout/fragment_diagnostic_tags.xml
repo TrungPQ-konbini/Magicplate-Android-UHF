@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.diagnosticTags.DiagnosticTagsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spin_kit"
+            style="@style/SpinKitView.Large.Circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/india_green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/spin_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/message_loading"
+            android:textColor="@color/india_green"
+            android:textSize="@dimen/dimen_24"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spin_kit" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <SearchView
+            android:id="@+id/searchTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:iconifiedByDefault="false"
+            android:queryHint="@string/title_searching"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayoutWriteTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_16"
+            android:layout_marginTop="@dimen/dimen_16"
+            android:layout_marginRight="@dimen/dimen_16"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchTags">
+
+            <!--            <com.dev.materialspinner.MaterialSpinner-->
+            <!--                android:id="@+id/spinnerPlateModelCode"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_weight="2"-->
+            <!--                android:gravity="center"-->
+            <!--                android:hint="@string/title_cloud_order_status"-->
+            <!--                android:spinnerMode="dialog"-->
+            <!--                android:textColor="@color/smoke" />-->
+
+            <!--            <androidx.appcompat.widget.AppCompatButton-->
+            <!--                android:id="@+id/buttonRegisterTags"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:layout_weight="3"-->
+            <!--                android:background="@drawable/custom_button_green_10"-->
+            <!--                android:gravity="center"-->
+            <!--                android:layout_marginLeft="@dimen/dimen_24"-->
+            <!--                android:layout_marginRight="@dimen/dimen_24"-->
+            <!--                android:layout_marginTop="@dimen/dimen_8"-->
+            <!--                android:layout_marginBottom="@dimen/dimen_8"-->
+            <!--                android:text="@string/title_register_tags"-->
+            <!--                android:textColor="@color/white"-->
+            <!--                android:textStyle="bold" />-->
+
+
+            <LinearLayout
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.dev.materialspinner.MaterialSpinner
+                    android:id="@+id/spinnerPlateModelCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="@string/title_cloud_order_status"
+                    android:spinnerMode="dialog"
+                    android:textColor="@color/smoke" />
+
+                <TextView
+                    android:id="@+id/txtLastSerialNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/dimen_8"
+                    android:text="Last Serial Number"
+                    android:textSize="@dimen/dimen_16">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnGetLastNumber"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="1"
+                android:text="Get Last Serial number">
+
+            </Button>
+
+            <Button
+
+                android:id="@+id/btnStartScan"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:text="Start Registration Scan">
+
+            </Button>
+
+            <Button
+                android:id="@+id/btnStartWriting"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="1"
+                android:text="Start Registration Writing"></Button>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtTagWritten"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="@dimen/dimen_8"
+                    android:text="Tag Written"
+                    android:textSize="@dimen/dimen_16">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/txtCurrentLastSerial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/dimen_8"
+                    android:text="Current Last Serial"
+                    android:textSize="@dimen/dimen_16">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnEndSession"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_weight="0.3"
+                android:text="End Session(Upload Current Last Serial)"></Button>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/titleHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            android:weightSum="9"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutWriteTags">
+
+            <TextView
+                android:id="@+id/titleHeaderIndex"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:gravity="center"
+                android:text="@string/title_index"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:weightSum="11">
+
+                <TextView
+                    android:id="@+id/titleHeaderEPC"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="@string/title_epc"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/titleHeaderSerialNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/title_serial_number"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/titleHeaderPlateModelCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/title_plate_code"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/titleHeaderPlateModelName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/title_plate_name"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewTags"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleHeader" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
