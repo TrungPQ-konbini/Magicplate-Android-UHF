@@ -28,9 +28,11 @@ import com.rfid.ReaderConnector
 import com.rfid.rxobserver.RXObserver
 import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.delay
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import kotlin.math.round
 
 @HiltAndroidApp
 class MainApplication : Application() {
@@ -52,19 +54,17 @@ class MainApplication : Application() {
         var currentVersion: String = "Version: N/A"
         const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
 
-        var tagSizeOld = 0
+        var roundReadTag = 1
         var timeTagSizeChanged = 0L
 
         private var rxObserver: RXObserver = object : RXObserver() {
             override fun onInventoryTag(tag: RXInventoryTag) {
                 Log.e(TAG, tag.strEPC)
-                AppContainer.GlobalVariable.strEpc = tag.strEPC
                 AppContainer.GlobalVariable.listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
-
+                Log.e("EKRON", "Add item to AppContainer.GlobalVariable.listEPC")
             }
 
             override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
-
                 val intent = Intent()
                 intent.action = "REFRESH_READER_TAGS"
                 LocalBroadcastManager.getInstance(instance.applicationContext).sendBroadcast(intent)
@@ -74,16 +74,16 @@ class MainApplication : Application() {
                     "==========End command reading UHF=========="
                 )
 
-
-
                 val current = System.currentTimeMillis()
                 if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
                     if (timeTagSizeChanged == 0L) {
                         timeTagSizeChanged = current
+                        Log.e("EKRON", "timeTagSizeChanged == 0L")
                     } else {
                         val offset = current - timeTagSizeChanged
                         if (offset < 500) {
                             Log.e(TAG, "$current | $offset => Ignore")
+                            Log.e("EKRON", "$current | $offset => Ignore")
                         } else {
                             sendBroadcastRefreshTags()
                         }
@@ -93,17 +93,20 @@ class MainApplication : Application() {
                 }
 
                 if (AppContainer.GlobalVariable.allowReadTags) {
+                    roundReadTag += 1
+                    Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
+                    AppContainer.GlobalVariable.listEPC.clear()
+
+                    Thread.sleep(500)
+
                     // Start reading UHF
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                    Log.e("EKRON", "roundReadTag: $roundReadTag")
                     Log.e(
                         TAG,
                         "==========Start command reading UHF=========="
                     )
                 }
-
-
-
-                AppContainer.GlobalVariable.listEPC.clear()
             }
         }
 
@@ -112,9 +115,18 @@ class MainApplication : Application() {
                 TAG,
                 "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
             )
-            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success && AppContainer.GlobalVariable.listEPC.isEmpty()) {
-                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
-                LogUtils.logInfo("Start new Transaction")
+            Log.e(
+                "EKRON",
+                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
+            )
+            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
+                if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
+                    Log.e("EKRON", "Start new Transaction")
+                    AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+                    LogUtils.logInfo("Start new Transaction")
+                } else {
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                }
             }
             if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
@@ -126,17 +138,17 @@ class MainApplication : Application() {
 
             if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
+                    //Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
                     AppContainer.GlobalVariable.listEPC.forEach { _epc ->
                         if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-                            Log.e("TrungPQ", "Add Tag | $_epc")
+                            //Log.e("TrungPQ", "Add Tag | $_epc")
                             AppContainer.CurrentTransaction.listEPC.add(_epc)
                         }
                     }
                 } else {
                     AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
-                    Log.e("TrungPQ", "Clear")
+                    //Log.e("TrungPQ", "Clear")
                 }
             } else {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {

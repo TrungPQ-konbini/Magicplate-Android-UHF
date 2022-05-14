@@ -151,10 +151,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             quantity = 1,
                             options = product.options
                         )
+                        AppContainer.CurrentTransaction.cart.add(cartEntity)
+                        // Refresh cart
+                        AppContainer.CurrentTransaction.refreshCart()
+                        refreshCart()
                     }
                 }
                 "ACCEPT_OPTIONS" -> {
                     // Refresh cart
+                    AppContainer.CurrentTransaction.refreshCart()
                     refreshCart()
                 }
                 "MQTT_SYNC_DATA" -> {
@@ -214,6 +219,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     override fun onStart() {
         super.onStart()
         val filterIntent = IntentFilter()
+        filterIntent.addAction("NEW_BARCODE")
         filterIntent.addAction("REFRESH_TAGS")
         filterIntent.addAction("ACCEPT_OPTIONS")
         filterIntent.addAction("MQTT_SYNC_DATA")
@@ -316,6 +322,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         displayMessage(_state.message)
                         LogUtils.logInfo(_state.message)
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
+                        Log.e("EKRON", "PaymentState.Success")
                         AppContainer.CurrentTransaction.resetTemporaryInfo()
                         // Refresh cart
                         refreshCart()
@@ -326,8 +333,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             printReceipt(AppContainer.CurrentTransaction.cartLocked)
                             AudioManager.instance.soundPaymentSuccess()
                         }
-
-                        MainApplication.startRealTimeInventory()
 
                         val message = getString(R.string.message_put_plate_on_the_tray)
                         resetMessage(message, 0)
@@ -421,7 +426,17 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 //            viewModel.debit()
 //        }
 
-//        binding.rfidMessageTitle.setSafeOnClickListener {
+        binding.rfidMessageTitle.setSafeOnClickListener {
+            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
+                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+            } else {
+                AppContainer.CurrentTransaction.barcode = "8885000035380"
+                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
+                val intent = Intent()
+                intent.action = "NEW_BARCODE"
+                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
+                barcode = ""
+            }
 //            AppContainer.GlobalVariable.listEPC.clear()
 //            AppContainer.GlobalVariable.listEPC.add("FF800000020300108C002F3F")
 //
@@ -440,7 +455,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 //            val intent = Intent()
 //            intent.action = "REFRESH_TAGS"
 //            LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
-//        }
+        }
         // TODO: End TrungPQ add to test
     }
 
@@ -657,6 +672,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
                 }
                 // Refresh cart
+                AppContainer.CurrentTransaction.refreshCart()
                 refreshCart()
             }
             ActionCart.Plus -> {
@@ -667,6 +683,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
                 }
                 // Refresh cart
+                AppContainer.CurrentTransaction.refreshCart()
                 refreshCart()
             }
             ActionCart.Delete -> {
@@ -679,6 +696,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
                 }
                 // Refresh cart
+                AppContainer.CurrentTransaction.refreshCart()
                 refreshCart()
             }
             ActionCart.Modifier -> {
@@ -824,7 +842,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             when (voice) {
                 R.raw.please_tap_card_again -> {
                     AudioManager.instance.soundPleaseTapCardAgain()
-
                 }
             }
         }
@@ -911,7 +928,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         setBlink(AlarmType.SUCCESS)
         AudioManager.instance.soundPaymentSuccess()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
-
+        Log.e("EKRON", "PaymentState.Success")
         val calendar = Calendar.getInstance()
         val currentTime = calendar.timeInMillis
 

@@ -38,6 +38,7 @@ class SalesActivity : AppCompatActivity() {
         const val JOB_GET_TOKEN_ID = 123
     }
 
+    private var barcode = ""
     private lateinit var jobTimerTask: TimerTask
     private lateinit var jobXDayTimerTask: TimerTask
 
@@ -96,7 +97,7 @@ class SalesActivity : AppCompatActivity() {
     override fun dispatchKeyEvent(e: KeyEvent): Boolean {
         if (e.action == KeyEvent.ACTION_DOWN) {
             val pressedKey = e.unicodeChar.toChar()
-            AppContainer.CurrentTransaction.barcode += pressedKey
+            barcode += pressedKey
         }
         Log.e("KEY_CODE", e.keyCode.toString())
         if (e.action == KeyEvent.ACTION_DOWN) {
@@ -106,10 +107,12 @@ class SalesActivity : AppCompatActivity() {
                         return super.dispatchKeyEvent(e)
                     }
                     lastTimeClicked = SystemClock.elapsedRealtime()
+                    AppContainer.CurrentTransaction.barcode = barcode
                     Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
                     val intent = Intent()
                     intent.action = "NEW_BARCODE"
                     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+                    barcode = ""
                 }
             }
         }

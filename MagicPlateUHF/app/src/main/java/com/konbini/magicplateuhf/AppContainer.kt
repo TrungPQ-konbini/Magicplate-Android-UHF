@@ -14,10 +14,7 @@ import java.util.*
 object AppContainer {
     object GlobalVariable {
         var isBackend = false
-        var tagSizeOld = 0
-        var timeTagSizeChanged = 0L
         var listEPC: MutableList<String> = mutableListOf()
-        var strEpc = ""
 
         var isGettingToken = false
         var isSyncTransaction = false
@@ -101,7 +98,6 @@ object AppContainer {
             paymentType = null
             currentDiscount = 0F
             listEPC.clear()
-            GlobalVariable.listEPC.clear()
             listTagEntity.clear()
             cart.clear()
             cartLocked.clear()
@@ -109,12 +105,30 @@ object AppContainer {
             refreshCart()
         }
 
-        fun refreshCart(): Boolean {
+        fun refreshCart() {
             val gson = Gson()
 
-            cart.clear()
+            countItems = 0
+            totalPrice = 0F
+
+            //cart.clear()
+            cart = cart.filter { cartEntity ->
+                cartEntity.strEPC.isEmpty()
+            }.toMutableList()
+
+            // Calculation with barcode
+            cart.forEach { cartEntity ->
+                var itemPrice = cartEntity.price.toFloat()
+                if (currentDiscount > 0) {
+                    val findProduct = findProduct(cartEntity.productId.toInt())
+                    cartEntity.salePrice = findProduct?.salePrice ?: ""
+                    itemPrice = if (cartEntity.salePrice.isNotEmpty()) cartEntity.salePrice.toFloat() else cartEntity.price.toFloat()
+                }
+                countItems += cartEntity.quantity
+                totalPrice += (itemPrice * cartEntity.quantity.toFloat())
+            }
+
             if (listTagEntity.isNotEmpty()) {
-                totalPrice = 0F
                 listTagEntity.forEach { _tagEntity ->
                     when (_tagEntity.plateModel) {
                         AppSettings.UHFStructure.CustomPrice.toInt(16).toString() -> {
@@ -135,6 +149,7 @@ object AppContainer {
                                 options = ""
                             )
                             val itemPrice = cartEntity.price.toFloat()
+                            countItems += cartEntity.quantity
                             totalPrice += (itemPrice * cartEntity.quantity.toFloat())
                             cart.add(cartEntity)
                         }
@@ -152,10 +167,6 @@ object AppContainer {
                                     productId = menuEntity.productId,
                                     plateModelId = menuEntity.plateModelId,
                                     price = menuEntity.price,
-                                    //if (customPrice.isNullOrEmpty() || !CommonUtil.isNumber(
-                                    //        customPrice
-                                    //    ) || customPrice == ""
-                                    //) menuEntity.price else (customPrice.toFloat() / 100).toString(),
                                     salePrice = "",
                                     productName = menuEntity.productName,
                                     plateModelName = menuEntity.plateModelName,
@@ -190,18 +201,13 @@ object AppContainer {
                                     }
                                 }
 
+                                countItems += cartEntity.quantity
                                 totalPrice += (itemPrice * cartEntity.quantity.toFloat())
                                 cart.add(cartEntity)
                             }
                         }
                     }
                 }
-                countItems = cart.size
-                return true
-            } else {
-                totalPrice = 0F
-                countItems = 0
-                return false
             }
         }
 
