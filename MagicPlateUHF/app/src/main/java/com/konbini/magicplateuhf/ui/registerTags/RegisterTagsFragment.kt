@@ -385,6 +385,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     if (epcValue.isEmpty()) return@launch
 
                     // Select tag
+                    delay(500)
                     val epcMatch = UhfUtil.setAccessEpcMatch(
                         epcValue,
                         requireContext(),
@@ -398,8 +399,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                                 newEPC.substring(0, 2).toInt(16)
                             } | ${newEPC.substring(4, 10).toInt(16)}"
                         )
-                        //Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
-                        delay(200)
+                        Log.e("NEW_EPC", "New EPC: $newEPC | ${newEPC.substring(0, 2).toInt(16)} | ${newEPC.substring(4, 10).toInt(16)}")
+                        LogUtils.logInfo("[New EPC] | $newEPC")
+                        //delay(200)
                         val writeTag = UhfUtil.writeTag(
                             newEPC,
                             requireContext(),
@@ -415,7 +417,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                             listSetPlateModelDataRequest.add(data)
                         }
                     }
-                    delay(200)
+                    LogUtils.logInfo("=============================================")
+                    //delay(200)
                     writeTags(position + 1)
                 } else {
                     showHideLoading(false)
@@ -427,7 +430,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         "Current Last Serial:<b> ${listSetPlateModelDataRequest.last().lastPlateSerial}</b> "
                     binding.txtCurrentLastSerial.text = Html.fromHtml(t2)
 
-                    delay(300)
+                    //delay(300)
                     serialNumber = 0
 
                     // Start reading UHF
