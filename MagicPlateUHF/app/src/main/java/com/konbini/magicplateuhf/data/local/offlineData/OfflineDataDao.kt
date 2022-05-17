@@ -8,8 +8,8 @@ interface OfflineDataDao {
     @Query("SELECT * FROM offline_data")
     suspend fun getAll() : List<OfflineDataEntity>
 
-    @Query("SELECT * FROM offline_data where is_synced = :isSynced")
-    suspend fun getNotSyncedData(isSynced: String): List<OfflineDataEntity>
+    @Query("SELECT * FROM offline_data where is_synced = 0")
+    suspend fun getNotSyncedData(): List<OfflineDataEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(offlineDataEntity: OfflineDataEntity): Long

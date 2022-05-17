@@ -61,7 +61,7 @@ class OfflineDataRepository @Inject constructor(
 
     suspend fun processOfflineData() {
         // Get all not synced data
-        val data = localOfflineDataSource.getNotSyncedData("false")
+        val data = localOfflineDataSource.getNotSyncedData()
         if (data.isEmpty()) {
             LogUtils.logOffline("All offline data has been synced")
         } else {
