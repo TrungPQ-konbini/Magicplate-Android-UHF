@@ -104,6 +104,7 @@ class SalesActivity : AppCompatActivity() {
             when (e.keyCode) {
                 KeyEvent.KEYCODE_ENTER -> {
                     if (SystemClock.elapsedRealtime() - lastTimeClicked < defaultInterval) {
+                        barcode = ""
                         return super.dispatchKeyEvent(e)
                     }
                     lastTimeClicked = SystemClock.elapsedRealtime()

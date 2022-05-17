@@ -146,7 +146,8 @@ class MainApplication : Application() {
                         }
                     }
                 } else {
-                    AppContainer.CurrentTransaction.currentDiscount = 0F
+                    if (AppContainer.CurrentTransaction.cart.isEmpty())
+                        AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
                     //Log.e("TrungPQ", "Clear")
                 }
@@ -155,7 +156,8 @@ class MainApplication : Application() {
                     AppContainer.CurrentTransaction.listEPC.clear()
                     AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
                 } else {
-                    AppContainer.CurrentTransaction.currentDiscount = 0F
+                    if (AppContainer.CurrentTransaction.cart.isEmpty())
+                        AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
                 }
             }

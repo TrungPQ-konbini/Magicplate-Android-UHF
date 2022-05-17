@@ -88,7 +88,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         PaymentState.ReadyToPay,
                         PaymentState.InProgress -> {
                             // Check Cart Locked Change
-                            if (AppContainer.CurrentTransaction.listEPC.isEmpty()) {
+                            if (AppContainer.CurrentTransaction.cart.isEmpty()) {
                                 AudioManager.instance.soundBuzzer()
                                 setBlink(AlarmType.ERROR)
                                 return
@@ -143,7 +143,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             timeBlockId = "",
                             productId = product.id.toString(),
                             plateModelId = "",
-                            price = product.price,
+                            price = product.regularPrice,
                             productName = product.name,
                             plateModelName = "",
                             plateModelCode = "",
