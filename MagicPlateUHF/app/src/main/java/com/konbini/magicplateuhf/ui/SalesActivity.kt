@@ -152,6 +152,7 @@ class SalesActivity : AppCompatActivity() {
 
         jobTimerTask = object : TimerTask() {
             override fun run() {
+                LogUtils.logOffline("Start Sync at $dateJob")
                 syncTransactions()
                 jobSyncOrderSpecifiedTime(isNextDay = true)
             }
