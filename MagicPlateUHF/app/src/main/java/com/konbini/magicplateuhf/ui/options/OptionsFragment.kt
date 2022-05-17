@@ -430,10 +430,19 @@ class OptionsFragment : Fragment() {
                 binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
                 binding.checkboxSyncSpecifiedTime.isChecked = false
                 binding.checkboxNoSyncOrder.isChecked = false
+
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderRealtime", isChecked)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderSpecifiedTime", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.NoSyncOrder", false)
+
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderRealtime Options: $isChecked")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderSpecifiedTime Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.NoSyncOrder Options: false")
+
                 showMessageSuccess()
             }
-            PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderRealtime", isChecked)
-            LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderRealtime Options: $isChecked")
         }
 
         binding.checkboxSyncOrderPeriodicPerTimePeriod.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -441,10 +450,19 @@ class OptionsFragment : Fragment() {
                 binding.checkboxSyncOrderRealtime.isChecked = false
                 binding.checkboxSyncSpecifiedTime.isChecked = false
                 binding.checkboxNoSyncOrder.isChecked = false
+
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderRealtime", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod", isChecked)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderSpecifiedTime", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.NoSyncOrder", false)
+
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderRealtime Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod Options: $isChecked")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderSpecifiedTime Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.NoSyncOrder Options: false")
+
                 showMessageSuccess()
             }
-            PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod", isChecked)
-            LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod Options: $isChecked")
         }
 
         binding.checkboxSyncSpecifiedTime.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -452,10 +470,19 @@ class OptionsFragment : Fragment() {
                 binding.checkboxSyncOrderRealtime.isChecked = false
                 binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
                 binding.checkboxNoSyncOrder.isChecked = false
+
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderRealtime", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderSpecifiedTime", isChecked)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.NoSyncOrder", false)
+
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderRealtime Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderSpecifiedTime Options: $isChecked")
+                LogUtils.logInfo("AppSettings.Options.Sync.NoSyncOrder Options: false")
+
                 showMessageSuccess()
             }
-            PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderSpecifiedTime", isChecked)
-            LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderSpecifiedTime Options: $isChecked")
         }
 
         binding.checkboxNoSyncOrder.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -463,10 +490,19 @@ class OptionsFragment : Fragment() {
                 binding.checkboxSyncOrderRealtime.isChecked = false
                 binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
                 binding.checkboxSyncSpecifiedTime.isChecked = false
+
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderRealtime", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.SyncOrderSpecifiedTime", false)
+                PrefUtil.setBoolean("AppSettings.Options.Sync.NoSyncOrder", isChecked)
+
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderRealtime Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.SyncOrderSpecifiedTime Options: false")
+                LogUtils.logInfo("AppSettings.Options.Sync.NoSyncOrder Options: $isChecked")
+
                 showMessageSuccess()
             }
-            PrefUtil.setBoolean("AppSettings.Options.Sync.NoSyncOrder", isChecked)
-            LogUtils.logInfo("AppSettings.Options.Sync.NoSyncOrder Options: $isChecked")
         }
 
         binding.checkboxCancelPayment.setOnCheckedChangeListener { buttonView, isChecked ->
