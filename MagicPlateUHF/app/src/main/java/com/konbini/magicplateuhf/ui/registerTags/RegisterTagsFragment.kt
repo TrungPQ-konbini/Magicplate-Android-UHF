@@ -98,7 +98,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     override fun onStop() {
-        MainApplication.startRealTimeInventory()
+        try {
+            AppContainer.GlobalVariable.allowReadTags = true
+            AppContainer.GlobalVariable.listEPC.clear()
+            Thread.sleep(500)
+            mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+        } catch (ex: Exception) {
+            LogUtils.logError(ex)
+        }
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(changeTagReceiver)
         super.onStop()
     }
@@ -228,7 +235,14 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
         binding.btnStartScan.setSafeOnClickListener {
             AppContainer.GlobalVariable.allowReadTags = false
-            MainApplication.mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+
+            try {
+                AppContainer.GlobalVariable.listEPC.clear()
+                Thread.sleep(500)
+                mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
+            }
             Log.e(
                 MainApplication.TAG,
                 "==========Start command reading UHF=========="
@@ -418,6 +432,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
                     // Start reading UHF
                     try {
+                        AppContainer.GlobalVariable.listEPC.clear()
+                        Thread.sleep(500)
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)
@@ -504,6 +520,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
                     // Start reading UHF
                     try {
+                        AppContainer.GlobalVariable.listEPC.clear()
+                        Thread.sleep(500)
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)

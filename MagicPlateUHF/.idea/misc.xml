@@ -5,14 +5,16 @@
       <map>
         <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/drawable/item_background_grey.xml" value="0.1953125" />
         <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/drawable/item_background_red.xml" value="0.1953125" />
+        <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/layout/activity_sales.xml" value="0.17299898682877407" />
         <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/layout/fragment_login.xml" value="0.1526268115942029" />
         <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/layout/fragment_magic_plate.xml" value="0.1038500506585613" />
+        <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/layout/fragment_plate_model.xml" value="0.17299898682877407" />
+        <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/layout/fragment_register_tags.xml" value="0.17299898682877407" />
+        <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/layout/item_cart.xml" value="0.17299898682877407" />
         <entry key="..\:/TrungPQ/Magicplate-Android-UHF/MagicPlateUHF/app/src/main/res/layout/item_payment.xml" value="0.11271529888551166" />
       </map>
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/build/classes" />
-  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

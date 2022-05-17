@@ -75,21 +75,25 @@ class MainApplication : Application() {
                 )
 
                 val current = System.currentTimeMillis()
-                if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
-                    if (timeTagSizeChanged == 0L) {
-                        timeTagSizeChanged = current
-                        Log.e("EKRON", "timeTagSizeChanged == 0L")
-                    } else {
-                        val offset = current - timeTagSizeChanged
-                        if (offset < 500) {
-                            Log.e(TAG, "$current | $offset => Ignore")
-                            Log.e("EKRON", "$current | $offset => Ignore")
-                        } else {
-                            sendBroadcastRefreshTags()
-                        }
-                    }
-                } else {
+                if (AppContainer.GlobalVariable.isBackend) {
                     sendBroadcastRefreshTags()
+                } else {
+                    if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
+                        if (timeTagSizeChanged == 0L) {
+                            timeTagSizeChanged = current
+                            Log.e("EKRON", "timeTagSizeChanged == 0L")
+                        } else {
+                            val offset = current - timeTagSizeChanged
+                            if (offset < 500) {
+                                Log.e(TAG, "$current | $offset => Ignore")
+                                Log.e("EKRON", "$current | $offset => Ignore")
+                            } else {
+                                sendBroadcastRefreshTags()
+                            }
+                        }
+                    } else {
+                        sendBroadcastRefreshTags()
+                    }
                 }
 
                 if (AppContainer.GlobalVariable.allowReadTags) {
