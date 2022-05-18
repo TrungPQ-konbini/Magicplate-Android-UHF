@@ -98,24 +98,24 @@ object AppSettings {
     }
 
     object Cloud {
-        var Host = "https://gleneagles.whew.life"
-        var ConsumerKey = "ck_c19a45488414efe7a89c407d5aa167da2c135ad2"
-        var ConsumerSecret = "cs_af3d5413a62a039fd8a4e6d1c0d4c14b354ad6a4"
-        var ClientId = "7xVVr5CoxH7rLT6GNV9Xu1JfARKGNRxQzBiTdgj6"
-        var ClientSecret = "UgWmwqG44HvO0ByNmQSmt7TvuEZrBlwQU6isYowg"
+        var Host = "https://yourbrighterfoodhall.whew.life"
+        var ConsumerKey = "ck_45aad49b5848880b08af254d4ce2be8d5f9be92c"
+        var ConsumerSecret = "cs_ed326ac24e60f00f71cf1b8d22afe9cdb317afd9"
+        var ClientId = "jlDNi2cP2HaEY8FjR8CfdkHX3OzELna3VhzzLiCf"
+        var ClientSecret = "LWd2tMqZ6mvBa71clGWAFPhBOwZ9tWjHBLru1mjC"
         var OrderStatus = "completed"
         var AllOrderStatus = ""
         var ProductIdForCustomPrice = 0
     }
 
     object Wallet {
-        var Host = "https://gleneagles.whew.life"
-        var ClientId = "7xVVr5CoxH7rLT6GNV9Xu1JfARKGNRxQzBiTdgj6"
-        var ClientSecret = "UgWmwqG44HvO0ByNmQSmt7TvuEZrBlwQU6isYowg"
+        var Host = "https://yourbrighterfoodhall.whew.life"
+        var ClientId = "jlDNi2cP2HaEY8FjR8CfdkHX3OzELna3VhzzLiCf"
+        var ClientSecret = "LWd2tMqZ6mvBa71clGWAFPhBOwZ9tWjHBLru1mjC"
     }
 
     object MQTT {
-        var Host = "tcp://gleneagles.whew.life:1883"
+        var Host = "tcp://yourbrighterfoodhall.whew.life:1883"
         var UserName = "konbini"
         var Password = "k0nbini"
         var Topic = "magicplate"
