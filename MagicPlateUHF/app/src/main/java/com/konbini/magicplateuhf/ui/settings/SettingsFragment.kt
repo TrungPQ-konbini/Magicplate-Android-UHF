@@ -112,7 +112,88 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupActions() {
+        /**
+         * Reset the specified address reader.
+         * @param btReadId	Reader Address(0xFF Public Address)
+         * @return	Succeeded :0, Failed:-1
+         */
+        binding.btnResetReader.setSafeOnClickListener {
+            try {
+                if (!MainApplication.isInitializedUHF()) {
+                    AlertDialogUtil.showError(
+                        getString(R.string.message_error_reader_uhf_has_not_been_initialized),
+                        requireContext()
+                    )
+                    return@setSafeOnClickListener
+                }
+                val result = MainApplication.mReaderUHF.reset(0xff.toByte())
+                if (result == 0) {
+                    AlertDialogUtil.showSuccess(
+                        getString(R.string.message_success_reset_reader),
+                        requireContext()
+                    )
+                } else {
+                    AlertDialogUtil.showError(
+                        getString(R.string.message_error_send_command),
+                        requireContext()
+                    )
+                }
 
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
+            }
+        }
+
+        /**
+         * Set output power(Method 1).
+         * <br> This command consumes more than 100mS.
+         * <br> If you want you change the output power frequently, please use Cmd_set_temporary_output_power command, which doesn't reduce the life of the internal flash memory.
+         * @param btReadId		Reader Address(0xFF Public Address)
+         * @param btOutputPower	RF output power, range from 0 to 33(0x00 - 0x21), the unit is dBm.
+         * @return	Succeeded :0, Failed:-1
+         */
+        binding.btnSetRFOutputPower.setSafeOnClickListener {
+            try {
+                if (!MainApplication.isInitializedUHF()) {
+                    AlertDialogUtil.showError(
+                        getString(R.string.message_error_reader_uhf_has_not_been_initialized),
+                        requireContext()
+                    )
+                    return@setSafeOnClickListener
+                }
+
+                var btOutputPower = 0
+                btOutputPower = binding.hardwareRFOutputPower.text.toString().toInt()
+
+                if (btOutputPower < 0 || btOutputPower > 33) {
+                    AlertDialogUtil.showError(
+                        getString(R.string.message_error_rf_output_power_range),
+                        requireContext()
+                    )
+                    return@setSafeOnClickListener
+                }
+                val result = MainApplication.mReaderUHF.setOutputPower(0xff.toByte(), btOutputPower.toByte())
+                if (result == 0) {
+                    PrefUtil.setInt("AppSettings.Hardware.Comport.RFOutputPower", btOutputPower)
+
+                    // Refresh Configuration
+                    AppSettings.getAllSetting()
+
+                    AlertDialogUtil.showSuccess(
+                        getString(R.string.message_success_set_rf_output_power),
+                        requireContext()
+                    )
+                } else {
+                    AlertDialogUtil.showError(
+                        getString(R.string.message_error_send_command),
+                        requireContext()
+                    )
+                }
+
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
+            }
+        }
     }
 
     // region Binding
@@ -127,6 +208,7 @@ class SettingsFragment : Fragment() {
     private fun bindHardware() {
         binding.hardwareUhfReader.setText(AppSettings.Hardware.Comport.ReaderUHF)
         binding.hardwareIuc.setText(AppSettings.Hardware.Comport.IUC)
+        binding.hardwareRFOutputPower.setText(AppSettings.Hardware.Comport.RFOutputPower.toString())
     }
 
     private fun bindTimer() {

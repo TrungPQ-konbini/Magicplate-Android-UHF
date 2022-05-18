@@ -44,6 +44,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private var serialNumber = 0
     private var lastSerialNumber = ""
 
+    private var isFinishWrite = false
     private var processing = false
     private lateinit var selectedPlateModel: PlateModelEntity
     private lateinit var adapter: RegisterTagsAdapter
@@ -62,8 +63,24 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     // Refresh tags
                     dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
                     dataTags.sortBy { tagEntity -> tagEntity.strEPC }
-                    adapter.setItems(dataTags)
                     setTitleButtonRegister()
+                    if (isFinishWrite) {
+                        // Check write tags false
+                        val findTagsFalse = dataTags.find { tagEntity -> "%02d".format(tagEntity.plateModel.toString().toInt()) != "%02d".format(selectedPlateModel.plateModelCode.toInt()) }
+                        if (findTagsFalse != null) {
+                            AlertDialogUtil.showError(
+                                getString(R.string.message_error_write_tags_failed),
+                                requireContext()
+                            )
+                            dataTags.forEach { tagEntity ->
+                                if ("%02d".format(tagEntity.plateModel.toString().toInt()) != "%02d".format(selectedPlateModel.plateModelCode.toInt())) {
+                                    tagEntity.isWriteFalse = true
+                                }
+                            }
+                        }
+                        isFinishWrite = false
+                    }
+                    adapter.setItems(dataTags)
                 }
             }
         }
@@ -371,9 +388,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         val newSerialNumber = "%06X".format(serialNumber)
 
         val replaceNewPlateModel = oldEPC.replaceRange(0, 2, newPlateModel)
-        val replaceNewSerialNumber =  replaceNewPlateModel.replaceRange(4, 10, newSerialNumber)
 
-        return replaceNewSerialNumber
+        return replaceNewPlateModel.replaceRange(4, 10, newSerialNumber)
     }
 
     private fun writeTags(position: Int) {
@@ -435,6 +451,8 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
                     // Start reading UHF
                     try {
+                        isFinishWrite = true
+                        adapter.setItems(ArrayList<TagEntity>())
                         AppContainer.GlobalVariable.listEPC.clear()
                         Thread.sleep(500)
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())

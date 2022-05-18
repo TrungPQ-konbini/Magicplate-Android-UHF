@@ -28,11 +28,10 @@ import com.rfid.ReaderConnector
 import com.rfid.rxobserver.RXObserver
 import com.rfid.rxobserver.bean.RXInventoryTag
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.delay
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
 import org.eclipse.paho.client.mqttv3.MqttMessage
-import kotlin.math.round
+
 
 @HiltAndroidApp
 class MainApplication : Application() {
@@ -183,6 +182,11 @@ class MainApplication : Application() {
 
         fun shared(): MainApplication {
             return instance
+        }
+
+        fun isInitializedUHF(): Boolean {
+            if (this::mReaderUHF.isInitialized) return true
+            return false
         }
 
         fun startRealTimeInventory() {

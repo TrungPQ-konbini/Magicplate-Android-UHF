@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.databinding.ItemRegisterTagBinding
-import com.konbini.magicplateuhf.utils.CommonUtil
 
 class RegisterTagsAdapter : RecyclerView.Adapter<RegisterTagsViewHolder>() {
 
@@ -68,8 +67,8 @@ class RegisterTagsViewHolder(
         }
 
         // Set background color
-        if (position % 2 == 0) {
-            itemBinding.root.setBackgroundResource(R.drawable.item_background_grey)
+        if (item.isWriteFalse) {
+            itemBinding.root.setBackgroundResource(R.drawable.item_background_red)
         } else {
             itemBinding.root.setBackgroundResource(R.drawable.item_background_white)
         }
