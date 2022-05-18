@@ -155,6 +155,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         // Refresh cart
                         AppContainer.CurrentTransaction.refreshCart()
                         refreshCart()
+                    } else {
+                        AlertDialogUtil.showError(
+                            getString(R.string.message_error_product_not_found),
+                            requireContext()
+                        )
                     }
                 }
                 "ACCEPT_OPTIONS" -> {

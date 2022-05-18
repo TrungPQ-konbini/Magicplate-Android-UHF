@@ -201,5 +201,6 @@
     <string name="message_please_scan_barcode">Please Scan Barcode !!!</string>
     <string name="message_please_tap_membership_card">Please Tap Membership Card !!!</string>
     <string name="message_error_user_not_found">User not found!!!</string>
+    <string name="message_error_product_not_found">Product not found!!!</string>
     <string name="title_product_id_for_custom_price">Product ID for custom price</string>
 </resources>
