@@ -76,7 +76,7 @@ class SettingsFragment : Fragment() {
 
     private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.  state.collect() { _state ->
+            viewModel.state.collect() { _state ->
                 when (_state.status) {
                     Resource.Status.LOADING -> {
                         showHideLoading(true)
