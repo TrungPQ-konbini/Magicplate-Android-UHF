@@ -8,7 +8,6 @@ data class TagEntity(
     var paidDate: String? = null,
     var timestamp: String? = null,
     var customPrice: String = "",
-    var lastUpdate: Long = 0
-) {
-
-}
+    var lastUpdate: Long = 0,
+    var isWriteFalse: Boolean = false
+)

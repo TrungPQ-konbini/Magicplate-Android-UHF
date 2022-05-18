@@ -176,6 +176,8 @@
     <string name="message_success_payment">Payment Success !!!</string>
     <string name="message_success_payment_balance">Payment Success !!! \n Balance: %s</string>
     <string name="message_success_sync_order">Sync Order #%s Success !!!</string>
+    <string name="message_success_reset_reader">Reset Reader Success !!!</string>
+    <string name="message_success_set_rf_output_power">Set RF Output Power Success !!!</string>
 
     <string name="message_warning_date_is_required">Please select from date to date!!!</string>
     <string name="message_warning_date_wrong_format">Date is wrong format!!!</string>
@@ -191,6 +193,8 @@
     <string name="message_error_payment_failed">%s \n Payment failed, please try again!!!</string>
     <string name="message_error_unknown_error">unknown error: %s \n please try again!!!</string>
     <string name="message_error_some_tag_write_error">Some tags write failed!!!</string>
+    <string name="message_error_rf_output_power_range">RF output power, range from 0 to 33(0x00 - 0x21), the unit is dBm.</string>
+    <string name="message_error_reader_uhf_has_not_been_initialized">Reader UHF has not been initialized</string>
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>
@@ -202,5 +206,11 @@
     <string name="message_please_tap_membership_card">Please Tap Membership Card !!!</string>
     <string name="message_error_user_not_found">User not found!!!</string>
     <string name="message_error_product_not_found">Product not found!!!</string>
+    <string name="message_error_send_command">Send command Error!!!</string>
+    <string name="message_error_write_tags_failed">some tags write failed, please try again!!!</string>
     <string name="title_product_id_for_custom_price">Product ID for custom price</string>
+    <string name="title_rf_output_power">RF Output Power</string>
+    <string name="title_get">Get</string>
+    <string name="title_set">Set</string>
+    <string name="title_reset_reader">Reset Reader</string>
 </resources>

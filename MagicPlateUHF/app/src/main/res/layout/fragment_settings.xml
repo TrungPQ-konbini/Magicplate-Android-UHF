@@ -209,6 +209,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:gravity="center"
                     android:orientation="horizontal"
                     android:weightSum="4">
 
@@ -217,12 +218,70 @@
                         android:layout_weight="3"
                         android:text="@string/title_uhf_reader" />
 
-                    <EditText
-                        android:id="@+id/hardwareUhfReader"
-                        style="@style/customEditTextSettings"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="@string/title_native_port"
-                        android:inputType="textNoSuggestions" />
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="4">
+
+                        <EditText
+                            android:id="@+id/hardwareUhfReader"
+                            style="@style/customEditTextSettings"
+                            android:layout_weight="1"
+                            android:hint="@string/title_native_port"
+                            android:inputType="textNoSuggestions" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnResetReader"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:background="@drawable/custom_button_red_10"
+                            android:text="@string/title_reset_reader"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+                </LinearLayout>
+                <!--RF Output Power-->
+                <LinearLayout
+                    android:id="@+id/hardwareRFOutputPowerPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_rf_output_power" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="4">
+
+                        <EditText
+                            android:id="@+id/hardwareRFOutputPower"
+                            style="@style/customEditTextSettings"
+                            android:layout_weight="1"
+                            android:hint="@string/title_native_port"
+                            android:inputType="textNoSuggestions|number" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnSetRFOutputPower"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:background="@drawable/custom_button_green_10"
+                            android:text="@string/title_set"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
                 </LinearLayout>
                 <!--IUC-->
                 <LinearLayout
@@ -304,9 +363,9 @@
                         android:text="@string/title_sync_order_specific_time" />
 
                     <LinearLayout
-                        android:layout_marginStart="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
                         android:layout_weight="1"
                         android:gravity="left">
 
@@ -352,6 +411,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/dimen_24"
                             android:textStyle="bold" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -709,8 +769,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
-                    android:orientation="horizontal"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     android:weightSum="4">
 
                     <TextView

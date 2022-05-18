@@ -83,6 +83,7 @@ object AppSettings {
     object Hardware {
         object Comport {
             var ReaderUHF = "/dev/ttyS1"
+            var RFOutputPower = 30 // dBm
             var ReaderUHFBaudRate = 115200
             var IUC = "/dev/ttyS2"
         }
