@@ -76,6 +76,7 @@ class MainApplication : Application() {
 
                 val current = System.currentTimeMillis()
                 if (AppContainer.GlobalVariable.isBackend) {
+                    AppContainer.GlobalVariable.listEPC = AppContainer.GlobalVariable.listEPC.distinct().toMutableList()
                     sendBroadcastRefreshTags()
                 } else {
                     if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
