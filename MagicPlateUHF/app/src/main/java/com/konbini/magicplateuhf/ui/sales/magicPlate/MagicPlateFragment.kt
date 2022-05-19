@@ -354,16 +354,17 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         MainApplication.mAudioManager.soundPaymentSuccess()
                         LogUtils.logInfo(_state.message)
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
-                        Log.e("EKRON", "PaymentState.Success")
-                        AppContainer.CurrentTransaction.resetTemporaryInfo()
-                        // Refresh cart
-                        refreshCart()
 
                         if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
                             // Print Receipt
                             LogUtils.logInfo("Start Print receipt")
                             printReceipt(AppContainer.CurrentTransaction.cartLocked)
                         }
+
+                        Log.e("EKRON", "PaymentState.Success")
+                        AppContainer.CurrentTransaction.resetTemporaryInfo()
+                        // Refresh cart
+                        refreshCart()
 
                         val message = getString(R.string.message_put_plate_on_the_tray)
                         resetMessage(message, 0)
@@ -996,17 +997,17 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         transaction.dateCreated = currentTime.toString()
         viewModel.insert(transaction)
 
-        val message = getString(R.string.message_put_plate_on_the_tray)
-        resetMessage(message, 0)
-        AppContainer.CurrentTransaction.resetTemporaryInfo()
-        // Refresh cart
-        refreshCart()
-
         if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
             // Print Receipt
             LogUtils.logInfo("Start Print receipt")
             printReceipt(AppContainer.CurrentTransaction.cartLocked)
         }
+
+        val message = getString(R.string.message_put_plate_on_the_tray)
+        resetMessage(message, 0)
+        AppContainer.CurrentTransaction.resetTemporaryInfo()
+        // Refresh cart
+        refreshCart()
     }
 
     /**
@@ -1404,45 +1405,56 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     }
 
     private fun printReceiptUSB() {
-        val usbConnection = UsbPrintersConnections.selectFirstConnected(requireContext())
-        val usbManager = requireActivity().getSystemService(Context.USB_SERVICE) as UsbManager?
-        if (usbConnection != null && usbManager != null) {
-            val permissionIntent = PendingIntent.getBroadcast(
-                requireContext(),
-                0,
-                Intent(ACTION_USB_PERMISSION),
-                0
-            )
-            val filter = IntentFilter(ACTION_USB_PERMISSION)
-            requireActivity().registerReceiver(usbReceiver, filter)
-            usbManager.requestPermission(usbConnection.device, permissionIntent)
+        val usbConnections = UsbPrintersConnections(requireContext()).list
+        usbConnections?.forEach usbConnections@{ usbConnection ->
+            if (usbConnection.device.manufacturerName?.contains("printer") == true) {
+                val usbManager =
+                    requireActivity().getSystemService(Context.USB_SERVICE) as UsbManager?
+                if (usbConnection != null && usbManager != null) {
+                    val permissionIntent = PendingIntent.getBroadcast(
+                        requireContext(),
+                        0,
+                        Intent(ACTION_USB_PERMISSION),
+                        0
+                    )
+                    val filter = IntentFilter(ACTION_USB_PERMISSION)
+                    requireActivity().registerReceiver(usbReceiver, filter)
+                    usbManager.requestPermission(usbConnection.device, permissionIntent)
+                }
+                return@usbConnections
+            }
         }
     }
 
     private val usbReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action
-            if (ACTION_USB_PERMISSION == action) {
-                synchronized(this) {
-                    val usbManager =
-                        requireActivity().getSystemService(Context.USB_SERVICE) as UsbManager?
-                    val usbDevice =
-                        intent.getParcelableExtra<Parcelable>(UsbManager.EXTRA_DEVICE) as UsbDevice?
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if (usbManager != null && usbDevice != null) {
-                            val printer =
-                                EscPosPrinter(
-                                    UsbConnection(usbManager, usbDevice),
-                                    203,
-                                    AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
-                                    32
-                                )
-                            val content =
-                                formatReceipt(AppContainer.CurrentTransaction.cartLocked)
-                            printer.printFormattedTextAndCut(content)
+            try {
+                val action = intent.action
+                if (ACTION_USB_PERMISSION == action) {
+                    synchronized(this) {
+                        val usbManager =
+                            requireActivity().getSystemService(Context.USB_SERVICE) as UsbManager?
+                        val usbDevice =
+                            intent.getParcelableExtra<Parcelable>(UsbManager.EXTRA_DEVICE) as UsbDevice?
+                        if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                            if (usbManager != null && usbDevice != null) {
+                                val printer =
+                                    EscPosPrinter(
+                                        UsbConnection(usbManager, usbDevice),
+                                        203,
+                                        AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
+                                        32
+                                    )
+                                val content =
+                                    formatReceipt(AppContainer.CurrentTransaction.cartLocked)
+                                printer.printFormattedText(content)
+                                printer.printFormattedTextAndCut("")
+                            }
                         }
                     }
                 }
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
             }
         }
     }
