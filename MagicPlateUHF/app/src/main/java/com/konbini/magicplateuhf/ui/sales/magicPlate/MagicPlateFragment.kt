@@ -89,7 +89,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         PaymentState.InProgress -> {
                             // Check Cart Locked Change
                             if (AppContainer.CurrentTransaction.cart.isEmpty()) {
-                                AudioManager.instance.soundBuzzer()
+                                MainApplication.mAudioManager.soundBuzzer()
                                 setBlink(AlarmType.ERROR)
                                 return
                             }
@@ -102,7 +102,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 //                                }
 //                            }
 //                            if (hasOtherTag) {
-//                                AudioManager.instance.soundBuzzer()
+//                                MainApplication.mAudioManager.soundBuzzer()
 //                                setBlink(AlarmType.ERROR)
 //                            }
                         }
@@ -129,7 +129,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "NEW_BARCODE" -> {
                     val paymentState = AppContainer.CurrentTransaction.paymentState
                     if (paymentState == PaymentState.InProgress || paymentState == PaymentState.ReadyToPay) {
-                        AudioManager.instance.soundDoNotChangeItem()
+                        MainApplication.mAudioManager.soundDoNotChangeItem()
                         return
                     }
                     val barcode = AppContainer.CurrentTransaction.barcode.split("\n")[0]
@@ -325,6 +325,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     Resource.Status.SUCCESS -> {
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
+                        MainApplication.mAudioManager.soundPaymentSuccess()
                         LogUtils.logInfo(_state.message)
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
                         Log.e("EKRON", "PaymentState.Success")
@@ -336,7 +337,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             // Print Receipt
                             LogUtils.logInfo("Start Print receipt")
                             printReceipt(AppContainer.CurrentTransaction.cartLocked)
-                            AudioManager.instance.soundPaymentSuccess()
                         }
 
                         val message = getString(R.string.message_put_plate_on_the_tray)
@@ -345,7 +345,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     Resource.Status.ERROR -> {
                         setBlink(AlarmType.ERROR)
                         displayMessage(_state.message)
-                        AudioManager.instance.soundBuzzer()
+                        MainApplication.mAudioManager.soundBuzzer()
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Error
 
 //                        val message = getString(R.string.message_please_tap_card_again)
@@ -517,7 +517,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
-                AudioManager.instance.soundProcessingPayment()
+                MainApplication.mAudioManager.soundPleaseTapCard()
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
@@ -538,7 +538,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
-                AudioManager.instance.soundProcessingPayment()
+                MainApplication.mAudioManager.soundPleaseTapCard()
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
@@ -558,7 +558,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
-                AudioManager.instance.soundProcessingPayment()
+                MainApplication.mAudioManager.soundPleaseTapCard()
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
@@ -578,7 +578,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Start countdown timeout and voice
                 timerTimeoutPayment.start()
-                AudioManager.instance.soundPleaseTapCard()
+                MainApplication.mAudioManager.soundPleaseTapCard()
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
@@ -613,7 +613,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 if (paymentState != PaymentState.Init && paymentState != PaymentState.Preparing) {
                     return
                 }
-                AudioManager.instance.soundEnterDiscount()
+                MainApplication.mAudioManager.soundEnterDiscount()
                 var message = getString(R.string.message_please_scan_barcode)
                 if (AppSettings.Options.Discount.NFC) {
                     message = getString(R.string.message_please_tap_membership_card)
@@ -662,7 +662,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val state = AppContainer.CurrentTransaction.paymentState
         if (state == PaymentState.ReadyToPay || state == PaymentState.InProgress) {
             setBlink(AlarmType.ERROR)
-            AudioManager.instance.soundDoNotChangeItem()
+            MainApplication.mAudioManager.soundDoNotChangeItem()
             return
         }
         when (type) {
@@ -757,10 +757,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         // Show message
         if (isTimeout) {
-            AudioManager.instance.soundPaymentTimeout()
+            MainApplication.mAudioManager.soundPaymentTimeout()
             displayMessage(getString(R.string.message_payment_timeout))
         } else {
-            AudioManager.instance.soundPaymentCancelled()
+            MainApplication.mAudioManager.soundPaymentCancelled()
+            //MainApplication.mAudioManager.soundPaymentCancelled()
             displayMessage(getString(R.string.message_payment_cancelled))
         }
         val message = getString(R.string.message_put_plate_on_the_tray)
@@ -846,7 +847,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             displayMessage(message)
             when (voice) {
                 R.raw.please_tap_card_again -> {
-                    AudioManager.instance.soundPleaseTapCardAgain()
+                    MainApplication.mAudioManager.soundPleaseTapCardAgain()
                 }
             }
         }
@@ -931,7 +932,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun handlePaymentSuccess() {
         setBlink(AlarmType.SUCCESS)
-        AudioManager.instance.soundPaymentSuccess()
+        MainApplication.mAudioManager.soundPaymentSuccess()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
         Log.e("EKRON", "PaymentState.Success")
         val calendar = Calendar.getInstance()
@@ -985,7 +986,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         setBlink(AlarmType.ERROR)
         displayMessage(ErrorCodeIM30.handleMessageIuc(_message, requireContext()))
-        AudioManager.instance.soundBuzzer()
+        MainApplication.mAudioManager.soundBuzzer()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Init
 
 //        val message = getString(R.string.message_please_tap_card_again)
@@ -1024,7 +1025,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             timerTimeoutPayment.cancel()
                             timeout = AppSettings.Options.Payment.Timeout
 
-                            AudioManager.instance.soundProcessingPayment()
+                            // MainApplication.mAudioManager.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
@@ -1067,7 +1068,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             timerTimeoutPayment.cancel()
                             timeout = AppSettings.Options.Payment.Timeout
 
-                            AudioManager.instance.soundProcessingPayment()
+                            // MainApplication.mAudioManager.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
@@ -1110,7 +1111,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             timerTimeoutPayment.cancel()
                             timeout = AppSettings.Options.Payment.Timeout
 
-                            AudioManager.instance.soundProcessingPayment()
+                            // MainApplication.mAudioManager.soundProcessingPayment()
                             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
                         }
                         Log.e(TAG, _message)
@@ -1309,7 +1310,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             // Show message warning cart is empty
             displayMessage(getString(R.string.message_warning_cart_is_empty))
             setBlink(AlarmType.ERROR)
-            AudioManager.instance.soundCartIsEmpty()
+            MainApplication.mAudioManager.soundCartIsEmpty()
 
             val message = getString(R.string.message_put_plate_on_the_tray)
             resetMessage(message, 0)

@@ -42,6 +42,7 @@ class MainApplication : Application() {
 
     companion object {
         const val TAG = "MainApplication"
+        lateinit var mAudioManager: AudioManager
         lateinit var mReaderASC: Reader
         lateinit var mManager: UsbManager
         lateinit var instance: MainApplication
@@ -64,6 +65,9 @@ class MainApplication : Application() {
             }
 
             override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
+                // Distinct list EPC
+                AppContainer.GlobalVariable.listEPC = AppContainer.GlobalVariable.listEPC.distinct().toMutableList()
+
                 val intent = Intent()
                 intent.action = "REFRESH_READER_TAGS"
                 LocalBroadcastManager.getInstance(instance.applicationContext).sendBroadcast(intent)
@@ -298,7 +302,7 @@ class MainApplication : Application() {
         initSetting()
         mainAppInit?.invoke()
         instance = this
-        AudioManager(this)
+        mAudioManager = AudioManager(this)
         getAppVersion()
         initMQTT()
         initAcsReader()

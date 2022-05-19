@@ -40,9 +40,13 @@ class AudioManager(private val context: Context) {
 
     fun soundCartIsEmpty() {
         if (mpCartIsEmpty == null) {
-            mpCartIsEmpty = MediaPlayer.create(context, R.raw.cart_is_empty);
+            mpCartIsEmpty = MediaPlayer.create(context, R.raw.cart_is_empty)
+            mpCartIsEmpty!!.setOnCompletionListener {
+                mpCartIsEmpty!!.release()
+                mpCartIsEmpty = null
+            }
         }
-        mpCartIsEmpty?.start()
+        mpCartIsEmpty!!.start()
     }
 
     fun soundPayment() {
@@ -82,7 +86,11 @@ class AudioManager(private val context: Context) {
 
     fun soundDoNotChangeItem() {
         if (mpDoNotChangeItem == null) {
-            mpDoNotChangeItem = MediaPlayer.create(context, R.raw.do_not_change_item);
+            mpDoNotChangeItem = MediaPlayer.create(context, R.raw.do_not_change_item)
+            mpDoNotChangeItem!!.setOnCompletionListener {
+                mpDoNotChangeItem!!.release()
+                mpDoNotChangeItem = null
+            }
         }
         mpDoNotChangeItem?.start()
     }
@@ -103,9 +111,13 @@ class AudioManager(private val context: Context) {
 
     fun soundPaymentSuccess() {
         if (mpPaymentSuccess == null) {
-            mpPaymentSuccess = MediaPlayer.create(context, R.raw.payment_successful);
+            mpPaymentSuccess = MediaPlayer.create(context, R.raw.payment_successful)
+            mpPaymentSuccess!!.setOnCompletionListener {
+                mpPaymentSuccess!!.release()
+                mpPaymentSuccess = null
+            }
         }
-        mpPaymentSuccess?.start()
+        mpPaymentSuccess!!.start()
     }
 
     fun soundPaymentFailed() {
@@ -117,16 +129,24 @@ class AudioManager(private val context: Context) {
 
     fun soundPaymentCancelled() {
         if (mpPaymentCancelled == null) {
-            mpPaymentCancelled = MediaPlayer.create(context, R.raw.payment_cancelled);
+            mpPaymentCancelled = MediaPlayer.create(context, R.raw.payment_cancelled)
+            mpPaymentCancelled!!.setOnCompletionListener {
+                mpPaymentCancelled!!.release()
+                mpPaymentCancelled = null
+            }
         }
-        mpPaymentCancelled?.start()
+        mpPaymentCancelled!!.start()
     }
 
     fun soundPaymentTimeout() {
         if (mpPaymentTimeout == null) {
-            mpPaymentTimeout = MediaPlayer.create(context, R.raw.payment_timeout);
+            mpPaymentTimeout = MediaPlayer.create(context, R.raw.payment_timeout)
+            mpPaymentTimeout!!.setOnCompletionListener {
+                mpPaymentTimeout!!.release()
+                mpPaymentTimeout = null
+            }
         }
-        mpPaymentTimeout?.start()
+        mpPaymentTimeout!!.start()
     }
 
     fun soundPlaceTrayInTheBox() {
@@ -173,16 +193,24 @@ class AudioManager(private val context: Context) {
 
     fun soundPleaseTapCard() {
         if (mpPleaseTapCard == null) {
-            mpPleaseTapCard = MediaPlayer.create(context, R.raw.please_tap_card);
+            mpPleaseTapCard = MediaPlayer.create(context, R.raw.please_tap_card)
+            mpPleaseTapCard!!.setOnCompletionListener {
+                mpPleaseTapCard!!.release()
+                mpPleaseTapCard = null
+            }
         }
-        mpPleaseTapCard?.start()
+        mpPleaseTapCard!!.start()
     }
 
     fun soundPleaseTapCardAgain() {
         if (mpPleaseTapCardAgain == null) {
             mpPleaseTapCardAgain = MediaPlayer.create(context, R.raw.please_tap_card_again)
+            mpPleaseTapCardAgain!!.setOnCompletionListener {
+                mpPleaseTapCardAgain!!.release()
+                mpPleaseTapCardAgain = null
+            }
         }
-        mpPleaseTapCardAgain?.start()
+        mpPleaseTapCardAgain!!.start()
     }
 
     fun soundPleaseLookIntoCamera() {
@@ -193,11 +221,13 @@ class AudioManager(private val context: Context) {
     }
 
     fun soundEnterDiscount() {
-        mpEnterDiscount = MediaPlayer.create(context, R.raw.enter_discount)
-        mpEnterDiscount?.setOnCompletionListener {
-            mpEnterDiscount?.release()
-            mpEnterDiscount = null
+        if (mpEnterDiscount == null) {
+            mpEnterDiscount = MediaPlayer.create(context, R.raw.enter_discount)
+            mpEnterDiscount!!.setOnCompletionListener {
+                mpEnterDiscount!!.release()
+                mpEnterDiscount = null
+            }
         }
-        mpEnterDiscount?.start()
+        mpEnterDiscount!!.start()
     }
 }
