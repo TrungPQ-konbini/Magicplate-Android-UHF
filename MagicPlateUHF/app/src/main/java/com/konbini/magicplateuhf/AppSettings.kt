@@ -184,6 +184,7 @@ object AppSettings {
         }
         var DiscountList = ""
         var RolesList = "administrator"
+        var ShowCancelPaymentButton = true
         var NotAllowWalletNonRfid = true
         var AllowAdminCancelPayment = true
         var IgnoreWhenRemovingTags = false

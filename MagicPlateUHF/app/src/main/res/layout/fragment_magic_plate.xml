@@ -327,6 +327,7 @@
                         android:background="@drawable/custom_button_mysterious_black_10"
                         android:padding="@dimen/dimen_12"
                         android:text="@string/title_cancel"
+                        android:visibility="gone"
                         android:textColor="@color/white" />
                 </LinearLayout>
 

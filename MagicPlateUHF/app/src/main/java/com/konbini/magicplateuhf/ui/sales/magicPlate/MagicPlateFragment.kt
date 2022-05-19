@@ -858,7 +858,9 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun displayMessage(message: String, isLoading: Boolean = false) {
         binding.rfidMessageTitle.text = message
-        if (AppContainer.CurrentTransaction.paymentState == PaymentState.ReadyToPay) {
+        if (AppContainer.CurrentTransaction.paymentState == PaymentState.ReadyToPay
+            && AppSettings.Options.ShowCancelPaymentButton
+        ) {
             binding.rfidCancelPayment.visibility = View.VISIBLE
         } else {
             binding.rfidCancelPayment.visibility = View.GONE
@@ -1249,7 +1251,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                                 // Discount
                                 if ((paymentState == PaymentState.Init
-                                    || paymentState == PaymentState.Preparing)
+                                            || paymentState == PaymentState.Preparing)
                                     && AppSettings.Options.Discount.NFC
                                 ) {
                                     if (this::pDialog.isInitialized) {

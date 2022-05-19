@@ -417,6 +417,12 @@ class OptionsFragment : Fragment() {
             showMessageSuccess()
         }
 
+        binding.checkboxShowHideCancelPaymentButton.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.ShowCancelPaymentButton", isChecked)
+            LogUtils.logInfo("AppSettings.Options.ShowCancelPaymentButton Options: $isChecked")
+            showMessageSuccess()
+        }
+
         binding.checkboxNotAllowWalletNonRfidActivated.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefUtil.setBoolean("AppSettings.Options.NotAllowWalletNonRfid", isChecked)
             LogUtils.logInfo("AppSettings.Options.NotAllowWalletNonRfid Options: $isChecked")
@@ -608,6 +614,7 @@ class OptionsFragment : Fragment() {
         binding.checkboxAlertTelegramActivated.isChecked = AppSettings.Alert.Telegram.Activated
         binding.checkboxAlertSlackActivated.isChecked = AppSettings.Alert.Slack.Activated
 
+        binding.checkboxShowHideCancelPaymentButton.isChecked = AppSettings.Options.ShowCancelPaymentButton
         binding.checkboxNotAllowWalletNonRfidActivated.isChecked = AppSettings.Options.NotAllowWalletNonRfid
         binding.checkboxIgnoreWhenRemovingTags.isChecked = AppSettings.Options.IgnoreWhenRemovingTags
 
@@ -726,6 +733,8 @@ class OptionsFragment : Fragment() {
                     if (pressedKey.isNotEmpty()) {
                         PrefUtil.setString("AppSettings.Options.KeyCodeCancelPayment", pressedKey)
                         binding.keyCodeCancelPayment.text = pressedKey
+                        // Refresh Configuration
+                        AppSettings.getAllSetting()
                     }
                 }
             }

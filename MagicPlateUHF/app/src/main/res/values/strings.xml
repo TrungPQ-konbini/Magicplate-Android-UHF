@@ -140,6 +140,7 @@
     <string name="title_bluetooth">Bluetooth</string>
     <string name="title_serial_number">Serial Number</string>
     <string name="title_ignore_when_removing_tags">Ignore when removing tags</string>
+    <string name="title_show_cancel_payment_button">Show Cancel Payment Button</string>
     <string name="title_plate_last_serial_number">Last Serial Number</string>
     <string name="title_receipt_width_paper">Receipt Width Paper</string>
     <string name="title_receipt_content">Receipt Content</string>
