@@ -20,6 +20,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.konbini.magicplateuhf.AppContainer
+import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.MainApplication.Companion.mReaderUHF
 import com.konbini.magicplateuhf.R
@@ -118,7 +119,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         try {
             AppContainer.GlobalVariable.allowReadTags = true
             AppContainer.GlobalVariable.listEPC.clear()
-            Thread.sleep(500)
+            Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
             mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
         } catch (ex: Exception) {
             LogUtils.logError(ex)
@@ -255,7 +256,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
             try {
                 AppContainer.GlobalVariable.listEPC.clear()
-                Thread.sleep(500)
+                Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
                 mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
@@ -454,7 +455,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         isFinishWrite = true
                         adapter.setItems(ArrayList<TagEntity>())
                         AppContainer.GlobalVariable.listEPC.clear()
-                        Thread.sleep(500)
+                        Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)
@@ -542,7 +543,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     // Start reading UHF
                     try {
                         AppContainer.GlobalVariable.listEPC.clear()
-                        Thread.sleep(500)
+                        Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)

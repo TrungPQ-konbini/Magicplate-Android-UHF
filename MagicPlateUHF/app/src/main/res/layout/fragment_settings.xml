@@ -243,6 +243,27 @@
                             android:textColor="@color/white" />
                     </LinearLayout>
                 </LinearLayout>
+                <!--Reader delay time-->
+                <LinearLayout
+                    android:id="@+id/hardwareDelayTimePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_delay_time" />
+
+                    <EditText
+                        android:id="@+id/hardwareDelayTime"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_milliseconds"
+                        android:inputType="textNoSuggestions|number" />
+                </LinearLayout>
                 <!--RF Output Power-->
                 <LinearLayout
                     android:id="@+id/hardwareRFOutputPowerPanel"

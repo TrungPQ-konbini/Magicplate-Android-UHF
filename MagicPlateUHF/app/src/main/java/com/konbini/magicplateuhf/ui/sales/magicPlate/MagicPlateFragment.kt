@@ -71,6 +71,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private var orderNumber = 0
     private val gson = Gson()
+    private var contentReceipt = ""
 
     // Variable for Discount
     private var barcode: String = ""
@@ -1359,6 +1360,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun printReceipt(cartLocked: MutableList<CartEntity>) {
         viewLifecycleOwner.lifecycleScope.launch {
+            contentReceipt = ""
             val lastNumber = viewModel.getLastTransactionId()
             if (lastNumber != null) {
                 orderNumber = lastNumber + 1
@@ -1372,6 +1374,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     // TCP
                     printReceiptTCP(cartLocked)
                 } else {
+                    contentReceipt = formatReceipt(AppContainer.CurrentTransaction.cartLocked)
                     // USB
                     printReceiptUSB()
                 }
@@ -1422,6 +1425,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     val filter = IntentFilter(ACTION_USB_PERMISSION)
                     requireActivity().registerReceiver(usbReceiver, filter)
                     usbManager.requestPermission(usbConnection.device, permissionIntent)
+                } else {
+                    AlertDialogUtil.showError(
+                        getString(R.string.message_error_printer_not_found),
+                        requireContext()
+                    )
                 }
                 return@usbConnections
             }
@@ -1447,9 +1455,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                         AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
                                         32
                                     )
-                                val content =
-                                    formatReceipt(AppContainer.CurrentTransaction.cartLocked)
-                                printer.printFormattedText(content)
+                                printer.printFormattedText(contentReceipt)
                                 printer.printFormattedTextAndCut("")
                             }
                         }
@@ -1465,18 +1471,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         return "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
                 "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
                 "[C]<font size='tall'>Date: ${Date()}</font>\n" +
-                "[C]<u><font size='big'>RECEIPT</font></u>\n" +
-                "[L]\n" +
-                "[C]<u><font size='tall'>ORDER N°${"%06d".format(orderNumber)}</font></u>\n" +
-                "[L]\n" +
+                "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n" +
                 formatContent(cartLocked) +
-                "[L]\n" +
                 "[L]<font size='tall'>Membership :</font>\n" +
                 "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
                 "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
                 "[L]\n" +
-                "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-                "[C]<qrcode size='20'>831254784551</qrcode>" +
+                "[C]<barcode type='ean13' height='10'>${"%12d".format(orderNumber)}</barcode>\n" +
+                //"[C]<qrcode size='20'>831254784551</qrcode>" +
                 "[L]\n" +
                 "[L]\n" +
                 "[L]\n"
@@ -1499,10 +1501,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[R]TOTAL PRICE :[R]${formatCurrency(total)}\n" +
                 "[L]\n" +
                 "[C]================================\n" +
-                "[C]<font size='tall'>Tel: ${AppSettings.Company.Tel}</font>\n" +
-                "[C]<font size='tall'>Email: ${AppSettings.Company.Email}</font>\n" +
-                "[C]<font size='tall'>Address: ${AppSettings.Company.Address}</font>\n" +
-                "[C]<font size='tall'>Thank you!!!</font>\n"
+                "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
+                "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
+                "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
+                "[C]<font size='tall'><b>Thank you!!!</b></font>\n"
     }
 
     private fun adminCancelPayment(pressedKey: String) {

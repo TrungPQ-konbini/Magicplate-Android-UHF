@@ -88,7 +88,7 @@ class MainApplication : Application() {
                             Log.e("EKRON", "timeTagSizeChanged == 0L")
                         } else {
                             val offset = current - timeTagSizeChanged
-                            if (offset < 500) {
+                            if (offset < AppSettings.Hardware.Comport.DelayTime.toLong()) {
                                 Log.e(TAG, "$current | $offset => Ignore")
                                 Log.e("EKRON", "$current | $offset => Ignore")
                             } else {
@@ -105,7 +105,7 @@ class MainApplication : Application() {
                     Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
                     AppContainer.GlobalVariable.listEPC.clear()
 
-                    Thread.sleep(500)
+                    Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
 
                     // Start reading UHF
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
@@ -237,7 +237,7 @@ class MainApplication : Application() {
                         mReaderUHF = RFIDReaderHelper.getDefaultHelper()
                         mReaderUHF.unRegisterObserver(rxObserver)
                         mReaderUHF.registerObserver(rxObserver)
-                        Thread.sleep(500)
+                        Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
                         startRealTimeInventory()
                     } catch (ex: Exception) {
                         Log.e(SalesActivity.TAG, ex.toString())
