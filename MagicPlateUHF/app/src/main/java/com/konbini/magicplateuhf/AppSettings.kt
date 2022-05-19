@@ -69,6 +69,7 @@ object AppSettings {
     }
 
     object UHFStructure {
+        var CCWID = "FD"
         var CustomPrice = "FF"
     }
 

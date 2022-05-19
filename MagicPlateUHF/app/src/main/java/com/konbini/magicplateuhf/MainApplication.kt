@@ -18,6 +18,7 @@ import com.konbini.magicplateuhf.base.MessageMQTT
 import com.konbini.magicplateuhf.data.enum.PaymentState
 import com.konbini.magicplateuhf.hardware.IM30Interface
 import com.konbini.magicplateuhf.ui.SalesActivity
+import com.konbini.magicplateuhf.ui.sales.magicPlate.MagicPlateFragment
 import com.konbini.magicplateuhf.utils.AudioManager
 import com.konbini.magicplateuhf.utils.LogUtils
 import com.konbini.magicplateuhf.utils.MqttHelper
@@ -61,7 +62,7 @@ class MainApplication : Application() {
             override fun onInventoryTag(tag: RXInventoryTag) {
                 Log.e(TAG, tag.strEPC)
                 AppContainer.GlobalVariable.listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
-                Log.e("EKRON", "Add item to AppContainer.GlobalVariable.listEPC")
+                Log.e(MagicPlateFragment.TAG, "Add item to AppContainer.GlobalVariable.listEPC")
             }
 
             override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
@@ -79,18 +80,17 @@ class MainApplication : Application() {
 
                 val current = System.currentTimeMillis()
                 if (AppContainer.GlobalVariable.isBackend) {
-                    AppContainer.GlobalVariable.listEPC = AppContainer.GlobalVariable.listEPC.distinct().toMutableList()
                     sendBroadcastRefreshTags()
                 } else {
                     if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
                         if (timeTagSizeChanged == 0L) {
                             timeTagSizeChanged = current
-                            Log.e("EKRON", "timeTagSizeChanged == 0L")
+                            Log.e(MagicPlateFragment.TAG, "timeTagSizeChanged == 0L")
                         } else {
                             val offset = current - timeTagSizeChanged
                             if (offset < AppSettings.Hardware.Comport.DelayTime.toLong()) {
                                 Log.e(TAG, "$current | $offset => Ignore")
-                                Log.e("EKRON", "$current | $offset => Ignore")
+                                Log.e(MagicPlateFragment.TAG, "$current | $offset => Ignore")
                             } else {
                                 sendBroadcastRefreshTags()
                             }
@@ -102,14 +102,14 @@ class MainApplication : Application() {
 
                 if (AppContainer.GlobalVariable.allowReadTags) {
                     roundReadTag += 1
-                    Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
+                    Log.e(TAG, "Clear AppContainer.GlobalVariable.listEPC")
                     AppContainer.GlobalVariable.listEPC.clear()
 
                     Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
 
                     // Start reading UHF
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                    Log.e("EKRON", "roundReadTag: $roundReadTag")
+                    Log.e(TAG, "roundReadTag: $roundReadTag")
                     Log.e(
                         TAG,
                         "==========Start command reading UHF=========="
@@ -123,13 +123,9 @@ class MainApplication : Application() {
                 TAG,
                 "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
             )
-            Log.e(
-                "EKRON",
-                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
-            )
             if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
                 if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
-                    Log.e("EKRON", "Start new Transaction")
+                    Log.e(MagicPlateFragment.TAG, "Start new Transaction")
                     AppContainer.CurrentTransaction.paymentState = PaymentState.Init
                     LogUtils.logInfo("Start new Transaction")
                 } else {
@@ -140,16 +136,13 @@ class MainApplication : Application() {
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
             ) {
-                //LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
                 return
             }
 
             if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    //Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
                     AppContainer.GlobalVariable.listEPC.forEach { _epc ->
                         if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-                            //Log.e("TrungPQ", "Add Tag | $_epc")
                             AppContainer.CurrentTransaction.listEPC.add(_epc)
                         }
                     }
@@ -157,7 +150,6 @@ class MainApplication : Application() {
                     if (AppContainer.CurrentTransaction.cart.isEmpty())
                         AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
-                    //Log.e("TrungPQ", "Clear")
                 }
             } else {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {

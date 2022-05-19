@@ -355,6 +355,7 @@ class CommonUtil {
             return TagEntity(
                 strEPC = strEPC,
                 plateModel = strEPC.substring(0, 2).toInt(16).toString(),
+                ccwId = strEPC.substring(2, 10),
                 serialNumber = strEPC.substring(4, 10).toInt(16).toString(),
                 timestamp = strEPC.substring(10, 18).toInt(16).toString(),
                 customPrice = customPrice

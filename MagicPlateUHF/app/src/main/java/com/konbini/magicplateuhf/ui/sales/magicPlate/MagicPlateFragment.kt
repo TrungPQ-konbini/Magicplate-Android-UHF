@@ -13,7 +13,6 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -32,16 +31,13 @@ import com.dantsu.escposprinter.connection.usb.UsbConnection
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
 import com.developer.kalert.KAlertDialog
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.konbini.magicplateuhf.AppContainer
-import com.konbini.magicplateuhf.AppContainer.CurrentTransaction.getListEpcLocked
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.*
 import com.konbini.magicplateuhf.data.entities.*
 import com.konbini.magicplateuhf.data.enum.*
-import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.databinding.FragmentMagicPlateBinding
 import com.konbini.magicplateuhf.hardware.IM30Interface
 import com.konbini.magicplateuhf.ui.settings.SettingsViewModel
@@ -49,11 +45,11 @@ import com.konbini.magicplateuhf.utils.*
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
+import com.konbini.magicplateuhf.utils.CommonUtil.Companion.getGreetingMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.reflect.Type
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
@@ -111,6 +107,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         PaymentState.Preparing -> {
                             // Refresh cart
                             refreshCart()
+
+                            if (AppContainer.CurrentTransaction.detectedUser != null) {
+                                autoDetectWalletPayment()
+                            }
                         }
                         else -> {
 
@@ -208,7 +208,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private var clickedTitleHeaderIndex = 0
     private var clickedTitleModel = 0
-    private var clickedTitleTotal = 0
 
     private lateinit var cartAdapter: CartAdapter
     private lateinit var paymentAdapter: PaymentAdapter
@@ -362,7 +361,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             printReceipt(AppContainer.CurrentTransaction.cartLocked)
                         }
 
-                        Log.e("EKRON", "PaymentState.Success")
+                        Log.e(TAG, "PaymentState.Success")
                         AppContainer.CurrentTransaction.resetTemporaryInfo()
                         // Refresh cart
                         refreshCart()
@@ -376,10 +375,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         MainApplication.mAudioManager.soundBuzzer()
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Error
 
-//                        val message = getString(R.string.message_please_tap_card_again)
-//                        val voice = R.raw.please_tap_card_again
-//                        resetMessage(message, voice)
-//                        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
                         val message = getString(R.string.message_put_plate_on_the_tray)
                         resetMessage(message, 0)
                         AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
@@ -438,15 +433,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 // Goto Login
                 gotoLogin()
             }
-
-//            if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
-//                clickedTitleModel = 0
-//                clickedTitleTotal = 0
-//                // Goto Login
-//                gotoLogin()
-//            } else {
-//                if (clickedTitleModel > 3) clickedTitleModel = 0
-//            }
         }
 
         binding.rfidCancelPayment.setSafeOnClickListener {
@@ -463,31 +449,35 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
                 AppContainer.CurrentTransaction.paymentState = PaymentState.Init
             } else {
-                AppContainer.CurrentTransaction.barcode = "8885000035380"
-                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
-                val intent = Intent()
-                intent.action = "NEW_BARCODE"
-                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
-                barcode = ""
+//                AppContainer.CurrentTransaction.barcode = "8885000035380"
+//                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
+//                val intent = Intent()
+//                intent.action = "NEW_BARCODE"
+//                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
+//                    .sendBroadcast(intent)
+//                barcode = ""
             }
-//            AppContainer.GlobalVariable.listEPC.clear()
-//            AppContainer.GlobalVariable.listEPC.add("FF800000020300108C002F3F")
-//
-//            AppContainer.CurrentTransaction.listEPC.clear()
-//            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
-//
-//            // Get list tags
-//            val listTagEntity =
-//                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
-//            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
-//
-//            MainApplication.timeTagSizeChanged = 0L
-//            AppContainer.CurrentTransaction.refreshCart()
-//
-//            // Add or Remove items to cart
-//            val intent = Intent()
-//            intent.action = "REFRESH_TAGS"
-//            LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
+            AppContainer.GlobalVariable.listEPC.clear()
+            AppContainer.GlobalVariable.listEPC.add("FD0A72910B00000000000000") // FD - 0A72910B
+            AppContainer.GlobalVariable.listEPC.add("0B8D2ED73900000000000000") // 11 - Salad bowl
+            AppContainer.GlobalVariable.listEPC.add("0C8D2ED73900000000000000") // 12 - Rice bowl
+            AppContainer.GlobalVariable.listEPC.add("0D8D2ED73900000000000000") // 13 - Noodle bowl
+
+            AppContainer.CurrentTransaction.listEPC.clear()
+            AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+
+            // Get list tags
+            val listTagEntity =
+                AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+            AppContainer.CurrentTransaction.listTagEntity = listTagEntity
+
+            MainApplication.timeTagSizeChanged = 0L
+            AppContainer.CurrentTransaction.refreshCart()
+
+            // Add or Remove items to cart
+            val intent = Intent()
+            intent.action = "REFRESH_TAGS"
+            LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
         }
         // TODO: End TrungPQ add to test
     }
@@ -663,13 +653,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                     Log.e("BARCODE_VALUE", barcode)
 
                                     barcode = barcode.split("\n")[0]
-                                    AppContainer.CurrentTransaction.ccwId1 = barcode
+                                    AppContainer.CurrentTransaction.ccwId1Discount = barcode
                                     if (this::pDialog.isInitialized) {
                                         if (pDialog.isShowing) {
                                             pDialog.dismiss()
                                         }
                                     }
-                                    AppContainer.CurrentTransaction.ccwId1 = barcode
+                                    AppContainer.CurrentTransaction.ccwId1Discount = barcode
                                     listenerDiscount()
                                     barcode = ""
                                 }
@@ -899,7 +889,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val cart = AppContainer.CurrentTransaction.cart
         cart.sortBy { tagEntity -> tagEntity.strEPC }
         cartAdapter.setItems(ArrayList(cart))
-        //LogUtils.logInfo("Display Cart: ${gson.toJson(cart)}")
     }
 
     /**
@@ -973,7 +962,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         setBlink(AlarmType.SUCCESS)
         MainApplication.mAudioManager.soundPaymentSuccess()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
-        Log.e("EKRON", "PaymentState.Success")
+        Log.e(TAG, "PaymentState.Success")
         val calendar = Calendar.getInstance()
         val currentTime = calendar.timeInMillis
 
@@ -1260,7 +1249,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                             pDialog.dismiss()
                                         }
                                     }
-                                    AppContainer.CurrentTransaction.ccwId1 = AppContainer.CurrentTransaction.cardNFC
+                                    AppContainer.CurrentTransaction.ccwId1Discount =
+                                        AppContainer.CurrentTransaction.cardNFC
                                     listenerDiscount()
                                 }
                             }
@@ -1309,7 +1299,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         discounts.forEach { discountEntity ->
                             if (roles.contains(discountEntity.roleName)) {
                                 Log.e(TAG, discountEntity.discountValue)
-                                AppContainer.CurrentTransaction.currentDiscount = discountEntity.discountValue.toFloat()
+                                AppContainer.CurrentTransaction.currentDiscount =
+                                    discountEntity.discountValue.toFloat()
                                 AppContainer.CurrentTransaction.refreshCart()
                                 refreshCart()
                                 return@outForeach
@@ -1323,7 +1314,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun findUserByCcwId1(): UserEntity? {
         return AppContainer.GlobalVariable.listUsers.find { userEntity ->
-            AppContainer.CurrentTransaction.ccwId1 == userEntity.ccwId1
+            AppContainer.CurrentTransaction.ccwId1Discount == userEntity.ccwId1
         }
     }
     // endregion
@@ -1579,6 +1570,26 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     cancelPayment()
                 }
             }
+        }
+    }
+
+    private fun autoDetectWalletPayment() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Show message welcome user
+            val userName = AppContainer.CurrentTransaction.detectedUser!!.displayName
+            val message = "${getGreetingMessage()} $userName"
+            displayMessage(message)
+
+            // Change Payment state
+            AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+            AppContainer.CurrentTransaction.paymentType = PaymentType.KONBINI_WALLET
+
+            // Locked cart
+            AppContainer.CurrentTransaction.cartLocked()
+
+            AppContainer.CurrentTransaction.cardNFC = AppContainer.CurrentTransaction.detectedUser!!.ccwId1
+            delay(2000)
+            viewModel.debit()
         }
     }
 }

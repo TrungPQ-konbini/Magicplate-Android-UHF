@@ -74,7 +74,7 @@ object AppContainer {
     }
 
     object CurrentTransaction {
-        var ccwId1: String = ""
+        var ccwId1Discount: String = ""
         var currentDiscount: Float = 0F
         var cardNFC = ""
         var barcode = ""
@@ -85,12 +85,13 @@ object AppContainer {
         var listEPC: MutableList<String> = mutableListOf()
         var listTagEntity: MutableList<TagEntity> = mutableListOf()
 
+        var detectedUser: UserEntity? = null
         var cart: MutableList<CartEntity> = mutableListOf()
         var cartLocked: MutableList<CartEntity> = mutableListOf()
         var option: Option = Option()
 
         fun resetTemporaryInfo() {
-            ccwId1 = ""
+            ccwId1Discount = ""
             cardNFC = ""
             barcode = ""
             countItems = 0
@@ -99,6 +100,7 @@ object AppContainer {
             currentDiscount = 0F
             listEPC.clear()
             listTagEntity.clear()
+            detectedUser = null
             cart.clear()
             cartLocked.clear()
             option = Option()
@@ -131,6 +133,9 @@ object AppContainer {
             if (listTagEntity.isNotEmpty()) {
                 listTagEntity.forEach { _tagEntity ->
                     when (_tagEntity.plateModel) {
+                        AppSettings.UHFStructure.CCWID.toInt(16).toString() -> {
+                            detectedUser = GlobalVariable.listUsers.find { userEntity -> userEntity.ccwId1.lowercase() == _tagEntity.ccwId.toString().lowercase() }
+                        }
                         AppSettings.UHFStructure.CustomPrice.toInt(16).toString() -> {
                             val cartEntity = CartEntity(
                                 uuid = UUID.randomUUID().toString(),
