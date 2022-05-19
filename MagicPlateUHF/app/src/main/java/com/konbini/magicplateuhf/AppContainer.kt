@@ -250,5 +250,26 @@ object AppContainer {
             }
             return result
         }
+
+        /**
+         * Check cart has non RFID
+         *
+         * @return
+         */
+        fun checkCartHasNonRFID(): Boolean {
+            if (!AppSettings.Options.NotAllowWalletNonRfid || !AppSettings.Options.Payment.Wallet) return false
+
+            return if (GlobalVariable.currentTimeBock != null) {
+                if (GlobalVariable.currentTimeBock?.activated == true) {
+                    val hasNonRFID = cart.find { cartEntity -> cartEntity.strEPC.isNullOrEmpty() }
+                    hasNonRFID != null
+                } else {
+                    // Show wallet
+                    false
+                }
+            } else {
+                false
+            }
+        }
     }
 }

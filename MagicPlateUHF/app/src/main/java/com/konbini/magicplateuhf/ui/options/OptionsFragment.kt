@@ -2,7 +2,10 @@ package com.konbini.magicplateuhf.ui.options
 
 import android.Manifest
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.BitmapFactory
@@ -15,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.R
@@ -712,5 +716,32 @@ class OptionsFragment : Fragment() {
         }
 
         showMessageSuccess()
+    }
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                "ADMIN_CANCEL_PAYMENT" -> {
+                    val pressedKey: String = intent.getStringExtra("pressedKey").toString()
+                    if (pressedKey.isNotEmpty()) {
+                        PrefUtil.setString("AppSettings.Options.KeyCodeCancelPayment", pressedKey)
+                        binding.keyCodeCancelPayment.text = pressedKey
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val filterIntent = IntentFilter()
+        filterIntent.addAction("ADMIN_CANCEL_PAYMENT")
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(broadcastReceiver, IntentFilter(filterIntent))
+    }
+
+    override fun onStop() {
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(broadcastReceiver)
+        super.onStop()
     }
 }

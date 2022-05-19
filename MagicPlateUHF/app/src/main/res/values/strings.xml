@@ -197,6 +197,8 @@
     <string name="message_error_reader_uhf_has_not_been_initialized">Reader UHF has not been initialized</string>
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
+    <string name="message_cancel_payment_admin">Payment Cancelled by Admin !!!</string>
+    <string name="message_allow_admin_cancel_payment_unchecked">Allow admin cancel payment is unchecked !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>
     <string name="message_error_TCP_is_empty">TCP is empty!!!</string>
     <string name="message_warning_role_is_required">Please select Role!!!</string>

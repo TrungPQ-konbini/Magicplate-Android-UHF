@@ -172,7 +172,7 @@
                                 android:layout_weight="1"
                                 android:background="@drawable/card_shadow_white"
                                 android:scaleType="fitCenter"
-                                android:src="@drawable/ic_mastercard" />
+                                android:src="@drawable/ic_master_visa" />
 
                             <androidx.appcompat.widget.AppCompatButton
                                 android:id="@+id/buttonAddImageMasterCard"

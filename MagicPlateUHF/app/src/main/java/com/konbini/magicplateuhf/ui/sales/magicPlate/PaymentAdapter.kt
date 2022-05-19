@@ -70,7 +70,7 @@ class PaymentViewHolder(
                     itemBinding.btnCardType.setImageDrawable(
                         ContextCompat.getDrawable(
                             itemView.context,
-                            R.drawable.ic_mastercard
+                            R.drawable.ic_master_visa
                         )
                     )
                 }

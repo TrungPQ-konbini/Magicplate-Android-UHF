@@ -170,6 +170,20 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "MQTT_SYNC_DATA" -> {
                     viewModelSettings.syncAll()
                 }
+                "ADMIN_CANCEL_PAYMENT" -> {
+                    if (AppSettings.Options.AllowAdminCancelPayment) {
+                        val pressedKey: String = intent.getStringExtra("pressedKey").toString()
+                        LogUtils.logInfo("User pressed key | $pressedKey")
+                        if (pressedKey.isNotEmpty()) {
+                            adminCancelPayment(pressedKey)
+                        }
+                    } else {
+                        AlertDialogUtil.showError(
+                            getString(R.string.message_allow_admin_cancel_payment_unchecked),
+                            requireContext()
+                        )
+                    }
+                }
             }
         }
     }
@@ -228,6 +242,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         filterIntent.addAction("REFRESH_TAGS")
         filterIntent.addAction("ACCEPT_OPTIONS")
         filterIntent.addAction("MQTT_SYNC_DATA")
+        filterIntent.addAction("ADMIN_CANCEL_PAYMENT")
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(broadcastReceiver, IntentFilter(filterIntent))
     }
@@ -257,7 +272,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * Init recycler view payments
      *
      */
-    private fun initRecyclerViewPayments() {
+    private fun initRecyclerViewPayments(checkNonRFID: Boolean = false) {
+        listPaymentType.clear()
         if (AppSettings.Options.Payment.MasterCard) {
             listPaymentType.add(PaymentType.MASTER_CARD.value)
         }
@@ -267,8 +283,18 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         if (AppSettings.Options.Payment.PayNow) {
             listPaymentType.add(PaymentType.PAY_NOW.value)
         }
-        if (AppSettings.Options.Payment.Wallet) {
-            listPaymentType.add(PaymentType.KONBINI_WALLET.value)
+        if (checkNonRFID) {
+            val cartHasNonRFID = AppContainer.CurrentTransaction.checkCartHasNonRFID()
+            if (!cartHasNonRFID) {
+                // Show wallet payment mode
+                if (AppSettings.Options.Payment.Wallet) {
+                    listPaymentType.add(PaymentType.KONBINI_WALLET.value)
+                }
+            }
+        } else {
+            if (AppSettings.Options.Payment.Wallet) {
+                listPaymentType.add(PaymentType.KONBINI_WALLET.value)
+            }
         }
         if (AppSettings.Options.Payment.Cash) {
             listPaymentType.add(PaymentType.CASH.value)
@@ -809,6 +835,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     }
 
     /**
+     * Display payment mode
+     *
+     */
+    private fun displayPaymentMode() {
+        initRecyclerViewPayments(checkNonRFID = true)
+    }
+
+    /**
      * Display Count Items
      */
     private fun displayCountItem() {
@@ -872,6 +906,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         displayCart()
         displayCountItem()
         displayTotal()
+        displayPaymentMode()
     }
 
     /**
@@ -1454,5 +1489,80 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[C]<font size='tall'>Email: ${AppSettings.Company.Email}</font>\n" +
                 "[C]<font size='tall'>Address: ${AppSettings.Company.Address}</font>\n" +
                 "[C]<font size='tall'>Thank you!!!</font>\n"
+    }
+
+    private fun adminCancelPayment(pressedKey: String) {
+        if (AppSettings.Options.AllowAdminCancelPayment) {
+            var isCorrect = false
+            val currentKeyCode = AppSettings.Options.KeyCodeCancelPayment
+            when (pressedKey) {
+                "KEYCODE_NUM_LOCK" -> {
+                    if (currentKeyCode == "KEYCODE_NUM_LOCK") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_0" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_0") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_1" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_1") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_2" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_2") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_3" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_3") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_4" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_4") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_5" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_5") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_6" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_6") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_7" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_7") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_8" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_8") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_9" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_9") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_DIVIDE" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_DIVIDE") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_MULTIPLY" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_MULTIPLY") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_SUBTRACT" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_SUBTRACT") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_ADD" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_ADD") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_DOT" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_DOT") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_COMMA" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_COMMA") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_ENTER" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_ENTER") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_EQUALS" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_EQUALS") isCorrect = true
+                }
+            }
+
+            if (isCorrect) {
+                val state = AppContainer.CurrentTransaction.paymentState
+                if (state == PaymentState.ReadyToPay) {
+                    displayMessage(getString(R.string.message_cancel_payment_admin))
+                    LogUtils.logInfo(getString(R.string.message_cancel_payment_admin))
+                    cancelPayment()
+                }
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.konbini.magicplateuhf.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
@@ -9,6 +10,7 @@ import androidx.navigation.findNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.ui.*
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.MainApplication
@@ -108,5 +110,39 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    override fun dispatchKeyEvent(e: KeyEvent): Boolean {
+        if (e.action == KeyEvent.ACTION_DOWN) {
+            var pressedKey = e.displayLabel.toString()
+            when (e.keyCode) {
+                KeyEvent.KEYCODE_NUM_LOCK -> { pressedKey = "KEYCODE_NUM_LOCK" }
+                KeyEvent.KEYCODE_NUMPAD_0 -> { pressedKey = "KEYCODE_NUMPAD_0" }
+                KeyEvent.KEYCODE_NUMPAD_1 -> { pressedKey = "KEYCODE_NUMPAD_1" }
+                KeyEvent.KEYCODE_NUMPAD_2 -> { pressedKey = "KEYCODE_NUMPAD_2" }
+                KeyEvent.KEYCODE_NUMPAD_3 -> { pressedKey = "KEYCODE_NUMPAD_3" }
+                KeyEvent.KEYCODE_NUMPAD_4 -> { pressedKey = "KEYCODE_NUMPAD_4" }
+                KeyEvent.KEYCODE_NUMPAD_5 -> { pressedKey = "KEYCODE_NUMPAD_5" }
+                KeyEvent.KEYCODE_NUMPAD_6 -> { pressedKey = "KEYCODE_NUMPAD_6" }
+                KeyEvent.KEYCODE_NUMPAD_7 -> { pressedKey = "KEYCODE_NUMPAD_7" }
+                KeyEvent.KEYCODE_NUMPAD_8 -> { pressedKey = "KEYCODE_NUMPAD_8" }
+                KeyEvent.KEYCODE_NUMPAD_9 -> { pressedKey = "KEYCODE_NUMPAD_9" }
+                KeyEvent.KEYCODE_NUMPAD_DIVIDE -> { pressedKey = "KEYCODE_NUMPAD_DIVIDE" }
+                KeyEvent.KEYCODE_NUMPAD_MULTIPLY -> { pressedKey = "KEYCODE_NUMPAD_MULTIPLY" }
+                KeyEvent.KEYCODE_NUMPAD_SUBTRACT -> { pressedKey = "KEYCODE_NUMPAD_SUBTRACT" }
+                KeyEvent.KEYCODE_NUMPAD_ADD -> { pressedKey = "KEYCODE_NUMPAD_ADD" }
+                KeyEvent.KEYCODE_NUMPAD_DOT -> { pressedKey = "KEYCODE_NUMPAD_DOT" }
+                KeyEvent.KEYCODE_NUMPAD_COMMA -> { pressedKey = "KEYCODE_NUMPAD_COMMA" }
+                KeyEvent.KEYCODE_NUMPAD_ENTER -> { pressedKey = "KEYCODE_NUMPAD_ENTER" }
+                KeyEvent.KEYCODE_NUMPAD_EQUALS -> { pressedKey = "KEYCODE_NUMPAD_EQUALS" }
+            }
+            if (pressedKey != "��") {
+                val intent = Intent()
+                intent.action = "ADMIN_CANCEL_PAYMENT"
+                intent.putExtra("pressedKey", pressedKey)
+                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
+            }
+        }
+        return super.dispatchKeyEvent(e)
     }
 }
