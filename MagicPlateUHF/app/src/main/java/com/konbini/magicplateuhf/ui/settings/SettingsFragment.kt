@@ -219,6 +219,7 @@ class SettingsFragment : Fragment() {
         val minute = String.format("%02d", AppSettings.Timer.SpecifiedTimeMinute)
         binding.specificTimeMinute.setText(minute)
 
+        binding.delayShowMessageAutoWallet.setText(AppSettings.Options.DelayMessageAutoWallet.toString())
         binding.periodicSyncOffline.setText(AppSettings.Timer.PeriodicSyncOffline.toString())
         binding.periodicGetToken.setText(AppSettings.Timer.PeriodicGetToken.toString())
 
@@ -322,6 +323,7 @@ class SettingsFragment : Fragment() {
         val hour = binding.specificTimeHour.text.toString().trim()
         val minute = binding.specificTimeMinute.text.toString().trim()
 
+        val delayShowMessageAutoWallet = binding.delayShowMessageAutoWallet.text.toString().trim()
         val periodicSyncOffline = binding.periodicSyncOffline.text.toString().trim()
         val periodicGetToken = binding.periodicGetToken.text.toString().trim()
         val xDayStoreLocalOrders = binding.xDayStoreLocalOrders.text.toString().trim()
@@ -346,6 +348,11 @@ class SettingsFragment : Fragment() {
 
         PrefUtil.setInt("AppSettings.Timer.SpecifiedTimeHour", if (hour.isEmpty()) 0 else hour.toInt())
         PrefUtil.setInt("AppSettings.Timer.SpecifiedTimeMinute", if (minute.isEmpty()) 0 else minute.toInt())
+
+        PrefUtil.setInt(
+            "AppSettings.Options.DelayMessageAutoWallet",
+            if (delayShowMessageAutoWallet.isEmpty()) 0 else delayShowMessageAutoWallet.toInt()
+        )
 
         PrefUtil.setInt(
             "AppSettings.Timer.PeriodicSyncOffline",

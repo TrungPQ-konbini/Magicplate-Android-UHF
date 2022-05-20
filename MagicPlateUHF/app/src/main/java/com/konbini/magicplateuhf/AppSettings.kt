@@ -157,6 +157,7 @@ object AppSettings {
     }
 
     object Options {
+        var DelayMessageAutoWallet = 2000
         var ConnectHardware = false
         var AcsReader = AcsReaderType.WHITE.value
         var MachineTypeActivated = MachineType.MAGIC_PLATE_MODE.value

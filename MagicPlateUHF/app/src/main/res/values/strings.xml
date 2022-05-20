@@ -219,4 +219,5 @@
     <string name="title_reset_reader">Reset Reader</string>
     <string name="title_delay_time">Delay time (milliseconds)</string>
     <string name="title_milliseconds">Milliseconds</string>
+    <string name="title_delay_show_message_auto_wallet">Delay Show Message on Auto Wallet(Milliseconds)</string>
 </resources>

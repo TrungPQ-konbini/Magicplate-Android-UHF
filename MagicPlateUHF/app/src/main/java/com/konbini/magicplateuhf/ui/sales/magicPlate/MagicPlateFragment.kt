@@ -1587,7 +1587,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 AppContainer.CurrentTransaction.cartLocked()
 
                 AppContainer.CurrentTransaction.cardNFC = AppContainer.CurrentTransaction.detectedUser!!.ccwId1
-                delay(2000)
+                delay(AppSettings.Options.DelayMessageAutoWallet.toLong())
                 viewModel.debit()
             }
         }

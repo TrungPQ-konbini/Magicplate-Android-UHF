@@ -345,6 +345,28 @@
                     android:textColor="@color/smoke"
                     android:textSize="@dimen/dimen_24"
                     android:textStyle="bold" />
+                <!--Delay show message auto wallet-->
+                <LinearLayout
+                    android:id="@+id/delayShowMessageAutoWalletPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_delay_show_message_auto_wallet" />
+
+                    <EditText
+                        android:id="@+id/delayShowMessageAutoWallet"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_milliseconds"
+                        android:inputType="number" />
+                </LinearLayout>
 
                 <!--PeriodicSyncOffline-->
                 <LinearLayout
