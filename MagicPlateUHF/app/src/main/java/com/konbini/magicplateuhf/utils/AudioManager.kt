@@ -58,7 +58,11 @@ class AudioManager(private val context: Context) {
 
     fun soundBuzzer() {
         if (mpBuzzer == null) {
-            mpBuzzer = MediaPlayer.create(context, R.raw.buzzer);
+            mpBuzzer = MediaPlayer.create(context, R.raw.buzzer)
+            mpBuzzer!!.setOnCompletionListener {
+                mpBuzzer!!.release()
+                mpBuzzer = null
+            }
         }
         mpBuzzer?.start()
     }
