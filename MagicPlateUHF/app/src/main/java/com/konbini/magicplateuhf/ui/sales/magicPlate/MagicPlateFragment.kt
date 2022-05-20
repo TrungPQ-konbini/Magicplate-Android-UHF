@@ -108,9 +108,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             // Refresh cart
                             refreshCart()
 
-                            if (AppContainer.CurrentTransaction.detectedUser != null) {
-                                autoDetectWalletPayment()
-                            }
+                            autoDetectWalletPayment()
                         }
                         else -> {
 
@@ -459,9 +457,9 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             }
             AppContainer.GlobalVariable.listEPC.clear()
             AppContainer.GlobalVariable.listEPC.add("FD0A72910B00000000000000") // FD - 0A72910B
-            AppContainer.GlobalVariable.listEPC.add("0B8D2ED73900000000000000") // 11 - Salad bowl
-            AppContainer.GlobalVariable.listEPC.add("0C8D2ED73900000000000000") // 12 - Rice bowl
-            AppContainer.GlobalVariable.listEPC.add("0D8D2ED73900000000000000") // 13 - Noodle bowl
+            //AppContainer.GlobalVariable.listEPC.add("0B8D2ED73900000000000000") // 11 - Salad bowl
+            //AppContainer.GlobalVariable.listEPC.add("0C8D2ED73900000000000000") // 12 - Rice bowl
+            //AppContainer.GlobalVariable.listEPC.add("0D8D2ED73900000000000000") // 13 - Noodle bowl
 
             AppContainer.CurrentTransaction.listEPC.clear()
             AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
@@ -1574,22 +1572,24 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     }
 
     private fun autoDetectWalletPayment() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            // Show message welcome user
-            val userName = AppContainer.CurrentTransaction.detectedUser!!.displayName
-            val message = "${getGreetingMessage()} $userName"
-            displayMessage(message)
+        if (AppContainer.CurrentTransaction.detectedUser != null && AppContainer.CurrentTransaction.cart.isNotEmpty()) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                // Show message welcome user
+                val userName = AppContainer.CurrentTransaction.detectedUser!!.displayName
+                val message = "${getGreetingMessage()} $userName"
+                displayMessage(message)
 
-            // Change Payment state
-            AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
-            AppContainer.CurrentTransaction.paymentType = PaymentType.KONBINI_WALLET
+                // Change Payment state
+                AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+                AppContainer.CurrentTransaction.paymentType = PaymentType.KONBINI_WALLET
 
-            // Locked cart
-            AppContainer.CurrentTransaction.cartLocked()
+                // Locked cart
+                AppContainer.CurrentTransaction.cartLocked()
 
-            AppContainer.CurrentTransaction.cardNFC = AppContainer.CurrentTransaction.detectedUser!!.ccwId1
-            delay(2000)
-            viewModel.debit()
+                AppContainer.CurrentTransaction.cardNFC = AppContainer.CurrentTransaction.detectedUser!!.ccwId1
+                delay(2000)
+                viewModel.debit()
+            }
         }
     }
 }
