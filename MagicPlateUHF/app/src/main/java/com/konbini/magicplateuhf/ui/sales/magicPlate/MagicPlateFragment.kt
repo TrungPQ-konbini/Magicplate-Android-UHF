@@ -457,9 +457,9 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             }
             AppContainer.GlobalVariable.listEPC.clear()
             AppContainer.GlobalVariable.listEPC.add("FD0A72910B00000000000000") // FD - 0A72910B
-            //AppContainer.GlobalVariable.listEPC.add("0B8D2ED73900000000000000") // 11 - Salad bowl
-            //AppContainer.GlobalVariable.listEPC.add("0C8D2ED73900000000000000") // 12 - Rice bowl
-            //AppContainer.GlobalVariable.listEPC.add("0D8D2ED73900000000000000") // 13 - Noodle bowl
+            AppContainer.GlobalVariable.listEPC.add("0B8D2ED73900000000000000") // 11 - Salad bowl
+            AppContainer.GlobalVariable.listEPC.add("0C8D2ED73900000000000000") // 12 - Rice bowl
+            AppContainer.GlobalVariable.listEPC.add("0D8D2ED73900000000000000") // 13 - Noodle bowl
 
             AppContainer.CurrentTransaction.listEPC.clear()
             AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)

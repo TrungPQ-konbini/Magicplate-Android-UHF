@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.konbini.magicplateuhf",
+  "applicationId": "com.konbini.magicplateuhf.auto",
   "variantName": "release",
   "elements": [
     {
@@ -12,7 +12,7 @@
       "filters": [],
       "versionCode": 1,
       "versionName": "0.0.9",
-      "outputFile": "MagicPlateUHF_0.0.9_20052022_0830.apk"
+      "outputFile": "MagicPlateUHF_0.0.9_20052022_0842.apk"
     }
   ]
 }
