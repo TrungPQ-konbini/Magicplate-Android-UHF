@@ -217,6 +217,7 @@
     <string name="title_get">Get</string>
     <string name="title_set">Set</string>
     <string name="title_reset_reader">Reset Reader</string>
-    <string name="title_delay_time">Delay time (milliseconds)</string>
+    <string name="title_delay_time_read_tags">Delay time read tags (milliseconds)</string>
+    <string name="title_delay_time_detect_tags_change">Delay time detect tags change (milliseconds)</string>
     <string name="title_milliseconds">Milliseconds</string>
 </resources>
