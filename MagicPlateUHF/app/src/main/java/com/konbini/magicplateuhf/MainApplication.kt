@@ -88,7 +88,7 @@ class MainApplication : Application() {
                             Log.e(MagicPlateFragment.TAG, "timeTagSizeChanged == 0L")
                         } else {
                             val offset = current - timeTagSizeChanged
-                            if (offset < AppSettings.Hardware.Comport.DelayTime.toLong()) {
+                            if (offset < AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toLong()) {
                                 Log.e(TAG, "$current | $offset => Ignore")
                                 Log.e(MagicPlateFragment.TAG, "$current | $offset => Ignore")
                             } else {
@@ -105,7 +105,7 @@ class MainApplication : Application() {
                     Log.e(TAG, "Clear AppContainer.GlobalVariable.listEPC")
                     AppContainer.GlobalVariable.listEPC.clear()
 
-                    Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
+                    Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
 
                     // Start reading UHF
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
@@ -229,7 +229,7 @@ class MainApplication : Application() {
                         mReaderUHF = RFIDReaderHelper.getDefaultHelper()
                         mReaderUHF.unRegisterObserver(rxObserver)
                         mReaderUHF.registerObserver(rxObserver)
-                        Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
+                        Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                         startRealTimeInventory()
                     } catch (ex: Exception) {
                         Log.e(SalesActivity.TAG, ex.toString())

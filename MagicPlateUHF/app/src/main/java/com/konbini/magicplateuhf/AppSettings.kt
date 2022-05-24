@@ -83,7 +83,8 @@ object AppSettings {
 
     object Hardware {
         object Comport {
-            var DelayTime = 500 // milliseconds
+            var DelayTimeDetectTagsChange  = 500 // milliseconds
+            var DelayTimeReadTags = 500 // milliseconds
             var ReaderUHF = "/dev/ttyS1"
             var RFOutputPower = 30 // dBm
             var ReaderUHFBaudRate = 115200

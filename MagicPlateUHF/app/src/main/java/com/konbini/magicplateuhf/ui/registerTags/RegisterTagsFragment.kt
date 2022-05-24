@@ -119,7 +119,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         try {
             AppContainer.GlobalVariable.allowReadTags = true
             AppContainer.GlobalVariable.listEPC.clear()
-            Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
+            Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
             mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
         } catch (ex: Exception) {
             LogUtils.logError(ex)
@@ -256,7 +256,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
             try {
                 AppContainer.GlobalVariable.listEPC.clear()
-                Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
+                Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                 mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
@@ -455,7 +455,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         isFinishWrite = true
                         adapter.setItems(ArrayList<TagEntity>())
                         AppContainer.GlobalVariable.listEPC.clear()
-                        Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
+                        Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)
@@ -543,7 +543,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     // Start reading UHF
                     try {
                         AppContainer.GlobalVariable.listEPC.clear()
-                        Thread.sleep(AppSettings.Hardware.Comport.DelayTime.toLong())
+                        Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)

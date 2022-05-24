@@ -208,7 +208,8 @@ class SettingsFragment : Fragment() {
     private fun bindHardware() {
         binding.hardwareUhfReader.setText(AppSettings.Hardware.Comport.ReaderUHF)
         binding.hardwareIuc.setText(AppSettings.Hardware.Comport.IUC)
-        binding.hardwareDelayTime.setText(AppSettings.Hardware.Comport.DelayTime.toString())
+        binding.hardwareDelayTimeReadTags.setText(AppSettings.Hardware.Comport.DelayTimeReadTags.toString())
+        binding.hardwareDelayTimeDetectTagsChange.setText(AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toString())
         binding.hardwareRFOutputPower.setText(AppSettings.Hardware.Comport.RFOutputPower.toString())
     }
 
@@ -289,7 +290,8 @@ class SettingsFragment : Fragment() {
         val companyAddress = binding.companyAddress.text.toString().trim()
 
         val hardwareIuc = binding.hardwareIuc.text.toString().trim()
-        val hardwareDelayTime = binding.hardwareDelayTime.text.toString().trim().toInt()
+        val hardwareDelayTimeReadTags = binding.hardwareDelayTimeReadTags.text.toString().trim().toInt()
+        val hardwareDelayTimeDetectTagsChange = binding.hardwareDelayTimeDetectTagsChange.text.toString().trim().toInt()
         val hardwareUhfReader = binding.hardwareUhfReader.text.toString().trim()
 
         val machinePinCode = binding.machinePinCode.text.toString().trim()
@@ -335,7 +337,8 @@ class SettingsFragment : Fragment() {
         PrefUtil.setString("AppSettings.Company.Email", companyEmail)
         PrefUtil.setString("AppSettings.Company.Address", companyAddress)
 
-        PrefUtil.setInt("AppSettings.Hardware.Comport.DelayTime", hardwareDelayTime)
+        PrefUtil.setInt("AppSettings.Hardware.Comport.DelayTimeReadTags", hardwareDelayTimeReadTags)
+        PrefUtil.setInt("AppSettings.Hardware.Comport.DelayTimeDetectTagsChange", hardwareDelayTimeDetectTagsChange)
         PrefUtil.setString("AppSettings.Hardware.Comport.IUC", hardwareIuc)
         if (AppSettings.Hardware.Comport.IUC != hardwareIuc) {
             MainApplication.initIM30()

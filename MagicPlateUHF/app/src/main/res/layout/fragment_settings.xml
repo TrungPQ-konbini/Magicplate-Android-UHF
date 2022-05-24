@@ -243,22 +243,45 @@
                             android:textColor="@color/white" />
                     </LinearLayout>
                 </LinearLayout>
-                <!--Reader delay time-->
+                <!--Delay time read tags-->
                 <LinearLayout
-                    android:id="@+id/hardwareDelayTimePanel"
+                    android:id="@+id/hardwareDelayTimeReadTagsPanel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:gravity="center"
                     android:orientation="horizontal"
                     android:weightSum="4">
 
                     <TextView
                         style="@style/customTextViewSettings"
                         android:layout_weight="3"
-                        android:text="@string/title_delay_time" />
+                        android:text="@string/title_delay_time_read_tags" />
 
                     <EditText
-                        android:id="@+id/hardwareDelayTime"
+                        android:id="@+id/hardwareDelayTimeReadTags"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_milliseconds"
+                        android:inputType="textNoSuggestions|number" />
+                </LinearLayout>
+                <!--Delay time read tags-->
+                <LinearLayout
+                    android:id="@+id/hardwareDelayTimeDetectTagsChangePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_delay_time_detect_tags_change" />
+
+                    <EditText
+                        android:id="@+id/hardwareDelayTimeDetectTagsChange"
                         style="@style/customEditTextSettings"
                         android:layout_weight="1"
                         android:hint="@string/title_milliseconds"
