@@ -49,7 +49,7 @@ abstract class AppDatabase: RoomDatabase() {
             }
 
         private fun buildDatabase(appContext: Context) =
-            Room.databaseBuilder(appContext, AppDatabase::class.java, "MagicPlateUHF")
+            Room.databaseBuilder(appContext, AppDatabase::class.java, "MagicPlateUHFAutoWallet")
                 .fallbackToDestructiveMigration()
                 //.addMigrations(Migration.MIGRATION_1_3_USER)
                 .build()

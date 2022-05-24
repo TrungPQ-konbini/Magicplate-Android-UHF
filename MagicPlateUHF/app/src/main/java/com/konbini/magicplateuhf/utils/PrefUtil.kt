@@ -6,7 +6,7 @@ import com.konbini.magicplateuhf.MainApplication
 
 class PrefUtil {
     companion object {
-        private const val SP_NAME = "MAGIC_PLATE_UHF"
+        private const val SP_NAME = "MAGIC_PLATE_UHF_AUTO_WALLET"
 
         fun getBoolean(key: String, defaultValue: Boolean): Boolean {
             val preferences = MainApplication.shared().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
