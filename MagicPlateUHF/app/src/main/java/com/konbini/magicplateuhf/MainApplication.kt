@@ -83,17 +83,23 @@ class MainApplication : Application() {
                     sendBroadcastRefreshTags()
                 } else {
                     if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
-                        if (timeTagSizeChanged == 0L) {
-                            timeTagSizeChanged = current
-                            Log.e("EKRON", "timeTagSizeChanged == 0L")
-                        } else {
-                            val offset = current - timeTagSizeChanged
-                            if (offset < AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toLong()) {
-                                Log.e(TAG, "$current | $offset => Ignore")
-                                Log.e("EKRON", "$current | $offset => Ignore")
+                        if (AppContainer.CurrentTransaction.listEPC.size > AppContainer.GlobalVariable.listEPC.size) {
+                            if (timeTagSizeChanged == 0L) {
+                                timeTagSizeChanged = current
+                                Log.e("EKRON", "timeTagSizeChanged == 0L")
                             } else {
-                                sendBroadcastRefreshTags()
+                                val offset = current - timeTagSizeChanged
+                                if (offset < AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toLong() &&
+                                    AppContainer.CurrentTransaction.listEPC.isNotEmpty()
+                                ) {
+                                    Log.e(TAG, "$current | $offset => Ignore")
+                                    Log.e("EKRON", "$current | $offset => Ignore")
+                                } else {
+                                    sendBroadcastRefreshTags()
+                                }
                             }
+                        } else {
+                            sendBroadcastRefreshTags()
                         }
                     } else {
                         sendBroadcastRefreshTags()

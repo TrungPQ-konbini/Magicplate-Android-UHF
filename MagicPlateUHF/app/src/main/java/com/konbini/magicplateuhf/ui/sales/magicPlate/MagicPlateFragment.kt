@@ -467,7 +467,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
                 val intent = Intent()
                 intent.action = "NEW_BARCODE"
-                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
+                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
+                    .sendBroadcast(intent)
                 barcode = ""
             }
 //            AppContainer.GlobalVariable.listEPC.clear()
@@ -641,6 +642,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 if (paymentState != PaymentState.Init && paymentState != PaymentState.Preparing) {
                     return
                 }
+
                 MainApplication.mAudioManager.soundEnterDiscount()
                 var message = getString(R.string.message_please_scan_barcode)
                 if (AppSettings.Options.Discount.NFC) {
@@ -849,6 +851,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun displayCountItem() {
         val countItems = AppContainer.CurrentTransaction.countItems
+        if (countItems < 1) {
+            if (this::pDialog.isInitialized) {
+                if (pDialog.isShowing) {
+                    pDialog.dismiss()
+                }
+            }
+        }
         binding.rfidItemCount.text = countItems.toString()
     }
 
@@ -1260,7 +1269,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                             pDialog.dismiss()
                                         }
                                     }
-                                    AppContainer.CurrentTransaction.ccwId1 = AppContainer.CurrentTransaction.cardNFC
+                                    AppContainer.CurrentTransaction.ccwId1 =
+                                        AppContainer.CurrentTransaction.cardNFC
                                     listenerDiscount()
                                 }
                             }
@@ -1309,7 +1319,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         discounts.forEach { discountEntity ->
                             if (roles.contains(discountEntity.roleName)) {
                                 Log.e(TAG, discountEntity.discountValue)
-                                AppContainer.CurrentTransaction.currentDiscount = discountEntity.discountValue.toFloat()
+                                AppContainer.CurrentTransaction.currentDiscount =
+                                    discountEntity.discountValue.toFloat()
                                 AppContainer.CurrentTransaction.refreshCart()
                                 refreshCart()
                                 return@outForeach
