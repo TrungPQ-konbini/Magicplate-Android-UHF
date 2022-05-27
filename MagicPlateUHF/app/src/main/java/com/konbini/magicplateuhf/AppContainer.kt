@@ -271,5 +271,26 @@ object AppContainer {
                 false
             }
         }
+
+        /**
+         * Check cart has barcode or tags
+         *
+         * @return
+         * 0: cart has only tags
+         * 1: cart has only barcodes
+         * 2: cart with tags and barcodes
+         */
+        fun checkCartHasBarcodeOrTags(): Int {
+            val cartWithTag = cartLocked.filter { cartEntity ->
+                cartEntity.strEPC.isNotEmpty()
+            }
+            val cartWithBarcode = cartLocked.filter { cartEntity ->
+                cartEntity.strEPC.isEmpty()
+            }
+
+            return if (cartWithTag.isNotEmpty() && cartWithBarcode.isEmpty()) 0
+            else if (cartWithTag.isEmpty() && cartWithBarcode.isNotEmpty()) 1
+            else 2
+        }
     }
 }

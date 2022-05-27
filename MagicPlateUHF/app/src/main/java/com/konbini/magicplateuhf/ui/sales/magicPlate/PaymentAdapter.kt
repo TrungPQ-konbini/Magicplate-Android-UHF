@@ -13,6 +13,7 @@ import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.enum.PaymentType
 import com.konbini.magicplateuhf.databinding.ItemPaymentBinding
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
+import com.konbini.magicplateuhf.utils.SafeClickListener
 import java.io.File
 
 class PaymentAdapter(private val listener: ItemListener) :
@@ -164,6 +165,13 @@ class PaymentViewHolder(
                 )
             }
         }
+    }
+
+    private fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
+        val safeClickListener = SafeClickListener {
+            onSafeClick(it)
+        }
+        setOnClickListener(safeClickListener)
     }
 
     override fun onClick(v: View?) {
