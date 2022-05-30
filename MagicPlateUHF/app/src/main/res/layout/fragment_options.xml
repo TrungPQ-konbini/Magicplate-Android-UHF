@@ -773,6 +773,21 @@
                             android:layout_weight="1"
                             android:text="@string/title_show_cancel_payment_button" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_get_reader_log"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_get_reader_log"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_get_reader_log" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

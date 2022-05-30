@@ -194,6 +194,7 @@ object AppSettings {
         var RolesList = "administrator"
         var ShowCancelPaymentButton = true
         var NotAllowWalletNonRfid = true
+        var AllowGetReaderLog = false
         var AllowAdminCancelPayment = true
         var AllowAdminCashPaymentApproval = true
         var IgnoreWhenRemovingTags = false

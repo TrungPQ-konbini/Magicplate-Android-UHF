@@ -549,6 +549,12 @@ class OptionsFragment : Fragment() {
             }
         }
 
+        binding.checkboxGetReaderLog.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.AllowGetReaderLog", isChecked)
+            LogUtils.logInfo("AppSettings.Options.AllowGetReaderLog Options: $isChecked")
+            showMessageSuccess()
+        }
+
         binding.checkboxCancelPayment.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefUtil.setBoolean("AppSettings.Options.AllowAdminCancelPayment", isChecked)
             LogUtils.logInfo("AppSettings.Options.AllowAdminCancelPayment Options: $isChecked")
@@ -677,6 +683,7 @@ class OptionsFragment : Fragment() {
         binding.checkboxSyncSpecifiedTime.isChecked = AppSettings.Options.Sync.SyncOrderSpecifiedTime
         binding.checkboxNoSyncOrder.isChecked = AppSettings.Options.Sync.NoSyncOrder
 
+        binding.checkboxGetReaderLog.isChecked = AppSettings.Options.AllowGetReaderLog
         binding.checkboxCancelPayment.isChecked = AppSettings.Options.AllowAdminCancelPayment
         binding.checkboxCashPaymentApproval.isChecked = AppSettings.Options.AllowAdminCashPaymentApproval
 

@@ -60,6 +60,7 @@ class MainApplication : Application() {
         private var rxObserver: RXObserver = object : RXObserver() {
             override fun onInventoryTag(tag: RXInventoryTag) {
                 Log.e(TAG, tag.strEPC)
+                LogUtils.logReader(tag.strEPC)
                 AppContainer.GlobalVariable.listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
                 Log.e("EKRON", "Add item to AppContainer.GlobalVariable.listEPC")
             }
@@ -76,6 +77,7 @@ class MainApplication : Application() {
                     TAG,
                     "==========End command reading UHF=========="
                 )
+                LogUtils.logReader("==========End command reading UHF==========")
 
                 val current = System.currentTimeMillis()
                 if (AppContainer.GlobalVariable.isBackend) {
@@ -107,19 +109,22 @@ class MainApplication : Application() {
                 }
 
                 if (AppContainer.GlobalVariable.allowReadTags) {
-                    roundReadTag += 1
-                    Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
+                    //roundReadTag += 1
+                    //Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
+                    LogUtils.logReader("Clear AppContainer.GlobalVariable.listEPC")
                     AppContainer.GlobalVariable.listEPC.clear()
 
                     Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
 
                     // Start reading UHF
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                    Log.e("EKRON", "roundReadTag: $roundReadTag")
+                    //Log.e("EKRON", "roundReadTag: $roundReadTag")
                     Log.e(
                         TAG,
                         "==========Start command reading UHF=========="
                     )
+                    //LogUtils.logReader("roundReadTag: $roundReadTag")
+                    LogUtils.logReader("==========Start command reading UHF==========")
                 }
             }
         }
@@ -129,13 +134,14 @@ class MainApplication : Application() {
                 TAG,
                 "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
             )
-            Log.e(
-                "EKRON",
-                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
-            )
+//            Log.e(
+//                "EKRON",
+//                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
+//            )
+            LogUtils.logReader("listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}")
             if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
                 if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
-                    Log.e("EKRON", "Start new Transaction")
+                    //Log.e("EKRON", "Start new Transaction")
                     AppContainer.CurrentTransaction.paymentState = PaymentState.Init
                     LogUtils.logInfo("Start new Transaction")
                 } else {

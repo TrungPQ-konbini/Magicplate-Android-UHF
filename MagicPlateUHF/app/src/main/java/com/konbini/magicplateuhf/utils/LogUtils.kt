@@ -3,6 +3,7 @@ package com.konbini.magicplateuhf.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import java.io.*
 import java.text.SimpleDateFormat
@@ -65,6 +66,13 @@ object LogUtils {
         val ste = Throwable().stackTrace
         val message = "[" + ste[1].fileName + ":" + ste[1].lineNumber + ":" + ste[1].methodName + "()] " + log
         writeLog(message, MainApplication.shared().applicationContext, "OfflineData")
+    }
+
+    fun logReader(log: String) {
+        val ste = Throwable().stackTrace
+        val message = "[" + ste[1].fileName + ":" + ste[1].lineNumber + ":" + ste[1].methodName + "()] " + log
+        if (AppSettings.Options.AllowGetReaderLog)
+            writeLog(message, MainApplication.shared().applicationContext, "Reader")
     }
 
     fun logApi(log: String) {

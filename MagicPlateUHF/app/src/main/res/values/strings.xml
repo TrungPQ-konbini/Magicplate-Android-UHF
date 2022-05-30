@@ -233,4 +233,5 @@
     <string name="title_delay_time_read_tags">Delay time read tags (milliseconds)</string>
     <string name="title_delay_time_detect_tags_change">Delay time detect tags change (milliseconds)</string>
     <string name="title_milliseconds">Milliseconds</string>
+    <string name="title_get_reader_log">Get Reader Log</string>
 </resources>
