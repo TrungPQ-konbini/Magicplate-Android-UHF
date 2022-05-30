@@ -811,8 +811,33 @@
                             android:layout_weight="1"
                             android:text="@string/title_admin_cancel_payment" />
 
-                        <TextView
+                        <EditText
                             android:id="@+id/keyCodeCancelPayment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textColor="@color/smoke"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_cash_payment_approval"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_cash_payment_approval"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_admin_cash_payment_approval" />
+
+                        <EditText
+                            android:id="@+id/keyCodeCashPaymentApproval"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"

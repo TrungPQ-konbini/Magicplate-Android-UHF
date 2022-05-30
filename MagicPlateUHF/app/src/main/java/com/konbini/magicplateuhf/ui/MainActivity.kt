@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
             }
             if (pressedKey != "��") {
                 val intent = Intent()
-                intent.action = "ADMIN_CANCEL_PAYMENT"
+                intent.action = "KEY_CODE"
                 intent.putExtra("pressedKey", pressedKey)
                 LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
             }

@@ -37,6 +37,7 @@ class AudioManager(private val context: Context) {
     private var mpCartIsEmpty: MediaPlayer? = null
     private var mpPleaseLookIntoCamera: MediaPlayer? = null
     private var mpEnterDiscount: MediaPlayer? = null
+    private var mpPleaseWaitCashierConfirm: MediaPlayer? = null
 
     fun soundCartIsEmpty() {
         if (mpCartIsEmpty == null) {
@@ -233,5 +234,16 @@ class AudioManager(private val context: Context) {
             }
         }
         mpEnterDiscount!!.start()
+    }
+
+    fun soundPleaseWaitCashierConfirm() {
+        if (mpPleaseWaitCashierConfirm == null) {
+            mpPleaseWaitCashierConfirm = MediaPlayer.create(context, R.raw.please_wait_cashier_confirm)
+            mpPleaseWaitCashierConfirm!!.setOnCompletionListener {
+                mpPleaseWaitCashierConfirm!!.release()
+                mpPleaseWaitCashierConfirm = null
+            }
+        }
+        mpPleaseWaitCashierConfirm!!.start()
     }
 }

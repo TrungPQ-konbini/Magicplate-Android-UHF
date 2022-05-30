@@ -195,8 +195,10 @@ object AppSettings {
         var ShowCancelPaymentButton = true
         var NotAllowWalletNonRfid = true
         var AllowAdminCancelPayment = true
+        var AllowAdminCashPaymentApproval = true
         var IgnoreWhenRemovingTags = false
         var KeyCodeCancelPayment = ""
+        var KeyCodeCashPaymentApproval = ""
         object Sync {
             var SyncOrderRealtime = true
             var SyncOrderPeriodicPerTimePeriod = false

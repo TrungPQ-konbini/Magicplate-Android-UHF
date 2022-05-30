@@ -554,6 +554,12 @@ class OptionsFragment : Fragment() {
             LogUtils.logInfo("AppSettings.Options.AllowAdminCancelPayment Options: $isChecked")
             showMessageSuccess()
         }
+
+        binding.checkboxCashPaymentApproval.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.AllowAdminCashPaymentApproval", isChecked)
+            LogUtils.logInfo("AppSettings.Options.AllowAdminCashPaymentApproval Options: $isChecked")
+            showMessageSuccess()
+        }
     }
 
     private fun initData() {
@@ -672,8 +678,10 @@ class OptionsFragment : Fragment() {
         binding.checkboxNoSyncOrder.isChecked = AppSettings.Options.Sync.NoSyncOrder
 
         binding.checkboxCancelPayment.isChecked = AppSettings.Options.AllowAdminCancelPayment
+        binding.checkboxCashPaymentApproval.isChecked = AppSettings.Options.AllowAdminCashPaymentApproval
 
-        binding.keyCodeCancelPayment.text = AppSettings.Options.KeyCodeCancelPayment
+        binding.keyCodeCancelPayment.setText(AppSettings.Options.KeyCodeCancelPayment)
+        binding.keyCodeCashPaymentApproval.setText(AppSettings.Options.KeyCodeCashPaymentApproval)
 
         binding.checkboxDiscountWithFormat.isChecked = AppSettings.Options.Discount.DiscountByFormat
     }
@@ -778,13 +786,27 @@ class OptionsFragment : Fragment() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                "ADMIN_CANCEL_PAYMENT" -> {
+                "KEY_CODE" -> {
                     val pressedKey: String = intent.getStringExtra("pressedKey").toString()
                     if (pressedKey.isNotEmpty()) {
-                        PrefUtil.setString("AppSettings.Options.KeyCodeCancelPayment", pressedKey)
-                        binding.keyCodeCancelPayment.text = pressedKey
-                        // Refresh Configuration
-                        AppSettings.getAllSetting()
+                        if (binding.keyCodeCancelPayment.hasFocus()) {
+                            PrefUtil.setString(
+                                "AppSettings.Options.KeyCodeCancelPayment",
+                                pressedKey
+                            )
+                            binding.keyCodeCancelPayment.setText(pressedKey)
+                            // Refresh Configuration
+                            AppSettings.getAllSetting()
+                        }
+                        if (binding.keyCodeCashPaymentApproval.hasFocus()) {
+                            PrefUtil.setString(
+                                "AppSettings.Options.KeyCodeCashPaymentApproval",
+                                pressedKey
+                            )
+                            binding.keyCodeCashPaymentApproval.setText(pressedKey)
+                            // Refresh Configuration
+                            AppSettings.getAllSetting()
+                        }
                     }
                 }
             }
@@ -794,7 +816,7 @@ class OptionsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         val filterIntent = IntentFilter()
-        filterIntent.addAction("ADMIN_CANCEL_PAYMENT")
+        filterIntent.addAction("KEY_CODE")
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(broadcastReceiver, IntentFilter(filterIntent))
     }

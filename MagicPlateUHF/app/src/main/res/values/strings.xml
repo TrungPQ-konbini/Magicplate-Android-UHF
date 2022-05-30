@@ -86,6 +86,8 @@
     <string name="title_customize">Customize</string>
     <string name="title_sync_order_realtime">Sync Order Realtime</string>
     <string name="title_admin_cancel_payment">Allow Admin cancel payment</string>
+    <string name="title_admin_cash_payment_approval">Allow Admin cash payment approval</string>
+    <string name="message_allow_admin_cash_payment_approval_unchecked">Allow admin cash payment approval is unchecked !!!</string>
 
     <string name="title_searching">Search...</string>
     <string name="title_index">No.</string>
@@ -208,6 +210,8 @@
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
     <string name="message_cancel_payment_admin">Payment Cancelled by Admin !!!</string>
+    <string name="message_cash_approved_payment_admin">Cash Payment Approved by Admin !!!</string>
+    <string name="message_please_wait_cashier_confirm">Please wait cashier confirm !!!</string>
     <string name="message_allow_admin_cancel_payment_unchecked">Allow admin cancel payment is unchecked !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>
     <string name="message_error_TCP_is_empty">TCP is empty!!!</string>
