@@ -701,11 +701,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 // Start countdown timeout and voice
                 MainApplication.mAudioManager.soundPleaseWaitCashierConfirm()
 
-                displayMessage(getString(R.string.message_please_wait_cashier_confirm))
-
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
                 AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.CASH
+
+                displayMessage(getString(R.string.message_please_wait_cashier_confirm))
 
                 // Locked cart
                 AppContainer.CurrentTransaction.cartLocked()
