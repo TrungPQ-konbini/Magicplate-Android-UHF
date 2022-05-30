@@ -3,6 +3,7 @@ package com.konbini.magicplateuhf
 import android.util.Log
 import com.konbini.magicplateuhf.data.enum.AcsReaderType
 import com.konbini.magicplateuhf.data.enum.MachineType
+import com.konbini.magicplateuhf.data.enum.PaymentDeviceType
 import com.konbini.magicplateuhf.utils.PrefUtil
 
 object AppSettings {
@@ -87,7 +88,7 @@ object AppSettings {
             var ReaderUHF = "/dev/ttyS1"
             var RFOutputPower = 30 // dBm
             var ReaderUHFBaudRate = 115200
-            var IUC = "/dev/ttyS2"
+            var PaymentDevice = "/dev/ttyS2"
         }
     }
 
@@ -174,6 +175,7 @@ object AppSettings {
             var pathImageCash = ""
             var Discount = false
             var pathImageDiscount = ""
+            var DeviceType = PaymentDeviceType.IUC.value
         }
         object Printer {
             var Bluetooth = true
@@ -183,6 +185,10 @@ object AppSettings {
         object Discount {
             var NFC = false
             var Barcode = true
+            var DiscountByFormat = false
+            var PrefixFormat = "000"
+            var SuffixesFormat = ""
+            var LengthFormat = 8
         }
         var DiscountList = ""
         var RolesList = "administrator"

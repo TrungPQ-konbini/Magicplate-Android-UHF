@@ -146,16 +146,16 @@ class MainApplication : Application() {
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
             ) {
-                //LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
+                Log.e("EKRON", "State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
                 return
             }
 
             if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    //Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
+                    Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
                     AppContainer.GlobalVariable.listEPC.forEach { _epc ->
                         if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-                            //Log.e("TrungPQ", "Add Tag | $_epc")
+                            Log.e("TrungPQ", "Add Tag | $_epc")
                             AppContainer.CurrentTransaction.listEPC.add(_epc)
                         }
                     }
@@ -163,12 +163,14 @@ class MainApplication : Application() {
                     if (AppContainer.CurrentTransaction.cart.isEmpty())
                         AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
-                    //Log.e("TrungPQ", "Clear")
+                    Log.e("TrungPQ", "Clear")
                 }
             } else {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    AppContainer.CurrentTransaction.listEPC.clear()
-                    AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                    if (AppContainer.GlobalVariable.listEPC.size > AppContainer.CurrentTransaction.listEPC.size) {
+                        AppContainer.CurrentTransaction.listEPC.clear()
+                        AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                    }
                 } else {
                     if (AppContainer.CurrentTransaction.cart.isEmpty())
                         AppContainer.CurrentTransaction.currentDiscount = 0F
@@ -212,7 +214,7 @@ class MainApplication : Application() {
         fun initIM30() {
             try {
                 IM30Interface(shared())
-                val comportIuc = AppSettings.Hardware.Comport.IUC
+                val comportIuc = AppSettings.Hardware.Comport.PaymentDevice
                 if (comportIuc.isNotEmpty() && comportIuc.contains("/dev/ttyS")) {
                     val opened = IM30Interface.instance.open(comportIuc)
                     IM30Interface.instance.setLogger { log ->

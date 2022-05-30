@@ -309,32 +309,32 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     private fun initRecyclerViewPayments(checkNonRFID: Boolean = false) {
         listPaymentType.clear()
         if (AppSettings.Options.Payment.MasterCard) {
-            listPaymentType.add(PaymentType.MASTER_CARD.value)
+            listPaymentType.add(PaymentModeType.MASTER_CARD.value)
         }
         if (AppSettings.Options.Payment.EzLink) {
-            listPaymentType.add(PaymentType.EZ_LINK.value)
+            listPaymentType.add(PaymentModeType.EZ_LINK.value)
         }
         if (AppSettings.Options.Payment.PayNow) {
-            listPaymentType.add(PaymentType.PAY_NOW.value)
+            listPaymentType.add(PaymentModeType.PAY_NOW.value)
         }
         if (checkNonRFID) {
             val cartHasNonRFID = AppContainer.CurrentTransaction.checkCartHasNonRFID()
             if (!cartHasNonRFID) {
                 // Show wallet payment mode
                 if (AppSettings.Options.Payment.Wallet) {
-                    listPaymentType.add(PaymentType.KONBINI_WALLET.value)
+                    listPaymentType.add(PaymentModeType.KONBINI_WALLET.value)
                 }
             }
         } else {
             if (AppSettings.Options.Payment.Wallet) {
-                listPaymentType.add(PaymentType.KONBINI_WALLET.value)
+                listPaymentType.add(PaymentModeType.KONBINI_WALLET.value)
             }
         }
         if (AppSettings.Options.Payment.Cash) {
-            listPaymentType.add(PaymentType.CASH.value)
+            listPaymentType.add(PaymentModeType.CASH.value)
         }
         if (AppSettings.Options.MachineTypeActivated == MachineType.DISCOUNT_MODE.value) {
-            listPaymentType.add(PaymentType.DISCOUNT.value)
+            listPaymentType.add(PaymentModeType.DISCOUNT.value)
         }
 
         if (!checkNonRFID) {
@@ -473,15 +473,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 // Goto Login
                 gotoLogin()
             }
-
-//            if (clickedTitleModel == 3 && clickedTitleTotal == 3) {
-//                clickedTitleModel = 0
-//                clickedTitleTotal = 0
-//                // Goto Login
-//                gotoLogin()
-//            } else {
-//                if (clickedTitleModel > 3) clickedTitleModel = 0
-//            }
         }
 
         binding.rfidCancelPayment.setSafeOnClickListener {
@@ -574,13 +565,13 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             return
         }
         when (payment) {
-            PaymentType.MASTER_CARD.value -> {
+            PaymentModeType.MASTER_CARD.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
 
                 // Check click button many times
                 if (SystemClock.elapsedRealtime() - lastTimeClicked < defaultInterval) {
-                    LogUtils.logInfo("User clicked ${PaymentType.MASTER_CARD.value} too fast")
+                    LogUtils.logInfo("User clicked ${PaymentModeType.MASTER_CARD.value} too fast")
                     return
                 }
                 lastTimeClicked = SystemClock.elapsedRealtime()
@@ -593,7 +584,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
-                AppContainer.CurrentTransaction.paymentType = PaymentType.MASTER_CARD
+                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.MASTER_CARD
 
                 // Locked cart
                 AppContainer.CurrentTransaction.cartLocked()
@@ -602,7 +593,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 listenerMasterCard()
 
             }
-            PaymentType.EZ_LINK.value -> {
+            PaymentModeType.EZ_LINK.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
 
@@ -620,7 +611,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
-                AppContainer.CurrentTransaction.paymentType = PaymentType.EZ_LINK
+                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.EZ_LINK
 
                 // Locked cart
                 AppContainer.CurrentTransaction.cartLocked()
@@ -628,7 +619,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 // Listener EzLink
                 listenerEzLink()
             }
-            PaymentType.PAY_NOW.value -> {
+            PaymentModeType.PAY_NOW.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
 
@@ -646,7 +637,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
-                AppContainer.CurrentTransaction.paymentType = PaymentType.PAY_NOW
+                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.PAY_NOW
 
                 // Locked cart
                 AppContainer.CurrentTransaction.cartLocked()
@@ -654,7 +645,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 // Listener PayNow
                 listenerPayNow()
             }
-            PaymentType.KONBINI_WALLET.value -> {
+            PaymentModeType.KONBINI_WALLET.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
 
@@ -672,12 +663,12 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
-                AppContainer.CurrentTransaction.paymentType = PaymentType.KONBINI_WALLET
+                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.KONBINI_WALLET
 
                 // Locked cart
                 AppContainer.CurrentTransaction.cartLocked()
             }
-            PaymentType.CASH.value -> {
+            PaymentModeType.CASH.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
 
@@ -691,7 +682,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 // Change Payment state
                 AppContainer.CurrentTransaction.paymentState = PaymentState.Success
-                AppContainer.CurrentTransaction.paymentType = PaymentType.CASH
+                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.CASH
 
                 // Locked cart
                 AppContainer.CurrentTransaction.cartLocked()
@@ -701,7 +692,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                 handlePaymentSuccess()
             }
-            PaymentType.DISCOUNT.value -> {
+            PaymentModeType.DISCOUNT.value -> {
                 val validate = validateSelectPayment()
                 if (!validate) return
 
@@ -853,9 +844,9 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         hideDialogDiscount()
 
         // Handle Hardware
-        if (AppContainer.CurrentTransaction.paymentType == PaymentType.MASTER_CARD
-            || AppContainer.CurrentTransaction.paymentType == PaymentType.EZ_LINK
-            || AppContainer.CurrentTransaction.paymentType == PaymentType.PAY_NOW
+        if (AppContainer.CurrentTransaction.paymentModeType == PaymentModeType.MASTER_CARD
+            || AppContainer.CurrentTransaction.paymentModeType == PaymentModeType.EZ_LINK
+            || AppContainer.CurrentTransaction.paymentModeType == PaymentModeType.PAY_NOW
         ) {
             IM30Interface.instance.cancel()
         }
@@ -1068,6 +1059,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      *
      */
     private fun handlePaymentSuccess() {
+        if (AppSettings.Options.Payment.DeviceType == PaymentDeviceType.IM30.value) {
+            // Reset countdown timeout payment
+            timerTimeoutPayment.cancel()
+            timeout = AppSettings.Options.Payment.Timeout
+
+            // MainApplication.mAudioManager.soundProcessingPayment()
+            AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+        }
         setBlink(AlarmType.SUCCESS)
         MainApplication.mAudioManager.soundPaymentSuccess()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
@@ -1086,11 +1085,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             beginImage = "n/a",
             endImage = "n/a",
             details = gson.toJson(AppContainer.CurrentTransaction.cartLocked),
-            paymentDetail = AppContainer.CurrentTransaction.paymentType!!.value,
+            paymentDetail = AppContainer.CurrentTransaction.paymentModeType!!.value,
             paymentTime = currentTime.toString(),
             paymentState = PaymentState.Success.name,
-            paymentType = AppContainer.CurrentTransaction.paymentType!!.value,
-            cardType = AppContainer.CurrentTransaction.paymentType!!.value,
+            paymentType = AppContainer.CurrentTransaction.paymentModeType!!.value,
+            cardType = AppContainer.CurrentTransaction.paymentModeType!!.value,
             cardNumber = AppContainer.CurrentTransaction.cardNFC,
             approveCode = "n/a",
             note = "n/a"
@@ -1152,14 +1151,27 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 }, { _message ->
                     // Callback
                     activity?.runOnUiThread {
-                        if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
-                            // Reset countdown timeout payment
-                            timerTimeoutPayment.cancel()
-                            timeout = AppSettings.Options.Payment.Timeout
+                        when (AppSettings.Options.Payment.DeviceType) {
+                            PaymentDeviceType.IUC.value -> { // IUC
+                                if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                                    // Reset countdown timeout payment
+                                    timerTimeoutPayment.cancel()
+                                    timeout = AppSettings.Options.Payment.Timeout
 
-                            // MainApplication.mAudioManager.soundProcessingPayment()
-                            AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                    // MainApplication.mAudioManager.soundProcessingPayment()
+                                    AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                }
+                            }
+                            else -> { // IM30
+                                // Reset countdown timeout payment
+                                timerTimeoutPayment.cancel()
+                                timeout = AppSettings.Options.Payment.Timeout
+
+                                // MainApplication.mAudioManager.soundProcessingPayment()
+                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                            }
                         }
+
                         Log.e(TAG, _message)
                         LogUtils.logInfo(_message)
                         displayMessage(_message)
@@ -1195,14 +1207,27 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 }, { _message ->
                     // Callback
                     activity?.runOnUiThread {
-                        if (_message.lowercase().contains("REMOVE CARD".lowercase())) {
-                            // Reset countdown timeout payment
-                            timerTimeoutPayment.cancel()
-                            timeout = AppSettings.Options.Payment.Timeout
+                        when (AppSettings.Options.Payment.DeviceType) {
+                            PaymentDeviceType.IUC.value -> { // IUC
+                                if (_message.lowercase().contains("REMOVE CARD".lowercase())) {
+                                    // Reset countdown timeout payment
+                                    timerTimeoutPayment.cancel()
+                                    timeout = AppSettings.Options.Payment.Timeout
 
-                            // MainApplication.mAudioManager.soundProcessingPayment()
-                            AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                    // MainApplication.mAudioManager.soundProcessingPayment()
+                                    AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                }
+                            }
+                            else -> { // IM30
+                                // Reset countdown timeout payment
+                                timerTimeoutPayment.cancel()
+                                timeout = AppSettings.Options.Payment.Timeout
+
+                                // MainApplication.mAudioManager.soundProcessingPayment()
+                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                            }
                         }
+
                         Log.e(TAG, _message)
                         LogUtils.logInfo(_message)
                         displayMessage(_message)
@@ -1238,14 +1263,27 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 }, { _message ->
                     // Callback
                     activity?.runOnUiThread {
-                        if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
-                            // Reset countdown timeout payment
-                            timerTimeoutPayment.cancel()
-                            timeout = AppSettings.Options.Payment.Timeout
+                        when (AppSettings.Options.Payment.DeviceType) {
+                            PaymentDeviceType.IUC.value -> { // IUC
+                                if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                                    // Reset countdown timeout payment
+                                    timerTimeoutPayment.cancel()
+                                    timeout = AppSettings.Options.Payment.Timeout
 
-                            // MainApplication.mAudioManager.soundProcessingPayment()
-                            AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                    // MainApplication.mAudioManager.soundProcessingPayment()
+                                    AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                }
+                            }
+                            else -> { // IM30
+                                // Reset countdown timeout payment
+                                timerTimeoutPayment.cancel()
+                                timeout = AppSettings.Options.Payment.Timeout
+
+                                // MainApplication.mAudioManager.soundProcessingPayment()
+                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                            }
                         }
+
                         Log.e(TAG, _message)
                         LogUtils.logInfo(_message)
                         displayMessage(_message)
@@ -1336,7 +1374,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                                 val paymentState = AppContainer.CurrentTransaction.paymentState
                                 if (paymentState == PaymentState.ReadyToPay
-                                    && AppContainer.CurrentTransaction.paymentType == PaymentType.KONBINI_WALLET
+                                    && AppContainer.CurrentTransaction.paymentModeType == PaymentModeType.KONBINI_WALLET
                                 ) {
                                     AppContainer.CurrentTransaction.paymentState =
                                         PaymentState.InProgress
@@ -1375,36 +1413,53 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun listenerDiscount() {
         lifecycleScope.launch {
-            var discounts: MutableList<DiscountEntity> = mutableListOf()
-            if (AppSettings.Options.DiscountList.isNotEmpty()) {
-                discounts = gson.fromJson(
-                    AppSettings.Options.DiscountList,
-                    Array<DiscountEntity>::class.java
-                ).toMutableList()
-                discounts.sortByDescending { discountEntity -> discountEntity.discountValue }
-            }
-
-            val userEntity = findUserByCcwId1()
-            if (userEntity == null) {
-                AlertDialogUtil.showError(
-                    getString(R.string.message_error_user_not_found),
-                    requireContext()
-                )
-            } else {
-                var roles: MutableList<String> = mutableListOf()
-                if (userEntity.roles.isNotEmpty()) {
-                    roles = userEntity.roles.split(",").map { it -> it.trim() }.toMutableList()
+            if (AppSettings.Options.Discount.DiscountByFormat && AppSettings.Options.MachineTypeActivated == MachineType.DISCOUNT_MODE.value) {
+                val validate = validateFormatOfDiscount()
+                if (validate) {
+                    AppContainer.CurrentTransaction.currentDiscount = 1F
+                    AppContainer.CurrentTransaction.refreshCart()
+                    refreshCart()
+                } else {
+                    AlertDialogUtil.showWarning(
+                        String.format(
+                            getString(R.string.message_error_wrong_format),
+                            AppContainer.CurrentTransaction.ccwId1
+                        ),
+                        requireContext()
+                    )
                 }
-                if (roles.isNotEmpty()) {
-                    run outForeach@{
-                        discounts.forEach { discountEntity ->
-                            if (roles.contains(discountEntity.roleName)) {
-                                Log.e(TAG, discountEntity.discountValue)
-                                AppContainer.CurrentTransaction.currentDiscount =
-                                    discountEntity.discountValue.toFloat()
-                                AppContainer.CurrentTransaction.refreshCart()
-                                refreshCart()
-                                return@outForeach
+            } else {
+                var discounts: MutableList<DiscountEntity> = mutableListOf()
+                if (AppSettings.Options.DiscountList.isNotEmpty()) {
+                    discounts = gson.fromJson(
+                        AppSettings.Options.DiscountList,
+                        Array<DiscountEntity>::class.java
+                    ).toMutableList()
+                    discounts.sortByDescending { discountEntity -> discountEntity.discountValue }
+                }
+
+                val userEntity = findUserByCcwId1()
+                if (userEntity == null) {
+                    AlertDialogUtil.showError(
+                        getString(R.string.message_error_user_not_found),
+                        requireContext()
+                    )
+                } else {
+                    var roles: MutableList<String> = mutableListOf()
+                    if (userEntity.roles.isNotEmpty()) {
+                        roles = userEntity.roles.split(",").map { it -> it.trim() }.toMutableList()
+                    }
+                    if (roles.isNotEmpty()) {
+                        run outForeach@{
+                            discounts.forEach { discountEntity ->
+                                if (roles.contains(discountEntity.roleName)) {
+                                    Log.e(TAG, discountEntity.discountValue)
+                                    AppContainer.CurrentTransaction.currentDiscount =
+                                        discountEntity.discountValue.toFloat()
+                                    AppContainer.CurrentTransaction.refreshCart()
+                                    refreshCart()
+                                    return@outForeach
+                                }
                             }
                         }
                     }
@@ -1417,6 +1472,20 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         return AppContainer.GlobalVariable.listUsers.find { userEntity ->
             AppContainer.CurrentTransaction.ccwId1 == userEntity.ccwId1
         }
+    }
+
+    private fun validateFormatOfDiscount(): Boolean {
+        val length = AppContainer.CurrentTransaction.ccwId1.length
+        if (length != AppSettings.Options.Discount.LengthFormat) {
+            LogUtils.logInfo("Discount | ${AppContainer.CurrentTransaction.ccwId1} wrong format!!!")
+            return false
+        }
+        val pattern = Regex("^${AppSettings.Options.Discount.PrefixFormat}")
+        if (!pattern.containsMatchIn(AppContainer.CurrentTransaction.ccwId1)) {
+            LogUtils.logInfo("Discount | ${AppContainer.CurrentTransaction.ccwId1} wrong format!!!")
+            return false
+        }
+        return true
     }
     // endregion
 

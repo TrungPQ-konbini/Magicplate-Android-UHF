@@ -327,9 +327,9 @@
                             android:textColor="@color/white" />
                     </LinearLayout>
                 </LinearLayout>
-                <!--IUC-->
+                <!--Payment device comport-->
                 <LinearLayout
-                    android:id="@+id/hardwareIucPanel"
+                    android:id="@+id/hardwarePaymentDeviceComportPanel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -339,10 +339,10 @@
                     <TextView
                         style="@style/customTextViewSettings"
                         android:layout_weight="3"
-                        android:text="@string/title_iuc" />
+                        android:text="@string/title_payment_device_comport" />
 
                     <EditText
-                        android:id="@+id/hardwareIuc"
+                        android:id="@+id/hardwarePaymentDeviceComport"
                         style="@style/customEditTextSettings"
                         android:layout_weight="1"
                         android:hint="@string/title_native_port"
@@ -1238,6 +1238,71 @@
                         android:layout_weight="1"
                         android:hint="@string/title_alert_slack_webhook"
                         android:inputType="textNoSuggestions" />
+                </LinearLayout>
+
+                <!--Discount with format-->
+                <LinearLayout
+                    android:id="@+id/discountPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_shadow_white"
+                    android:orientation="vertical"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/alertPanel">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_discount_with_format"
+                        android:textColor="@color/smoke"
+                        android:textSize="@dimen/dimen_24"
+                        android:textStyle="bold" />
+                    <!--Discount Length-->
+                    <LinearLayout
+                        android:id="@+id/discountWithFormatPanel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:orientation="horizontal"
+                        android:weightSum="6">
+
+                        <TextView
+                            style="@style/customTextViewSettings"
+                            android:layout_weight="1"
+                            android:text="@string/title_length" />
+
+                        <EditText
+                            android:id="@+id/discountFormatLength"
+                            style="@style/customEditTextSettings"
+                            android:layout_weight="1"
+                            android:hint="@string/title_length"
+                            android:inputType="textNoSuggestions|number" />
+
+                        <TextView
+                            style="@style/customTextViewSettings"
+                            android:layout_weight="1"
+                            android:text="@string/title_prefix" />
+
+                        <EditText
+                            android:id="@+id/discountFormatPrefix"
+                            style="@style/customEditTextSettings"
+                            android:layout_weight="1"
+                            android:hint="@string/title_prefix"
+                            android:inputType="textNoSuggestions" />
+
+                        <TextView
+                            style="@style/customTextViewSettings"
+                            android:layout_weight="1"
+                            android:text="@string/title_suffixes" />
+
+                        <EditText
+                            android:id="@+id/discountFormatSuffixes"
+                            style="@style/customEditTextSettings"
+                            android:layout_weight="1"
+                            android:hint="@string/title_suffixes"
+                            android:inputType="textNoSuggestions" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

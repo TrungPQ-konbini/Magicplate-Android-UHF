@@ -2,7 +2,6 @@ package com.konbini.magicplateuhf.ui.sales.magicPlate
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.R
-import com.konbini.magicplateuhf.data.enum.PaymentType
+import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.databinding.ItemPaymentBinding
-import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.SafeClickListener
 import java.io.File
 
@@ -60,7 +58,7 @@ class PaymentViewHolder(
         this.payment = payment
         // Set background
         when (payment) {
-            PaymentType.MASTER_CARD.value -> {
+            PaymentModeType.MASTER_CARD.value -> {
                 if (AppSettings.Options.Payment.pathImageMasterCard.isNotEmpty()) {
                     val imgFile = File(AppSettings.Options.Payment.pathImageMasterCard)
                     if (imgFile.exists()) {
@@ -76,7 +74,7 @@ class PaymentViewHolder(
                     )
                 }
             }
-            PaymentType.EZ_LINK.value -> {
+            PaymentModeType.EZ_LINK.value -> {
                 if (AppSettings.Options.Payment.pathImageEzLink.isNotEmpty()) {
                     val imgFile = File(AppSettings.Options.Payment.pathImageEzLink)
                     if (imgFile.exists()) {
@@ -92,7 +90,7 @@ class PaymentViewHolder(
                     )
                 }
             }
-            PaymentType.PAY_NOW.value -> {
+            PaymentModeType.PAY_NOW.value -> {
                 if (AppSettings.Options.Payment.pathImagePayNow.isNotEmpty()) {
                     val imgFile = File(AppSettings.Options.Payment.pathImagePayNow)
                     if (imgFile.exists()) {
@@ -108,7 +106,7 @@ class PaymentViewHolder(
                     )
                 }
             }
-            PaymentType.KONBINI_WALLET.value -> {
+            PaymentModeType.KONBINI_WALLET.value -> {
                 if (AppSettings.Options.Payment.pathImageWallet.isNotEmpty()) {
                     val imgFile = File(AppSettings.Options.Payment.pathImageWallet)
                     if (imgFile.exists()) {
@@ -124,7 +122,7 @@ class PaymentViewHolder(
                     )
                 }
             }
-            PaymentType.CASH.value -> {
+            PaymentModeType.CASH.value -> {
                 if (AppSettings.Options.Payment.pathImageCash.isNotEmpty()) {
                     val imgFile = File(AppSettings.Options.Payment.pathImageCash)
                     if (imgFile.exists()) {
@@ -140,7 +138,7 @@ class PaymentViewHolder(
                     )
                 }
             }
-            PaymentType.DISCOUNT.value -> {
+            PaymentModeType.DISCOUNT.value -> {
                 if (AppSettings.Options.Payment.pathImageDiscount.isNotEmpty()) {
                     val imgFile = File(AppSettings.Options.Payment.pathImageDiscount)
                     if (imgFile.exists()) {
