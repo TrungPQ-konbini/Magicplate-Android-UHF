@@ -1476,14 +1476,27 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun validateFormatOfDiscount(): Boolean {
         val length = AppContainer.CurrentTransaction.ccwId1.length
-        if (length != AppSettings.Options.Discount.LengthFormat) {
-            LogUtils.logInfo("Discount | ${AppContainer.CurrentTransaction.ccwId1} wrong format!!!")
-            return false
+        if (AppSettings.Options.Discount.LengthFormat > 0) {
+            if (length != AppSettings.Options.Discount.LengthFormat) {
+                LogUtils.logInfo("Discount | ${AppContainer.CurrentTransaction.ccwId1} wrong format!!!")
+                return false
+            }
         }
-        val pattern = Regex("^${AppSettings.Options.Discount.PrefixFormat}")
-        if (!pattern.containsMatchIn(AppContainer.CurrentTransaction.ccwId1)) {
-            LogUtils.logInfo("Discount | ${AppContainer.CurrentTransaction.ccwId1} wrong format!!!")
-            return false
+
+        if (AppSettings.Options.Discount.PrefixFormat.isNotEmpty()) {
+            val pattern = Regex("^${AppSettings.Options.Discount.PrefixFormat}")
+            if (!pattern.containsMatchIn(AppContainer.CurrentTransaction.ccwId1)) {
+                LogUtils.logInfo("Discount | ${AppContainer.CurrentTransaction.ccwId1} wrong format!!!")
+                return false
+            }
+        }
+
+        if (AppSettings.Options.Discount.SuffixesFormat.isNotEmpty()) {
+            val pattern = Regex("${AppSettings.Options.Discount.SuffixesFormat}$")
+            if (!pattern.containsMatchIn(AppContainer.CurrentTransaction.ccwId1)) {
+                LogUtils.logInfo("Discount | ${AppContainer.CurrentTransaction.ccwId1} wrong format!!!")
+                return false
+            }
         }
         return true
     }
