@@ -360,8 +360,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 GridLayoutManager(requireContext(), spanCount, GridLayoutManager.VERTICAL, false)
             binding.recyclerViewPayments.layoutManager = manager
             binding.recyclerViewPayments.adapter = paymentAdapter
+            paymentAdapter.setItems(items = ArrayList(listPaymentType))
+        } else {
+            if (paymentAdapter.itemCount != listPaymentType.size)
+                paymentAdapter.setItems(items = ArrayList(listPaymentType))
         }
-        paymentAdapter.setItems(items = ArrayList(listPaymentType))
     }
 
     /**
