@@ -797,22 +797,42 @@ class OptionsFragment : Fragment() {
                     val pressedKey: String = intent.getStringExtra("pressedKey").toString()
                     if (pressedKey.isNotEmpty()) {
                         if (binding.keyCodeCancelPayment.hasFocus()) {
-                            PrefUtil.setString(
-                                "AppSettings.Options.KeyCodeCancelPayment",
-                                pressedKey
-                            )
-                            binding.keyCodeCancelPayment.setText(pressedKey)
-                            // Refresh Configuration
-                            AppSettings.getAllSetting()
+                            if (pressedKey != AppSettings.Options.KeyCodeCashPaymentApproval) {
+                                PrefUtil.setString(
+                                    "AppSettings.Options.KeyCodeCancelPayment",
+                                    pressedKey
+                                )
+                                binding.keyCodeCancelPayment.setText(pressedKey)
+                                // Refresh Configuration
+                                AppSettings.getAllSetting()
+                            } else {
+                                AlertDialogUtil.showError(
+                                    String.format(
+                                        getString(R.string.message_error_has_been_used),
+                                        pressedKey.uppercase()
+                                    ),
+                                    requireContext()
+                                )
+                            }
                         }
                         if (binding.keyCodeCashPaymentApproval.hasFocus()) {
-                            PrefUtil.setString(
-                                "AppSettings.Options.KeyCodeCashPaymentApproval",
-                                pressedKey
-                            )
-                            binding.keyCodeCashPaymentApproval.setText(pressedKey)
-                            // Refresh Configuration
-                            AppSettings.getAllSetting()
+                            if (pressedKey != AppSettings.Options.KeyCodeCancelPayment) {
+                                PrefUtil.setString(
+                                    "AppSettings.Options.KeyCodeCashPaymentApproval",
+                                    pressedKey
+                                )
+                                binding.keyCodeCashPaymentApproval.setText(pressedKey)
+                                // Refresh Configuration
+                                AppSettings.getAllSetting()
+                            } else {
+                                AlertDialogUtil.showError(
+                                    String.format(
+                                        getString(R.string.message_error_has_been_used),
+                                        pressedKey.uppercase()
+                                    ),
+                                    requireContext()
+                                )
+                            }
                         }
                     }
                 }

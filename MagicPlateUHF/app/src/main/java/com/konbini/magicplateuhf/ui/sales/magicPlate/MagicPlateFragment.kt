@@ -206,18 +206,20 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         )
                     }
 
-                    // Check Admin cash payment appro
-                    if (AppSettings.Options.AllowAdminCashPaymentApproval) {
-                        val pressedKey: String = intent.getStringExtra("pressedKey").toString()
-                        LogUtils.logInfo("User pressed key | $pressedKey")
-                        if (pressedKey.isNotEmpty()) {
-                            adminCashPaymentApproval(pressedKey)
+                    if (AppContainer.CurrentTransaction.paymentModeType == PaymentModeType.CASH) {
+                        // Check Admin cash payment appro
+                        if (AppSettings.Options.AllowAdminCashPaymentApproval) {
+                            val pressedKey: String = intent.getStringExtra("pressedKey").toString()
+                            LogUtils.logInfo("User pressed key | $pressedKey")
+                            if (pressedKey.isNotEmpty()) {
+                                adminCashPaymentApproval(pressedKey)
+                            }
+                        } else {
+                            AlertDialogUtil.showError(
+                                getString(R.string.message_allow_admin_cash_payment_approval_unchecked),
+                                requireContext()
+                            )
                         }
-                    } else {
-                        AlertDialogUtil.showError(
-                            getString(R.string.message_allow_admin_cash_payment_approval_unchecked),
-                            requireContext()
-                        )
                     }
                 }
             }
