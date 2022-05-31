@@ -506,17 +506,17 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 //        }
 
         binding.rfidMessageTitle.setSafeOnClickListener {
-            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
-                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
-            } else {
-                AppContainer.CurrentTransaction.barcode = "8885000035380"
-                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
-                val intent = Intent()
-                intent.action = "NEW_BARCODE"
-                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
-                    .sendBroadcast(intent)
-                barcode = ""
-            }
+//            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
+//                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+//            } else {
+//                AppContainer.CurrentTransaction.barcode = "8885000035380"
+//                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
+//                val intent = Intent()
+//                intent.action = "NEW_BARCODE"
+//                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
+//                    .sendBroadcast(intent)
+//                barcode = ""
+//            }
 //            val timer = object: CountDownTimer(500, 100) {
 //                override fun onTick(millisUntilFinished: Long) {
 //                    // do something
