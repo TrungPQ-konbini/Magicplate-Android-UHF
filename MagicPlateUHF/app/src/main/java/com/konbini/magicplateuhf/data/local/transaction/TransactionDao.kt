@@ -36,5 +36,5 @@ interface TransactionDao {
     suspend fun deleteSingleById(id: Long)
 
     @Query("DELETE FROM transactions WHERE uuid = :uuid")
-    fun deleteSingleByUuid(uuid: String)
+    suspend fun deleteSingleByUuid(uuid: String)
 }
