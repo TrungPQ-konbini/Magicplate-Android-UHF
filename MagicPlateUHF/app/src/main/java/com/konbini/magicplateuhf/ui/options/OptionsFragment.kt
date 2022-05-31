@@ -24,7 +24,8 @@ import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.enum.AcsReaderType
 import com.konbini.magicplateuhf.data.enum.MachineType
-import com.konbini.magicplateuhf.data.enum.PaymentType
+import com.konbini.magicplateuhf.data.enum.PaymentDeviceType
+import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.databinding.FragmentOptionsBinding
 import com.konbini.magicplateuhf.utils.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,6 +68,7 @@ class OptionsFragment : Fragment() {
     }
 
     private fun setupActions() {
+        //====================Machine type================================
         binding.checkboxMagicPlateMode.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 PrefUtil.setString(
@@ -118,6 +120,32 @@ class OptionsFragment : Fragment() {
             }
         }
 
+        //====================Payment device type================================
+        binding.checkboxPaymentDeviceTypeIuc.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setString("AppSettings.Options.Payment.DeviceType", PaymentDeviceType.IUC.value)
+                binding.checkboxPaymentDeviceTypeIuc.isChecked = true
+                binding.checkboxPaymentDeviceTypeIm30.isChecked = false
+                showMessageSuccess()
+            } else {
+                binding.checkboxPaymentDeviceTypeIuc.isChecked = false
+                binding.checkboxPaymentDeviceTypeIm30.isChecked = true
+            }
+        }
+
+        binding.checkboxPaymentDeviceTypeIm30.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                PrefUtil.setString("AppSettings.Options.Payment.DeviceType", PaymentDeviceType.IM30.value)
+                binding.checkboxPaymentDeviceTypeIuc.isChecked = false
+                binding.checkboxPaymentDeviceTypeIm30.isChecked = true
+                showMessageSuccess()
+            } else {
+                binding.checkboxPaymentDeviceTypeIuc.isChecked = true
+                binding.checkboxPaymentDeviceTypeIm30.isChecked = false
+            }
+        }
+
+        //====================Payment device mode================================
         binding.checkboxMasterCard.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefUtil.setBoolean("AppSettings.Options.Payment.MasterCard", isChecked)
             LogUtils.logInfo("Payment mode Options: $isChecked")
@@ -135,7 +163,7 @@ class OptionsFragment : Fragment() {
                 // GIVE AN INTEGER VALUE FOR PERMISSION_CODE_READ LIKE 1001
                 requestPermissions(permission, PERMISSION_CODE_READ)
             } else {
-                accessType = PaymentType.MASTER_CARD.value
+                accessType = PaymentModeType.MASTER_CARD.value
                 pickImageFromGallery()
             }
         }
@@ -147,7 +175,7 @@ class OptionsFragment : Fragment() {
                         R.drawable.ic_mastercard
                     )
                 )
-                accessType = PaymentType.MASTER_CARD.value
+                accessType = PaymentModeType.MASTER_CARD.value
                 saveOptionsPayment("")
             }
         }
@@ -169,7 +197,7 @@ class OptionsFragment : Fragment() {
                 // GIVE AN INTEGER VALUE FOR PERMISSION_CODE_READ LIKE 1001
                 requestPermissions(permission, PERMISSION_CODE_READ)
             } else {
-                accessType = PaymentType.EZ_LINK.value
+                accessType = PaymentModeType.EZ_LINK.value
                 pickImageFromGallery()
             }
         }
@@ -181,7 +209,7 @@ class OptionsFragment : Fragment() {
                         R.drawable.ic_ez_link
                     )
                 )
-                accessType = PaymentType.EZ_LINK.value
+                accessType = PaymentModeType.EZ_LINK.value
                 saveOptionsPayment("")
             }
         }
@@ -203,7 +231,7 @@ class OptionsFragment : Fragment() {
                 // GIVE AN INTEGER VALUE FOR PERMISSION_CODE_READ LIKE 1001
                 requestPermissions(permission, PERMISSION_CODE_READ)
             } else {
-                accessType = PaymentType.KONBINI_WALLET.value
+                accessType = PaymentModeType.KONBINI_WALLET.value
                 pickImageFromGallery()
             }
         }
@@ -215,7 +243,7 @@ class OptionsFragment : Fragment() {
                         R.drawable.logo
                     )
                 )
-                accessType = PaymentType.KONBINI_WALLET.value
+                accessType = PaymentModeType.KONBINI_WALLET.value
                 saveOptionsPayment("")
             }
         }
@@ -237,7 +265,7 @@ class OptionsFragment : Fragment() {
                 // GIVE AN INTEGER VALUE FOR PERMISSION_CODE_READ LIKE 1001
                 requestPermissions(permission, PERMISSION_CODE_READ)
             } else {
-                accessType = PaymentType.PAY_NOW.value
+                accessType = PaymentModeType.PAY_NOW.value
                 pickImageFromGallery()
             }
         }
@@ -249,7 +277,7 @@ class OptionsFragment : Fragment() {
                         R.drawable.ic_pay_now
                     )
                 )
-                accessType = PaymentType.PAY_NOW.value
+                accessType = PaymentModeType.PAY_NOW.value
                 saveOptionsPayment("")
             }
         }
@@ -271,7 +299,7 @@ class OptionsFragment : Fragment() {
                 // GIVE AN INTEGER VALUE FOR PERMISSION_CODE_READ LIKE 1001
                 requestPermissions(permission, PERMISSION_CODE_READ)
             } else {
-                accessType = PaymentType.CASH.value
+                accessType = PaymentModeType.CASH.value
                 pickImageFromGallery()
             }
         }
@@ -283,7 +311,7 @@ class OptionsFragment : Fragment() {
                         R.drawable.ic_money
                     )
                 )
-                accessType = PaymentType.CASH.value
+                accessType = PaymentModeType.CASH.value
                 saveOptionsPayment("")
             }
         }
@@ -299,7 +327,7 @@ class OptionsFragment : Fragment() {
                 // GIVE AN INTEGER VALUE FOR PERMISSION_CODE_READ LIKE 1001
                 requestPermissions(permission, PERMISSION_CODE_READ)
             } else {
-                accessType = PaymentType.DISCOUNT.value
+                accessType = PaymentModeType.DISCOUNT.value
                 pickImageFromGallery()
             }
         }
@@ -311,7 +339,7 @@ class OptionsFragment : Fragment() {
                         R.drawable.ic_discounts
                     )
                 )
-                accessType = PaymentType.DISCOUNT.value
+                accessType = PaymentModeType.DISCOUNT.value
                 saveOptionsPayment("")
             }
         }
@@ -435,6 +463,12 @@ class OptionsFragment : Fragment() {
             showMessageSuccess()
         }
 
+        binding.checkboxDiscountWithFormat.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.Discount.DiscountByFormat", isChecked)
+            LogUtils.logInfo("AppSettings.Options.Discount.DiscountByFormat Options: $isChecked")
+            showMessageSuccess()
+        }
+
         binding.checkboxSyncOrderRealtime.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 binding.checkboxSyncOrderPeriodicPerTimePeriod.isChecked = false
@@ -515,14 +549,27 @@ class OptionsFragment : Fragment() {
             }
         }
 
+        binding.checkboxGetReaderLog.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.AllowGetReaderLog", isChecked)
+            LogUtils.logInfo("AppSettings.Options.AllowGetReaderLog Options: $isChecked")
+            showMessageSuccess()
+        }
+
         binding.checkboxCancelPayment.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefUtil.setBoolean("AppSettings.Options.AllowAdminCancelPayment", isChecked)
             LogUtils.logInfo("AppSettings.Options.AllowAdminCancelPayment Options: $isChecked")
             showMessageSuccess()
         }
+
+        binding.checkboxCashPaymentApproval.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.AllowAdminCashPaymentApproval", isChecked)
+            LogUtils.logInfo("AppSettings.Options.AllowAdminCashPaymentApproval Options: $isChecked")
+            showMessageSuccess()
+        }
     }
 
     private fun initData() {
+        //====================Machine type================================
         when (AppSettings.Options.MachineTypeActivated) {
             MachineType.MAGIC_PLATE_MODE.value -> {
                 binding.checkboxMagicPlateMode.isChecked = true
@@ -544,6 +591,19 @@ class OptionsFragment : Fragment() {
             }
         }
 
+        //====================Payment type================================
+        when (AppSettings.Options.Payment.DeviceType) {
+            PaymentDeviceType.IUC.value -> { // IUC
+              binding.checkboxPaymentDeviceTypeIuc.isChecked = true
+              binding.checkboxPaymentDeviceTypeIm30.isChecked = false
+            }
+            else -> { // IM30
+                binding.checkboxPaymentDeviceTypeIuc.isChecked = false
+                binding.checkboxPaymentDeviceTypeIm30.isChecked = true
+            }
+        }
+
+        //====================Payment mode================================
         binding.checkboxMasterCard.isChecked = AppSettings.Options.Payment.MasterCard
         binding.checkboxEzlink.isChecked = AppSettings.Options.Payment.EzLink
         binding.checkboxWallet.isChecked = AppSettings.Options.Payment.Wallet
@@ -623,9 +683,14 @@ class OptionsFragment : Fragment() {
         binding.checkboxSyncSpecifiedTime.isChecked = AppSettings.Options.Sync.SyncOrderSpecifiedTime
         binding.checkboxNoSyncOrder.isChecked = AppSettings.Options.Sync.NoSyncOrder
 
+        binding.checkboxGetReaderLog.isChecked = AppSettings.Options.AllowGetReaderLog
         binding.checkboxCancelPayment.isChecked = AppSettings.Options.AllowAdminCancelPayment
+        binding.checkboxCashPaymentApproval.isChecked = AppSettings.Options.AllowAdminCashPaymentApproval
 
-        binding.keyCodeCancelPayment.text = AppSettings.Options.KeyCodeCancelPayment
+        binding.keyCodeCancelPayment.setText(AppSettings.Options.KeyCodeCancelPayment)
+        binding.keyCodeCashPaymentApproval.setText(AppSettings.Options.KeyCodeCashPaymentApproval)
+
+        binding.checkboxDiscountWithFormat.isChecked = AppSettings.Options.Discount.DiscountByFormat
     }
 
     private fun showMessageSuccess() {
@@ -666,7 +731,7 @@ class OptionsFragment : Fragment() {
 
     private fun saveOptionsPayment(picturePath: String) {
         when (accessType) {
-            PaymentType.MASTER_CARD.value -> {
+            PaymentModeType.MASTER_CARD.value -> {
                 val imgFile = File(picturePath)
                 if (imgFile.exists()) {
                     val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
@@ -675,7 +740,7 @@ class OptionsFragment : Fragment() {
                 PrefUtil.setString("AppSettings.Options.Payment.pathImageMasterCard", picturePath)
                 LogUtils.logInfo("AppSettings.Options.Payment.pathImageMasterCard : $picturePath")
             }
-            PaymentType.EZ_LINK.value -> {
+            PaymentModeType.EZ_LINK.value -> {
                 val imgFile = File(picturePath)
                 if (imgFile.exists()) {
                     val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
@@ -684,7 +749,7 @@ class OptionsFragment : Fragment() {
                 PrefUtil.setString("AppSettings.Options.Payment.pathImageEzLink", picturePath)
                 LogUtils.logInfo("AppSettings.Options.Payment.pathImageEzLink : $picturePath")
             }
-            PaymentType.KONBINI_WALLET.value -> {
+            PaymentModeType.KONBINI_WALLET.value -> {
                 val imgFile = File(picturePath)
                 if (imgFile.exists()) {
                     val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
@@ -693,7 +758,7 @@ class OptionsFragment : Fragment() {
                 PrefUtil.setString("AppSettings.Options.Payment.pathImageWallet", picturePath)
                 LogUtils.logInfo("AppSettings.Options.Payment.pathImageWallet : $picturePath")
             }
-            PaymentType.PAY_NOW.value -> {
+            PaymentModeType.PAY_NOW.value -> {
                 val imgFile = File(picturePath)
                 if (imgFile.exists()) {
                     val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
@@ -702,7 +767,7 @@ class OptionsFragment : Fragment() {
                 PrefUtil.setString("AppSettings.Options.Payment.pathImagePayNow", picturePath)
                 LogUtils.logInfo("AppSettings.Options.Payment.pathImagePayNow : $picturePath")
             }
-            PaymentType.CASH.value -> {
+            PaymentModeType.CASH.value -> {
                 val imgFile = File(picturePath)
                 if (imgFile.exists()) {
                     val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
@@ -711,7 +776,7 @@ class OptionsFragment : Fragment() {
                 PrefUtil.setString("AppSettings.Options.Payment.pathImageCash", picturePath)
                 LogUtils.logInfo("AppSettings.Options.Payment.pathImageCash : $picturePath")
             }
-            PaymentType.DISCOUNT.value -> {
+            PaymentModeType.DISCOUNT.value -> {
                 val imgFile = File(picturePath)
                 if (imgFile.exists()) {
                     val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
@@ -728,13 +793,47 @@ class OptionsFragment : Fragment() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                "ADMIN_CANCEL_PAYMENT" -> {
+                "KEY_CODE" -> {
                     val pressedKey: String = intent.getStringExtra("pressedKey").toString()
                     if (pressedKey.isNotEmpty()) {
-                        PrefUtil.setString("AppSettings.Options.KeyCodeCancelPayment", pressedKey)
-                        binding.keyCodeCancelPayment.text = pressedKey
-                        // Refresh Configuration
-                        AppSettings.getAllSetting()
+                        if (binding.keyCodeCancelPayment.hasFocus()) {
+                            if (pressedKey != AppSettings.Options.KeyCodeCashPaymentApproval) {
+                                PrefUtil.setString(
+                                    "AppSettings.Options.KeyCodeCancelPayment",
+                                    pressedKey
+                                )
+                                binding.keyCodeCancelPayment.setText(pressedKey)
+                                // Refresh Configuration
+                                AppSettings.getAllSetting()
+                            } else {
+                                AlertDialogUtil.showError(
+                                    String.format(
+                                        getString(R.string.message_error_has_been_used),
+                                        pressedKey.uppercase()
+                                    ),
+                                    requireContext()
+                                )
+                            }
+                        }
+                        if (binding.keyCodeCashPaymentApproval.hasFocus()) {
+                            if (pressedKey != AppSettings.Options.KeyCodeCancelPayment) {
+                                PrefUtil.setString(
+                                    "AppSettings.Options.KeyCodeCashPaymentApproval",
+                                    pressedKey
+                                )
+                                binding.keyCodeCashPaymentApproval.setText(pressedKey)
+                                // Refresh Configuration
+                                AppSettings.getAllSetting()
+                            } else {
+                                AlertDialogUtil.showError(
+                                    String.format(
+                                        getString(R.string.message_error_has_been_used),
+                                        pressedKey.uppercase()
+                                    ),
+                                    requireContext()
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -744,7 +843,7 @@ class OptionsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         val filterIntent = IntentFilter()
-        filterIntent.addAction("ADMIN_CANCEL_PAYMENT")
+        filterIntent.addAction("KEY_CODE")
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(broadcastReceiver, IntentFilter(filterIntent))
     }

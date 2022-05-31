@@ -75,18 +75,64 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!--=================Payment Device type=================-->
+            <TextView
+                android:id="@+id/title_payment_device_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/title_payment_device_type"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_machine" />
+
+            <LinearLayout
+                android:id="@+id/layout_payment_device_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_shadow_white"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_payment_device_type">
+
+                <LinearLayout
+                    android:id="@+id/layout_payment_device_type_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_payment_device_type_iuc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_iuc" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_payment_device_type_im30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_im30" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!--=================Payment=================-->
             <TextView
                 android:id="@+id/title_payment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@string/title_payment"
+                android:text="@string/title_payment_mode"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_machine" />
+                app:layout_constraintTop_toBottomOf="@id/layout_payment_device_type" />
 
             <LinearLayout
                 android:id="@+id/layout_payment"
@@ -671,79 +717,149 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/card_shadow_white"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+                android:weightSum="2"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/title_customize">
 
                 <LinearLayout
-                    android:id="@+id/layout_customize_activated"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <CheckBox
-                        android:id="@+id/checkbox_not_allow_wallet_non_rfid_activated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_not_allow_wallet_non_rfid" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_ignore_when_removing_tags"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <CheckBox
-                        android:id="@+id/checkbox_ignore_when_removing_tags"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_ignore_when_removing_tags" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_show_hide_cancel_payment_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <CheckBox
-                        android:id="@+id/checkbox_show_hide_cancel_payment_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_show_cancel_payment_button" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_cancel_payment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
-
-                    <CheckBox
-                        android:id="@+id/checkbox_cancel_payment"
+                    <LinearLayout
+                        android:id="@+id/layout_customize_activated"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_admin_cancel_payment" />
+                        android:orientation="horizontal"
+                        android:weightSum="1">
 
-                    <TextView
-                        android:id="@+id/keyCodeCancelPayment"
+                        <CheckBox
+                            android:id="@+id/checkbox_not_allow_wallet_non_rfid_activated"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_not_allow_wallet_non_rfid" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_ignore_when_removing_tags"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_ignore_when_removing_tags"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_ignore_when_removing_tags" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_show_hide_cancel_payment_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_show_hide_cancel_payment_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_show_cancel_payment_button" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_get_reader_log"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_get_reader_log"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_get_reader_log" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/layout_discount_with_format"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_discount_with_format"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_discount_with_format" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_cancel_payment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textColor="@color/smoke"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_cancel_payment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_admin_cancel_payment" />
+
+                        <EditText
+                            android:id="@+id/keyCodeCancelPayment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textColor="@color/smoke"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_cash_payment_approval"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_cash_payment_approval"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_admin_cash_payment_approval" />
+
+                        <EditText
+                            android:id="@+id/keyCodeCashPaymentApproval"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textColor="@color/smoke"
+                            android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

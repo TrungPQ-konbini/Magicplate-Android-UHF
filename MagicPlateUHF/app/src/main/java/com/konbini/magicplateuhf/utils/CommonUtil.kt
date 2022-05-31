@@ -5,17 +5,14 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
-import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import androidx.core.text.isDigitsOnly
 import com.google.gson.Gson
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.data.entities.CartEntity
-import com.konbini.magicplateuhf.data.entities.MenuEntity
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
-import com.konbini.magicplateuhf.data.enum.PaymentType
+import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.data.remote.transaction.request.*
 import java.sql.Timestamp
@@ -191,7 +188,7 @@ class CommonUtil {
                 macAddress = AppSettings.Machine.MacAddress,
                 txnDateTime = formatterTime.format(Date(transactionEntity.dateCreated.toLong())),
                 txnUniqueId = transactionEntity.uuid,
-                paymentType = if (transactionEntity.paymentType == PaymentType.KONBINI_WALLET.value) "KONBI_WALLET" else transactionEntity.paymentType,
+                paymentType = if (transactionEntity.paymentType == PaymentModeType.KONBINI_WALLET.value) "KONBI_WALLET" else transactionEntity.paymentType,
                 cardNumber = transactionEntity.cardNumber,
                 orderStatus = AppSettings.Cloud.OrderStatus,
                 source = AppSettings.Machine.Source,
@@ -254,10 +251,10 @@ class CommonUtil {
                     }
                     4 -> {
                         val meta = MetaDataOrder()
-                        val paymentType = AppContainer.CurrentTransaction.paymentType
+                        val paymentType = AppContainer.CurrentTransaction.paymentModeType
                         meta.key = "_payment_method"
                         meta.value =
-                            if (paymentType == PaymentType.KONBINI_WALLET) PaymentType.KONBINI_WALLET.value
+                            if (paymentType == PaymentModeType.KONBINI_WALLET) PaymentModeType.KONBINI_WALLET.value
                                 .lowercase() else paymentType?.value.toString()
                         metaData.add(meta)
                     }

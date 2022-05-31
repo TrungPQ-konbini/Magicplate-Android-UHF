@@ -60,6 +60,7 @@ class MainApplication : Application() {
         private var rxObserver: RXObserver = object : RXObserver() {
             override fun onInventoryTag(tag: RXInventoryTag) {
                 Log.e(TAG, tag.strEPC)
+                LogUtils.logReader(tag.strEPC)
                 AppContainer.GlobalVariable.listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
                 Log.e("EKRON", "Add item to AppContainer.GlobalVariable.listEPC")
             }
@@ -76,6 +77,7 @@ class MainApplication : Application() {
                     TAG,
                     "==========End command reading UHF=========="
                 )
+                LogUtils.logReader("==========End command reading UHF==========")
 
                 val current = System.currentTimeMillis()
                 if (AppContainer.GlobalVariable.isBackend) {
@@ -107,19 +109,22 @@ class MainApplication : Application() {
                 }
 
                 if (AppContainer.GlobalVariable.allowReadTags) {
-                    roundReadTag += 1
-                    Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
+                    //roundReadTag += 1
+                    //Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
+                    LogUtils.logReader("Clear AppContainer.GlobalVariable.listEPC")
                     AppContainer.GlobalVariable.listEPC.clear()
 
                     Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
 
                     // Start reading UHF
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                    Log.e("EKRON", "roundReadTag: $roundReadTag")
+                    //Log.e("EKRON", "roundReadTag: $roundReadTag")
                     Log.e(
                         TAG,
                         "==========Start command reading UHF=========="
                     )
+                    //LogUtils.logReader("roundReadTag: $roundReadTag")
+                    LogUtils.logReader("==========Start command reading UHF==========")
                 }
             }
         }
@@ -129,13 +134,14 @@ class MainApplication : Application() {
                 TAG,
                 "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
             )
-            Log.e(
-                "EKRON",
-                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
-            )
+//            Log.e(
+//                "EKRON",
+//                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
+//            )
+            LogUtils.logReader("listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}")
             if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
                 if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
-                    Log.e("EKRON", "Start new Transaction")
+                    //Log.e("EKRON", "Start new Transaction")
                     AppContainer.CurrentTransaction.paymentState = PaymentState.Init
                     LogUtils.logInfo("Start new Transaction")
                 } else {
@@ -146,16 +152,16 @@ class MainApplication : Application() {
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
                 && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
             ) {
-                //LogUtils.logInfo("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
+                Log.e("EKRON", "State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
                 return
             }
 
             if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    //Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
+                    Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
                     AppContainer.GlobalVariable.listEPC.forEach { _epc ->
                         if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-                            //Log.e("TrungPQ", "Add Tag | $_epc")
+                            Log.e("TrungPQ", "Add Tag | $_epc")
                             AppContainer.CurrentTransaction.listEPC.add(_epc)
                         }
                     }
@@ -163,12 +169,14 @@ class MainApplication : Application() {
                     if (AppContainer.CurrentTransaction.cart.isEmpty())
                         AppContainer.CurrentTransaction.currentDiscount = 0F
                     AppContainer.CurrentTransaction.listEPC.clear()
-                    //Log.e("TrungPQ", "Clear")
+                    Log.e("TrungPQ", "Clear")
                 }
             } else {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    AppContainer.CurrentTransaction.listEPC.clear()
-                    AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                    if (AppContainer.GlobalVariable.listEPC.size > AppContainer.CurrentTransaction.listEPC.size) {
+                        AppContainer.CurrentTransaction.listEPC.clear()
+                        AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                    }
                 } else {
                     if (AppContainer.CurrentTransaction.cart.isEmpty())
                         AppContainer.CurrentTransaction.currentDiscount = 0F
@@ -212,7 +220,7 @@ class MainApplication : Application() {
         fun initIM30() {
             try {
                 IM30Interface(shared())
-                val comportIuc = AppSettings.Hardware.Comport.IUC
+                val comportIuc = AppSettings.Hardware.Comport.PaymentDevice
                 if (comportIuc.isNotEmpty() && comportIuc.contains("/dev/ttyS")) {
                     val opened = IM30Interface.instance.open(comportIuc)
                     IM30Interface.instance.setLogger { log ->

@@ -109,6 +109,7 @@ class SettingsFragment : Fragment() {
         bindWallet()
         bindMQTT()
         bindAlert()
+        bindDiscountFormat()
     }
 
     private fun setupActions() {
@@ -207,7 +208,7 @@ class SettingsFragment : Fragment() {
 
     private fun bindHardware() {
         binding.hardwareUhfReader.setText(AppSettings.Hardware.Comport.ReaderUHF)
-        binding.hardwareIuc.setText(AppSettings.Hardware.Comport.IUC)
+        binding.hardwarePaymentDeviceComport.setText(AppSettings.Hardware.Comport.PaymentDevice)
         binding.hardwareDelayTimeReadTags.setText(AppSettings.Hardware.Comport.DelayTimeReadTags.toString())
         binding.hardwareDelayTimeDetectTagsChange.setText(AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toString())
         binding.hardwareRFOutputPower.setText(AppSettings.Hardware.Comport.RFOutputPower.toString())
@@ -281,6 +282,12 @@ class SettingsFragment : Fragment() {
         binding.alertSlackWebhook.setText(AppSettings.Alert.Slack.Webhook)
     }
 
+    private fun bindDiscountFormat() {
+        binding.discountFormatLength.setText(AppSettings.Options.Discount.LengthFormat.toString())
+        binding.discountFormatPrefix.setText(AppSettings.Options.Discount.PrefixFormat)
+        binding.discountFormatSuffixes.setText(AppSettings.Options.Discount.SuffixesFormat)
+    }
+
     private fun insert() {
         val companyLogo = binding.companyLogo.text.toString().trim()
         val companyName = binding.companyName.text.toString().trim()
@@ -288,7 +295,7 @@ class SettingsFragment : Fragment() {
         val companyEmail = binding.companyEmail.text.toString().trim()
         val companyAddress = binding.companyAddress.text.toString().trim()
 
-        val hardwareIuc = binding.hardwareIuc.text.toString().trim()
+        val hardwareIuc = binding.hardwarePaymentDeviceComport.text.toString().trim()
         val hardwareDelayTimeReadTags = binding.hardwareDelayTimeReadTags.text.toString().trim().toInt()
         val hardwareDelayTimeDetectTagsChange = binding.hardwareDelayTimeDetectTagsChange.text.toString().trim().toInt()
         val hardwareUhfReader = binding.hardwareUhfReader.text.toString().trim()
@@ -329,6 +336,10 @@ class SettingsFragment : Fragment() {
         val xDayStoreLocalOrders = binding.xDayStoreLocalOrders.text.toString().trim()
         val xDayStoreLocalMenus = binding.xDayStoreLocalMenus.text.toString().trim()
 
+        val discountFormatLength = binding.discountFormatLength.text.toString().trim().toInt()
+        val discountFormatPrefix = binding.discountFormatPrefix.text.toString().trim()
+        val discountFormatSuffixes = binding.discountFormatSuffixes.text.toString().trim()
+
         PrefUtil.setString("AppSettings.Company.Logo", companyLogo)
         PrefUtil.setString("AppSettings.Company.Name", companyName)
         PrefUtil.setString("AppSettings.Company.Tel", companyTel)
@@ -337,8 +348,8 @@ class SettingsFragment : Fragment() {
 
         PrefUtil.setInt("AppSettings.Hardware.Comport.DelayTimeReadTags", hardwareDelayTimeReadTags)
         PrefUtil.setInt("AppSettings.Hardware.Comport.DelayTimeDetectTagsChange", hardwareDelayTimeDetectTagsChange)
-        PrefUtil.setString("AppSettings.Hardware.Comport.IUC", hardwareIuc)
-        if (AppSettings.Hardware.Comport.IUC != hardwareIuc) {
+        PrefUtil.setString("AppSettings.Hardware.Comport.PaymentDevice", hardwareIuc)
+        if (AppSettings.Hardware.Comport.PaymentDevice != hardwareIuc) {
             MainApplication.initIM30()
         }
 
@@ -395,6 +406,10 @@ class SettingsFragment : Fragment() {
         PrefUtil.setString("AppSettings.Alert.Telegram.Group", alertTelegramGroup)
 
         PrefUtil.setString("AppSettings.Alert.Slack.Webhook", alertSlackWebhook)
+
+        PrefUtil.setInt("AppSettings.Options.Discount.LengthFormat", discountFormatLength)
+        PrefUtil.setString("AppSettings.Options.Discount.PrefixFormat", discountFormatPrefix)
+        PrefUtil.setString("AppSettings.Options.Discount.SuffixesFormat", discountFormatSuffixes)
 
         // Refresh Configuration
         AppSettings.getAllSetting()

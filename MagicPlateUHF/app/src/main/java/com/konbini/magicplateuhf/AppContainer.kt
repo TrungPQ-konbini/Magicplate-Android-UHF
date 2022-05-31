@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.konbini.magicplateuhf.data.entities.*
 import com.konbini.magicplateuhf.data.enum.PaymentState
-import com.konbini.magicplateuhf.data.enum.PaymentType
+import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.utils.CommonUtil
 import java.lang.reflect.Type
@@ -80,7 +80,7 @@ object AppContainer {
         var barcode = ""
         var countItems = 0
         var totalPrice = 0F
-        var paymentType: PaymentType? = null
+        var paymentModeType: PaymentModeType? = null
         var paymentState: PaymentState = PaymentState.Init
         var listEPC: MutableList<String> = mutableListOf()
         var listTagEntity: MutableList<TagEntity> = mutableListOf()
@@ -95,7 +95,7 @@ object AppContainer {
             barcode = ""
             countItems = 0
             totalPrice = 0F
-            paymentType = null
+            paymentModeType = null
             currentDiscount = 0F
             listEPC.clear()
             listTagEntity.clear()

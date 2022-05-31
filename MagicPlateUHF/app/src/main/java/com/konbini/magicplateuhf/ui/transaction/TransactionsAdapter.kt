@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
-import com.konbini.magicplateuhf.data.enum.PaymentType
+import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.databinding.ItemTransactionBinding
 import com.konbini.magicplateuhf.utils.CommonUtil
 
@@ -73,7 +73,7 @@ class TransactionViewHolder(
     fun bind(item: TransactionEntity) {
         this.transaction = item
         itemBinding.transactionTime.text = "Date Time: ${ CommonUtil.convertMillisToString(item.paymentTime.toLong(), "dd/MM/yyyy HH:mm") }"
-        itemBinding.transactionPaymentMethod.text = if (transaction.paymentType == PaymentType.KONBINI_WALLET.value) "WALLET" else transaction.paymentType
+        itemBinding.transactionPaymentMethod.text = if (transaction.paymentType == PaymentModeType.KONBINI_WALLET.value) "WALLET" else transaction.paymentType
         var products = ""
         // get old cart
         val cart = Gson().fromJson(transaction.details, Array<CartEntity>::class.java).asList()

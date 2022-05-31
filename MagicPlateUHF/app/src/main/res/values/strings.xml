@@ -70,6 +70,11 @@
     <string name="title_magic_plate_mode">Magic Plate Mode</string>
     <string name="title_self_kiosk_mode">Self Kiosk Mode</string>
     <string name="title_payment">Payment</string>
+    <string name="title_payment_mode">Payment Mode</string>
+    <string name="title_payment_device_type">Payment Device Type</string>
+    <string name="title_payment_device_comport">Payment Device Comport</string>
+    <string name="title_iuc">IUC</string>
+    <string name="title_im30">IM30</string>
     <string name="title_ez_link">EzLink</string>
     <string name="title_master_card">MasterCard</string>
     <string name="title_pay_now">PayNow</string>
@@ -81,6 +86,8 @@
     <string name="title_customize">Customize</string>
     <string name="title_sync_order_realtime">Sync Order Realtime</string>
     <string name="title_admin_cancel_payment">Allow Admin cancel payment</string>
+    <string name="title_admin_cash_payment_approval">Allow Admin cash payment approval</string>
+    <string name="message_allow_admin_cash_payment_approval_unchecked">Allow admin cash payment approval is unchecked !!!</string>
 
     <string name="title_searching">Search...</string>
     <string name="title_index">No.</string>
@@ -118,7 +125,6 @@
     <string name="title_sync_order_specific_time">Sync Orders with Specific Time</string>
     <string name="title_no_sync_orders">No Sync Orders</string>
     <string name="title_hardware">Hardware</string>
-    <string name="title_iuc">IUC</string>
     <string name="title_native_port">Native Port</string>
     <string name="title_timer">Timer</string>
     <string name="title_hour">Hour</string>
@@ -149,9 +155,13 @@
     <string name="title_usb">USB</string>
     <string name="title_nfc">NFC</string>
     <string name="title_discount">Discount</string>
+    <string name="title_discount_with_format">Discount With Format</string>
     <string name="title_discount_mode">Discount Mode</string>
     <string name="title_add_picture">Add Picture</string>
     <string name="title_remove_picture">Remove Picture</string>
+    <string name="title_length">Length</string>
+    <string name="title_prefix">Prefix</string>
+    <string name="title_suffixes">Suffixes</string>
 
     <!--Category-->
     <string name="title_category_name">Category Name</string>
@@ -197,9 +207,12 @@
     <string name="message_error_rf_output_power_range">RF output power, range from 0 to 33(0x00 - 0x21), the unit is dBm.</string>
     <string name="message_error_reader_uhf_has_not_been_initialized">Reader UHF has not been initialized</string>
     <string name="message_error_printer_not_found">No USB printer found !!!</string>
+    <string name="message_error_has_been_used">%s has been used !!!</string>
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
     <string name="message_cancel_payment_admin">Payment Cancelled by Admin !!!</string>
+    <string name="message_cash_approved_payment_admin">Cash Payment Approved by Admin !!!</string>
+    <string name="message_please_wait_cashier_confirm">Please wait cashier confirm !!!</string>
     <string name="message_allow_admin_cancel_payment_unchecked">Allow admin cancel payment is unchecked !!!</string>
     <string name="message_payment_timeout">Payment Timeout !!!</string>
     <string name="message_error_TCP_is_empty">TCP is empty!!!</string>
@@ -209,6 +222,7 @@
     <string name="message_please_scan_barcode">Please Scan Barcode !!!</string>
     <string name="message_please_tap_membership_card">Please Tap Membership Card !!!</string>
     <string name="message_error_user_not_found">User not found!!!</string>
+    <string name="message_error_wrong_format">Discount value [%s] wrong format!!!</string>
     <string name="message_error_product_not_found">Product not found!!!</string>
     <string name="message_error_send_command">Send command Error!!!</string>
     <string name="message_error_write_tags_failed">some tags write failed, please try again!!!</string>
@@ -220,4 +234,5 @@
     <string name="title_delay_time_read_tags">Delay time read tags (milliseconds)</string>
     <string name="title_delay_time_detect_tags_change">Delay time detect tags change (milliseconds)</string>
     <string name="title_milliseconds">Milliseconds</string>
+    <string name="title_get_reader_log">Get Reader Log</string>
 </resources>
