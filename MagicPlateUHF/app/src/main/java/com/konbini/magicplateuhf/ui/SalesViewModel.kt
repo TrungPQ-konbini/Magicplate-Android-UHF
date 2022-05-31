@@ -56,7 +56,7 @@ class SalesViewModel @Inject constructor(
                 listAllTransactions.forEach { transactionEntity ->
                     Log.e("STORE_X_DAY_LOCAL_DATA", "${Date(transactionEntity.paymentTime.toLong())}")
                     if (comparisonDate.time > transactionEntity.paymentTime.toLong()) {
-                        val logContent = "[STORE_X_DAY_LOCAL_DATA] Delete transaction date: ${Date(transactionEntity.paymentTime)} | uuid: ${transactionEntity.uuid}"
+                        val logContent = "[STORE_X_DAY_LOCAL_DATA] Delete transaction date: ${Date(transactionEntity.paymentTime.toLong())} | uuid: ${transactionEntity.uuid}"
                         Log.e("STORE_X_DAY_LOCAL_DATA", logContent)
                         LogUtils.logInfo(logContent)
                         transactionRepository.deleteSingleByUuid(transactionEntity.uuid)

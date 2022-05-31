@@ -376,10 +376,7 @@ class OptionsFragment : Fragment() {
 
                 binding.checkboxPrinterTcp.isChecked = false
                 binding.checkboxPrinterUsb.isChecked = false
-            } else {
-                if (!binding.checkboxPrinterTcp.isChecked && !binding.checkboxPrinterUsb.isChecked) {
-                    binding.checkboxPrinterBle.isChecked = true
-                }
+                showMessageSuccess()
             }
         }
 
@@ -391,10 +388,7 @@ class OptionsFragment : Fragment() {
 
                 binding.checkboxPrinterBle.isChecked = false
                 binding.checkboxPrinterUsb.isChecked = false
-            } else {
-                if (!binding.checkboxPrinterBle.isChecked && !binding.checkboxPrinterUsb.isChecked) {
-                    binding.checkboxPrinterTcp.isChecked = true
-                }
+                showMessageSuccess()
             }
         }
 
@@ -406,10 +400,7 @@ class OptionsFragment : Fragment() {
 
                 binding.checkboxPrinterBle.isChecked = false
                 binding.checkboxPrinterTcp.isChecked = false
-            } else {
-                if (!binding.checkboxPrinterBle.isChecked && !binding.checkboxPrinterTcp.isChecked) {
-                    binding.checkboxPrinterUsb.isChecked = true
-                }
+                showMessageSuccess()
             }
         }
 
