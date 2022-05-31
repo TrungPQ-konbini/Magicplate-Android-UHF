@@ -153,7 +153,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         return
                     }
                     val barcode = AppContainer.CurrentTransaction.barcode.split("\n")[0]
-                    if (barcode.isEmpty()) return
+                    if (barcode.isEmpty() || barcode.length == 1) return
                     val product =
                         AppContainer.GlobalVariable.listProducts.find { _productEntity -> _productEntity.barcode == barcode }
                     if (product != null) {
