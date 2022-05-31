@@ -118,7 +118,8 @@ object AppContainer {
 
             // Calculation with barcode
             cart.forEach { cartEntity ->
-                var itemPrice = cartEntity.price.toFloat()
+                var itemPrice = 0F
+                if (cartEntity.price.isNotEmpty()) itemPrice = cartEntity.price.toFloat()
                 if (currentDiscount > 0) {
                     val findProduct = findProduct(cartEntity.productId.toInt())
                     cartEntity.salePrice = findProduct?.salePrice ?: ""

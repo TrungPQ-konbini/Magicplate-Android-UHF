@@ -584,6 +584,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     return
                 }
                 lastTimeClicked = SystemClock.elapsedRealtime()
+                LogUtils.logInfo("User clicked ${PaymentType.MASTER_CARD.value}")
 
                 changeColorWhenSelectPayment()
 
@@ -611,6 +612,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     return
                 }
                 lastTimeClicked = SystemClock.elapsedRealtime()
+                LogUtils.logInfo("User clicked ${PaymentType.EZ_LINK.value}")
 
                 changeColorWhenSelectPayment()
 
@@ -637,6 +639,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     return
                 }
                 lastTimeClicked = SystemClock.elapsedRealtime()
+                LogUtils.logInfo("User clicked ${PaymentType.PAY_NOW.value}")
 
                 changeColorWhenSelectPayment()
 
@@ -663,6 +666,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     return
                 }
                 lastTimeClicked = SystemClock.elapsedRealtime()
+                LogUtils.logInfo("User clicked ${PaymentType.KONBINI_WALLET.value}")
 
                 changeColorWhenSelectPayment()
 
@@ -686,6 +690,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     return
                 }
                 lastTimeClicked = SystemClock.elapsedRealtime()
+                LogUtils.logInfo("User clicked ${PaymentType.CASH.value}")
 
                 changeColorWhenSelectPayment()
 
@@ -715,6 +720,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     return
                 }
                 lastTimeClicked = SystemClock.elapsedRealtime()
+                LogUtils.logInfo("User clicked ${PaymentType.DISCOUNT.value}")
 
                 timerTimeoutDiscount.cancel()
                 timerTimeoutDiscount.start()
@@ -729,6 +735,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     requireContext()
                 )
 
+                LogUtils.logInfo("Message | $message")
+
                 if (AppSettings.Options.Discount.Barcode) {
                     pDialog.setOnKeyListener(DialogInterface.OnKeyListener { dialog, keyCode, event ->
                         if (event.action == KeyEvent.ACTION_DOWN) {
@@ -741,7 +749,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                 Timer().schedule(100) {
                                     if (AppSettings.Options.AllowAdminCancelPayment && barcode.length == 1) {
                                         Log.e("BARCODE_VALUE", barcode)
-
+                                        LogUtils.logInfo("User scan barcode | $barcode")
                                         // Hide icon loading
                                         hideDialogDiscount()
                                         barcode = ""
@@ -752,6 +760,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             when (event.keyCode) {
                                 KeyEvent.KEYCODE_ENTER -> {
                                     Log.e("BARCODE_VALUE", barcode)
+                                    LogUtils.logInfo("User scan barcode | $barcode")
 
                                     barcode = barcode.split("\n")[0]
                                     AppContainer.CurrentTransaction.ccwId1 = barcode
@@ -876,9 +885,11 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         // Show message
         if (isTimeout) {
+            LogUtils.logInfo(getString(R.string.message_payment_timeout))
             MainApplication.mAudioManager.soundPaymentTimeout()
             displayMessage(getString(R.string.message_payment_timeout))
         } else {
+            LogUtils.logInfo(getString(R.string.message_payment_cancelled))
             MainApplication.mAudioManager.soundPaymentCancelled()
             //MainApplication.mAudioManager.soundPaymentCancelled()
             displayMessage(getString(R.string.message_payment_cancelled))
@@ -894,6 +905,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param show
      */
     private fun showHideLoading(show: Boolean) {
+        LogUtils.logInfo("Show hide loading | $show")
         if (show) {
             binding.loadingPanel.visibility = View.VISIBLE
             binding.contentPanel.visibility = View.GONE
@@ -1068,6 +1080,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      *
      */
     private fun handlePaymentSuccess() {
+        LogUtils.logInfo("Payment Success")
         setBlink(AlarmType.SUCCESS)
         MainApplication.mAudioManager.soundPaymentSuccess()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
@@ -1117,6 +1130,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * @param _message
      */
     private fun handlePaymentError(_message: String) {
+        LogUtils.logInfo("Payment Error | $_message")
         // Reset countdown timeout payment
         timerTimeoutPayment.cancel()
         timeout = AppSettings.Options.Payment.Timeout
@@ -1384,16 +1398,21 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 discounts.sortByDescending { discountEntity -> discountEntity.discountValue }
             }
 
+            LogUtils.logInfo("Discounts | ${gson.toJson(discounts)}")
+
             val userEntity = findUserByCcwId1()
             if (userEntity == null) {
                 AlertDialogUtil.showError(
                     getString(R.string.message_error_user_not_found),
                     requireContext()
                 )
+                LogUtils.logInfo(getString(R.string.message_error_user_not_found))
             } else {
+                LogUtils.logInfo("Found user | ${gson.toJson(userEntity)}")
                 var roles: MutableList<String> = mutableListOf()
                 if (userEntity.roles.isNotEmpty()) {
                     roles = userEntity.roles.split(",").map { it -> it.trim() }.toMutableList()
+                    LogUtils.logInfo("Roles | ${gson.toJson(roles)}")
                 }
                 if (roles.isNotEmpty()) {
                     run outForeach@{
@@ -1408,6 +1427,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                             }
                         }
                     }
+                } else {
+                    LogUtils.logInfo("Roles is empty")
                 }
             }
         }
@@ -1438,6 +1459,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     private fun validateSelectPayment(): Boolean {
         val validate = validateCartIsEmpty()
         if (validate) {
+            LogUtils.logInfo(getString(R.string.message_warning_cart_is_empty))
             // Show message warning cart is empty
             displayMessage(getString(R.string.message_warning_cart_is_empty))
             setBlink(AlarmType.ERROR)
