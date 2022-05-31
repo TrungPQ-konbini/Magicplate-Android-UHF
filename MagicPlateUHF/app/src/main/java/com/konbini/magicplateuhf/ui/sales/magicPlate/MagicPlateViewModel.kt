@@ -12,6 +12,7 @@ import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.data.entities.MenuEntity
 import com.konbini.magicplateuhf.data.entities.TimeBlockEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
+import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.data.enum.PaymentState
 import com.konbini.magicplateuhf.data.remote.wallet.request.DebitRequest
 import com.konbini.magicplateuhf.data.remote.wallet.response.ErrorResponse
@@ -149,7 +150,7 @@ class MagicPlateViewModel @Inject constructor(
                             paymentTime = currentTime.toString(),
                             paymentState = PaymentState.Success.name,
                             paymentType = AppContainer.CurrentTransaction.paymentModeType!!.value,
-                            cardType = AppContainer.CurrentTransaction.paymentModeType!!.value,
+                            cardType = PaymentModeType.KONBINI_WALLET.value,
                             cardNumber = AppContainer.CurrentTransaction.cardNFC,
                             approveCode = "n/a",
                             note = "n/a"

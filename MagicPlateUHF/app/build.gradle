@@ -138,5 +138,5 @@ dependencies {
     implementation files('src/main/libs/acssmc-1.1.5.jar')
 
     // Printer ESCPOS
-    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.1.2'
+    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.2.0'
 }

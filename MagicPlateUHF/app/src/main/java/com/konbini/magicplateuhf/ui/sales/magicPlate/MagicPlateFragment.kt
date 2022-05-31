@@ -55,6 +55,7 @@ import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 import kotlin.math.roundToInt
 
+
 @AndroidEntryPoint
 class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.ItemListener {
 
@@ -258,7 +259,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private var clickedTitleHeaderIndex = 0
     private var clickedTitleModel = 0
-    private var clickedTitleTotal = 0
 
     private lateinit var cartAdapter: CartAdapter
     private lateinit var paymentAdapter: PaymentAdapter
@@ -1098,7 +1098,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      * Handle payment success
      *
      */
-    private fun handlePaymentSuccess() {
+    private fun handlePaymentSuccess(cardType: String) {
         LogUtils.logInfo("Payment Success")
         if (AppSettings.Options.Payment.DeviceType == PaymentDeviceType.IM30.value) {
             // Reset countdown timeout payment
@@ -1130,7 +1130,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             paymentTime = currentTime.toString(),
             paymentState = PaymentState.Success.name,
             paymentType = AppContainer.CurrentTransaction.paymentModeType!!.value,
-            cardType = AppContainer.CurrentTransaction.paymentModeType!!.value,
+            cardType = cardType,
             cardNumber = AppContainer.CurrentTransaction.cardNFC,
             approveCode = "n/a",
             note = "n/a"
@@ -1180,10 +1180,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val amount = (AppContainer.CurrentTransaction.totalPrice.toDouble() * 100).roundToInt()
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                IM30Interface.instance.sale(amount, {
+                IM30Interface.instance.sale(amount, { saleResponse ->
                     // Success
                     activity?.runOnUiThread {
-                        handlePaymentSuccess()
+                        handlePaymentSuccess(saleResponse.cardType)
                     }
                 }, { _message ->
                     // Error
@@ -1236,10 +1236,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val amount = (AppContainer.CurrentTransaction.totalPrice.toDouble() * 100).roundToInt()
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                IM30Interface.instance.cpas(amount, {
+                IM30Interface.instance.cpas(amount, { saleResponse ->
                     // Success
                     activity?.runOnUiThread {
-                        handlePaymentSuccess()
+                        handlePaymentSuccess(saleResponse.cardType)
                     }
                 }, { _message ->
                     // Error
@@ -1292,10 +1292,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val amount = (AppContainer.CurrentTransaction.totalPrice.toDouble() * 100).roundToInt()
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                IM30Interface.instance.mpqr(amount, IM30Interface.MpqrWalletLabel.DBSMAX_PAYNOW, {
+                IM30Interface.instance.mpqr(amount, IM30Interface.MpqrWalletLabel.DBSMAX_PAYNOW, { saleResponse ->
                     // Success
                     activity?.runOnUiThread {
-                        handlePaymentSuccess()
+                        handlePaymentSuccess(saleResponse.cardType)
                     }
                 }, { _message ->
                     // Error
@@ -1604,7 +1604,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     private fun printReceiptBluetooth(cartLocked: MutableList<CartEntity>) {
         val device = BluetoothPrintersConnections.selectFirstPaired()
         val printer =
-            EscPosPrinter(device, 203, AppSettings.ReceiptPrinter.WidthPaper.toFloat(), 32)
+            EscPosPrinter(device, 203, /*AppSettings.ReceiptPrinter.WidthPaper.toFloat()*/48f, 32)
         val content = formatReceipt(cartLocked)
         printer.printFormattedTextAndCut(content)
     }
@@ -1696,7 +1696,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
                 "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
                 "[L]\n" +
-                "[C]<barcode type='ean13' height='10'>${"%12d".format(orderNumber)}</barcode>\n" +
+                "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
                 //"[C]<qrcode size='20'>831254784551</qrcode>" +
                 "[L]\n" +
                 "[L]\n" +
@@ -1871,7 +1871,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     displayMessage(getString(R.string.message_cash_approved_payment_admin))
                     LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
 
-                    handlePaymentSuccess()
+                    handlePaymentSuccess(PaymentModeType.CASH.value)
                 }
             }
         }
