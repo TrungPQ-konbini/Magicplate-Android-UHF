@@ -3,22 +3,30 @@ package com.konbini.magicplateuhf.utils
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.animation.Animation
 import com.google.gson.Gson
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
+import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.entities.TagEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
 import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.data.remote.transaction.request.*
+import com.konbini.magicplateuhf.ui.SalesActivity
 import java.sql.Timestamp
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.system.exitProcess
+
 
 class CommonUtil {
     companion object {
@@ -373,6 +381,27 @@ class CommonUtil {
             animator.setEvaluator(ArgbEvaluator())
 
             animator.start()
+        }
+
+        private const val MAGICAL_NUMBER = 16111987
+
+        fun restartApp() {
+            val intent = Intent(
+                MainApplication.instance.applicationContext,
+                SalesActivity::class.java
+            )
+            val mPendingIntentId: Int = MAGICAL_NUMBER
+            val mPendingIntent = PendingIntent.getActivity(
+                MainApplication.instance.applicationContext,
+                mPendingIntentId,
+                intent,
+                PendingIntent.FLAG_CANCEL_CURRENT
+            )
+            val mgr = MainApplication.instance.applicationContext
+                .getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            mgr[AlarmManager.RTC, System.currentTimeMillis() + 500] = mPendingIntent
+            LogUtils.logInfo("Restart app !!!")
+            exitProcess(0)
         }
     }
 }

@@ -61,8 +61,6 @@ object AppContainer {
                                     }
                                 }
                             }
-
-
                         }
                     }
 

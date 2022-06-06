@@ -160,6 +160,7 @@ class MagicPlateViewModel @Inject constructor(
 
                         val msg = String.format(
                             resources.getString(R.string.message_success_payment_balance),
+                            CommonUtil.formatCurrency(AppContainer.CurrentTransaction.totalPrice),
                             CommonUtil.formatCurrency(_responseDebit.balance ?: 0F)
                         )
 
@@ -293,19 +294,20 @@ class MagicPlateViewModel @Inject constructor(
                             )
                         }
                     } else {
-                        // Show message
-                        var messageDetail = ""
-                        // submit transaction fail
-                        val message = submitTransaction.message
-                        try {
-                            val errorResponse =
-                                gson.fromJson(message, ErrorResponse::class.java)
-                            messageDetail =
-                                "${errorResponse.errorCode}: ${errorResponse.message}"
-                            LogUtils.logInfo(messageDetail)
-                        } catch (ex: JsonParseException) {
-                            LogUtils.logError(ex)
-                        }
+//                        // Show message
+//                        var messageDetail = ""
+//                        // submit transaction fail
+//                        val message = submitTransaction.message
+//                        try {
+//                            val errorResponse =
+//                                gson.fromJson(message, ErrorResponse::class.java)
+//                            messageDetail =
+//                                "${errorResponse.errorCode}: ${errorResponse.message}"
+//                            LogUtils.logInfo(messageDetail)
+//                        } catch (ex: JsonParseException) {
+//                            LogUtils.logError(ex)
+//                        }
+                        LogUtils.logInfo("[Token]: Error ${gson.toJson(submitTransaction.data ?: "Can't submit transaction!!!")}")
                         // Save to sync offline data
                         LogUtils.logInfo(
                             "[Insert Offline Transaction] ${

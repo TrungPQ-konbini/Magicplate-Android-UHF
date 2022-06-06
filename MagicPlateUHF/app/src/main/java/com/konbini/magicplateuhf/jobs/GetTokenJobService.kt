@@ -3,6 +3,7 @@ package com.konbini.magicplateuhf.jobs
 import android.app.job.JobParameters
 import android.app.job.JobService
 import android.util.Log
+import com.google.gson.Gson
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.data.remote.wallet.request.WalletTokenRequest
@@ -71,6 +72,9 @@ class GetTokenJobService : JobService() {
                                 LogUtils.logInfo("[Token]: ${AppContainer.GlobalVariable.currentToken}")
                                 Log.e(TAG, "[Token]: ${AppContainer.GlobalVariable.currentToken}")
                             }
+                        } else {
+                            AppContainer.GlobalVariable.isGettingToken = false
+                            LogUtils.logInfo("[Token]: Error ${Gson().toJson(tokenWallet.data ?: "Can't get Token!!!")}")
                         }
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)

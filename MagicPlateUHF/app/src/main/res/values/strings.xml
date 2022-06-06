@@ -184,8 +184,8 @@
     <string name="message_success_sync">Sync Success !!!</string>
     <string name="message_success_register">Register Success !!!</string>
     <string name="message_success_login">Login Success !!!</string>
-    <string name="message_success_payment">Payment Success !!!</string>
-    <string name="message_success_payment_balance">Payment Success !!! \n Balance: %s</string>
+    <string name="message_success_payment">Payment Success !!! \n Total Paid %s</string>
+    <string name="message_success_payment_balance">Payment Success !!! \n Total Paid %s \n Balance: %s</string>
     <string name="message_success_sync_order">Sync Order #%s Success !!!</string>
     <string name="message_success_reset_reader">Reset Reader Success !!!</string>
     <string name="message_success_set_rf_output_power">Set RF Output Power Success !!!</string>
@@ -210,6 +210,8 @@
     <string name="message_error_has_been_used">%s has been used !!!</string>
 
     <string name="message_payment_cancelled">Cancelled Payment !!!</string>
+    <string name="message_plates_not_register">Plates are not registered on the system !!!</string>
+    <string name="message_menu_not_create_yet">Today\'s menu hasn\'t been created yet !!!</string>
     <string name="message_cancel_payment_admin">Payment Cancelled by Admin !!!</string>
     <string name="message_cash_approved_payment_admin">Cash Payment Approved by Admin !!!</string>
     <string name="message_please_wait_cashier_confirm">Please wait cashier confirm !!!</string>

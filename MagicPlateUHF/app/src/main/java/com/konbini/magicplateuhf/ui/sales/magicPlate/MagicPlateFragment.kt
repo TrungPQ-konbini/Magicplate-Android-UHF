@@ -10,10 +10,7 @@ import android.os.CountDownTimer
 import android.os.Parcelable
 import android.os.SystemClock
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,6 +43,7 @@ import com.konbini.magicplateuhf.utils.*
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
+import com.konbini.magicplateuhf.utils.CommonUtil.Companion.restartApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -54,7 +52,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 import kotlin.math.roundToInt
-
 
 @AndroidEntryPoint
 class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.ItemListener {
@@ -129,6 +126,23 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         }
                         PaymentState.Init,
                         PaymentState.Preparing -> {
+                            // Check menu created
+                            if (AppContainer.GlobalVariable.listMenusToday.isEmpty()) {
+                                MainApplication.mAudioManager.soundBuzzer()
+                                setBlink(AlarmType.ERROR)
+                                displayMessage(getString(R.string.message_menu_not_create_yet))
+                                return
+                            }
+
+                            // Check tag is register
+                            val tagsRegistered = AppContainer.CurrentTransaction.cart.filter { cartEntity -> cartEntity.strEPC.isNotEmpty() }
+                            if (tagsRegistered.size != AppContainer.CurrentTransaction.listTagEntity.size) {
+                                MainApplication.mAudioManager.soundBuzzer()
+                                setBlink(AlarmType.ERROR)
+                                displayMessage(getString(R.string.message_plates_not_register))
+                                return
+                            }
+
                             // Refresh cart
                             refreshCart()
                         }
@@ -208,7 +222,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
 
                     if (AppContainer.CurrentTransaction.paymentModeType == PaymentModeType.CASH) {
-                        // Check Admin cash payment appro
+                        // Check Admin cash payment approval
                         if (AppSettings.Options.AllowAdminCashPaymentApproval) {
                             val pressedKey: String = intent.getStringExtra("pressedKey").toString()
                             LogUtils.logInfo("User pressed key | $pressedKey")
@@ -405,6 +419,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         LogUtils.logInfo(_state.message)
                     }
                     Resource.Status.SUCCESS -> {
+                        LogUtils.logInfo("Start Blink Green")
                         setBlink(AlarmType.SUCCESS)
                         displayMessage(_state.message)
                         MainApplication.mAudioManager.soundPaymentSuccess()
@@ -500,23 +515,27 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
 
         // TODO: Start TrungPQ add to test
-//        binding.spinKitMessage.setSafeOnClickListener {
-//            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
-//            viewModel.debit()
-//        }
+        binding.rfidTotalCount.setSafeOnClickListener {
+            setBlink(AlarmType.SUCCESS)
+        }
+
+        binding.spinKitMessage.setSafeOnClickListener {
+            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
+            viewModel.debit()
+        }
 
         binding.rfidMessageTitle.setSafeOnClickListener {
-//            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
-//                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
-//            } else {
-//                AppContainer.CurrentTransaction.barcode = "8885000035380"
-//                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
-//                val intent = Intent()
-//                intent.action = "NEW_BARCODE"
-//                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
-//                    .sendBroadcast(intent)
-//                barcode = ""
-//            }
+            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
+                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+            } else {
+                AppContainer.CurrentTransaction.barcode = "8885000035380"
+                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
+                val intent = Intent()
+                intent.action = "NEW_BARCODE"
+                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
+                    .sendBroadcast(intent)
+                barcode = ""
+            }
 //            val timer = object: CountDownTimer(500, 100) {
 //                override fun onTick(millisUntilFinished: Long) {
 //                    // do something
@@ -547,6 +566,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         }
         // TODO: End TrungPQ add to test
+
+        binding.shutdown.setSafeOnClickListener {
+            restartApp()
+        }
     }
 
     /**
@@ -1052,7 +1075,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             AlarmType.SUCCESS -> {
                 binding.rfidProducts.blink(Color.GREEN, 3, 500L)
                 binding.layoutMessageTitle.blink(Color.GREEN, 3, 500L)
-                binding.rfidMessageTitle.blink(Color.GREEN, 3, 500L)
+                //binding.rfidMessageTitle.blink(Color.GREEN, 3, 500L)
                 binding.rfidItemCount.blink(Color.GREEN, 3, 500L)
                 binding.rfidTotalCount.blink(Color.GREEN, 3, 500L)
                 binding.selectPayment.blink(Color.GREEN, 3, 500L)
@@ -1060,7 +1083,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             AlarmType.WARNING -> {
                 binding.rfidProducts.blink(Color.YELLOW, 3, 500L)
                 binding.layoutMessageTitle.blink(Color.YELLOW, 3, 500L)
-                binding.rfidMessageTitle.blink(Color.YELLOW, 3, 500L)
+                //binding.rfidMessageTitle.blink(Color.YELLOW, 3, 500L)
                 binding.rfidItemCount.blink(Color.YELLOW, 3, 500L)
                 binding.rfidTotalCount.blink(Color.YELLOW, 3, 500L)
                 binding.selectPayment.blink(Color.YELLOW, 3, 500L)
@@ -1068,7 +1091,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             AlarmType.ERROR -> {
                 binding.rfidProducts.blink(Color.RED, 3, 500L)
                 binding.layoutMessageTitle.blink(Color.RED, 3, 500L)
-                binding.rfidMessageTitle.blink(Color.RED, 3, 500L)
+                //binding.rfidMessageTitle.blink(Color.RED, 3, 500L)
                 binding.rfidItemCount.blink(Color.RED, 3, 500L)
                 binding.rfidTotalCount.blink(Color.RED, 3, 500L)
                 binding.selectPayment.blink(Color.RED, 3, 500L)
@@ -1076,7 +1099,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             else -> {
                 binding.rfidProducts.blink(Color.GRAY, 3, 500L)
                 binding.layoutMessageTitle.blink(Color.GRAY, 3, 500L)
-                binding.rfidMessageTitle.blink(Color.GRAY, 3, 500L)
+                //binding.rfidMessageTitle.blink(Color.GRAY, 3, 500L)
                 binding.rfidItemCount.blink(Color.GRAY, 3, 500L)
                 binding.rfidTotalCount.blink(Color.GRAY, 3, 500L)
                 binding.selectPayment.blink(Color.GRAY, 3, 500L)
@@ -1109,6 +1132,12 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
         }
         setBlink(AlarmType.SUCCESS)
+        displayMessage(
+            String.format(
+                resources.getString(R.string.message_success_payment),
+                formatCurrency(AppContainer.CurrentTransaction.totalPrice)
+            )
+        )
         MainApplication.mAudioManager.soundPaymentSuccess()
         AppContainer.CurrentTransaction.paymentState = PaymentState.Success
         //Log.e("EKRON", "PaymentState.Success")
