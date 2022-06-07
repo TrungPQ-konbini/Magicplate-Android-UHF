@@ -60,9 +60,11 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     private val changeTagReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                "REFRESH_TAGS" -> {
+                "REFRESH_READER_TAGS" -> {
                     // Refresh tags
-                    dataTags = ArrayList(AppContainer.CurrentTransaction.listTagEntity)
+                    val listTagEntity =
+                        AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+                    dataTags = ArrayList(listTagEntity)
                     dataTags.sortBy { tagEntity -> tagEntity.strEPC }
                     setTitleButtonRegister()
                     if (isFinishWrite) {
@@ -110,7 +112,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
         super.onStart()
         AppContainer.GlobalVariable.allowReadTags = false
         val filterIntent = IntentFilter()
-        filterIntent.addAction("REFRESH_TAGS")
+        filterIntent.addAction("REFRESH_READER_TAGS")
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(changeTagReceiver, IntentFilter(filterIntent))
     }
