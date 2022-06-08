@@ -110,6 +110,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onStart() {
         super.onStart()
+        AppContainer.GlobalVariable.isRegisterBackend = true
         AppContainer.GlobalVariable.allowReadTags = false
         val filterIntent = IntentFilter()
         filterIntent.addAction("REFRESH_READER_TAGS")
@@ -119,9 +120,10 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onStop() {
         try {
+            AppContainer.GlobalVariable.isRegisterBackend = false
             AppContainer.GlobalVariable.allowReadTags = true
             AppContainer.GlobalVariable.listEPC.clear()
-            Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
+            //Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
             mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
         } catch (ex: Exception) {
             LogUtils.logError(ex)
@@ -258,7 +260,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
             try {
                 AppContainer.GlobalVariable.listEPC.clear()
-                Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
+                //Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                 mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
@@ -269,9 +271,9 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
             )
         }
 
-        binding.txtLastSerialNumber.setSafeOnClickListener {
-            writeTags2()
-        }
+//        binding.txtLastSerialNumber.setSafeOnClickListener {
+//            writeTags2()
+//        }
     }
 
     private fun writeTags() {
@@ -449,19 +451,20 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                         "Current Last Serial:<b> ${listSetPlateModelDataRequest.last().lastPlateSerial}</b> "
                     binding.txtCurrentLastSerial.text = Html.fromHtml(t2)
 
-                    //delay(300)
+                    delay(300)
                     serialNumber = 0
 
                     // Start reading UHF
-                    try {
-                        isFinishWrite = true
-                        adapter.setItems(ArrayList<TagEntity>())
-                        AppContainer.GlobalVariable.listEPC.clear()
-                        Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
-                        mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                    } catch (ex: Exception) {
-                        LogUtils.logError(ex)
-                    }
+
+                    isFinishWrite = true
+                    adapter.setItems(ArrayList<TagEntity>())
+                    AppContainer.GlobalVariable.listEPC.clear()
+                    //delay(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
+                    //mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+
+                    delay(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
+                    mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+
                 }
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
@@ -545,7 +548,7 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     // Start reading UHF
                     try {
                         AppContainer.GlobalVariable.listEPC.clear()
-                        Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
+                        //delay(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                         mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     } catch (ex: Exception) {
                         LogUtils.logError(ex)

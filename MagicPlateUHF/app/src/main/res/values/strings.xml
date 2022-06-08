@@ -162,6 +162,8 @@
     <string name="title_length">Length</string>
     <string name="title_prefix">Prefix</string>
     <string name="title_suffixes">Suffixes</string>
+    <string name="title_restart">Restart</string>
+    <string name="title_shutdown">Shutdown</string>
 
     <!--Category-->
     <string name="title_category_name">Category Name</string>

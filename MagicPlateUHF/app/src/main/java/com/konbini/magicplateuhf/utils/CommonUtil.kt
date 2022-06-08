@@ -383,9 +383,28 @@ class CommonUtil {
             animator.start()
         }
 
+        /**
+         * Restart or turn off application
+         * 0: Restart App
+         * 1: TurnOff App
+         *
+         * @param type
+         *
+         */
+        fun restartOrTurnOffApplication(type: Int) {
+            when (type) {
+                0 -> { // Restart App
+                    restartApp()
+                }
+                1 -> { // TurnOff App
+                    turnOffApp()
+                }
+            }
+        }
+
         private const val MAGICAL_NUMBER = 16111987
 
-        fun restartApp() {
+        private fun restartApp() {
             val intent = Intent(
                 MainApplication.instance.applicationContext,
                 SalesActivity::class.java
@@ -401,6 +420,11 @@ class CommonUtil {
                 .getSystemService(Context.ALARM_SERVICE) as AlarmManager
             mgr[AlarmManager.RTC, System.currentTimeMillis() + 500] = mPendingIntent
             LogUtils.logInfo("Restart app !!!")
+            exitProcess(0)
+        }
+
+        private fun turnOffApp() {
+            LogUtils.logInfo("Shutdown app !!!")
             exitProcess(0)
         }
     }

@@ -65,11 +65,11 @@
                 android:background="@drawable/card_shadow_white">
 
                 <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/line_vertical_40"
+                    android:id="@+id/line_vertical_50"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.40" />
+                    app:layout_constraintGuide_percent="0.50" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/line_horizontal_70"
@@ -78,18 +78,30 @@
                     android:orientation="horizontal"
                     app:layout_constraintGuide_percent="0.70" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rfidProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:scrollbars="vertical"
+                    android:elevation="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/titleBottom"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/titleHeader" />
+
                 <LinearLayout
                     android:id="@+id/rfidMaskReading"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:alpha="0.8"
+                    android:alpha="0.35"
+                    android:elevation="15dp"
+                    android:visibility="gone"
                     android:background="@drawable/card_shadow_grey"
                     android:minHeight="250dp"
                     android:orientation="vertical"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@id/titleBottom"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="@id/line_vertical_40"
+                    app:layout_constraintRight_toRightOf="@id/line_vertical_50"
                     app:layout_constraintTop_toBottomOf="@id/line_horizontal_70">
 
                     <TextView
@@ -98,6 +110,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:scrollbarFadeDuration="0"
+                        android:scrollbarAlwaysDrawVerticalTrack="true"
                         android:scrollbars="vertical"
                         android:textColor="@color/white"
                         android:textStyle="italic" />
@@ -179,16 +192,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rfidProducts"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:scrollbars="vertical"
-                    app:layout_constraintBottom_toTopOf="@id/titleBottom"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/titleHeader" />
-
                 <LinearLayout
                     android:id="@+id/titleBottom"
                     android:layout_width="match_parent"
@@ -202,19 +205,19 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rfidProducts">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="8"
-                        android:gravity="start">
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:layout_weight="8"-->
+<!--                        android:gravity="start">-->
 
-                        <ImageView
-                            android:id="@+id/shutdown"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/ic_restart" />
-                    </LinearLayout>
+<!--                        <ImageView-->
+<!--                            android:id="@+id/shutdown"-->
+<!--                            android:layout_width="40dp"-->
+<!--                            android:layout_height="40dp"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:background="@drawable/ic_restart" />-->
+<!--                    </LinearLayout>-->
 
                     <TextView
                         android:id="@+id/rfidCurrentTimeBlock"

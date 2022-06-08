@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -16,6 +17,7 @@ import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
 import com.konbini.magicplateuhf.databinding.ActivityMainBinding
+import com.konbini.magicplateuhf.utils.SafeClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -87,7 +89,30 @@ class MainActivity : AppCompatActivity() {
             handled
         }
 
+        val layoutRestart: LinearLayout = hView.findViewById(R.id.layout_restart)
+        layoutRestart.setSafeOnClickListener {
+            AppContainer.GlobalVariable.actionRestartShutdown = "RESTART"
+            val intent = Intent(this, SalesActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        }
+
+        val layoutShutdown: LinearLayout = hView.findViewById(R.id.layout_shutdown)
+        layoutShutdown.setSafeOnClickListener {
+            AppContainer.GlobalVariable.actionRestartShutdown = "SHUTDOWN"
+            val intent = Intent(this, SalesActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        }
+
         AppContainer.GlobalVariable.isBackend = true
+    }
+
+    private fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
+        val safeClickListener = SafeClickListener {
+            onSafeClick(it)
+        }
+        setOnClickListener(safeClickListener)
     }
 
     private fun logout() {

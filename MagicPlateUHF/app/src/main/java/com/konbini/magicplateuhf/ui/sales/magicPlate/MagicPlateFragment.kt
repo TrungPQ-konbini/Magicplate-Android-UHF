@@ -43,7 +43,6 @@ import com.konbini.magicplateuhf.utils.*
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.blink
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.convertStringToShortTime
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.formatCurrency
-import com.konbini.magicplateuhf.utils.CommonUtil.Companion.restartApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -296,7 +295,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         setupRecyclerView()
         setupObservers()
         setupActions()
-        initData()
         listenerAcsReader()
     }
 
@@ -310,6 +308,12 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         filterIntent.addAction("KEY_CODE")
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(broadcastReceiver, IntentFilter(filterIntent))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initData()
+        binding.rfidMaskReading.bringToFront()
     }
 
     override fun onStop() {
@@ -566,10 +570,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         }
         // TODO: End TrungPQ add to test
-
-        binding.shutdown.setSafeOnClickListener {
-            restartApp()
-        }
     }
 
     /**
@@ -596,6 +596,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             displayMessage(getString(R.string.message_put_plate_on_the_tray))
 
             showHideLoading(false)
+
+            when (AppContainer.GlobalVariable.actionRestartShutdown) {
+                "RESTART" -> {
+                    CommonUtil.restartOrTurnOffApplication(0)
+                }
+                "SHUTDOWN" -> {
+                    CommonUtil.restartOrTurnOffApplication(1)
+                }
+            }
         }
     }
 

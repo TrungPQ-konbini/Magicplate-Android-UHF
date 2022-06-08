@@ -64,6 +64,7 @@ class LoginFragment : Fragment() {
                 when (_state.status) {
                     Resource.Status.SUCCESS -> {
                         val intent = Intent(activity, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)
                     }
                     Resource.Status.ERROR -> {
