@@ -15,7 +15,6 @@ object AppContainer {
     object GlobalVariable {
         var actionRestartShutdown = ""
         var isBackend = false
-        var isRegisterBackend = false
         var listEPC: MutableList<String> = mutableListOf()
 
         var isGettingToken = false

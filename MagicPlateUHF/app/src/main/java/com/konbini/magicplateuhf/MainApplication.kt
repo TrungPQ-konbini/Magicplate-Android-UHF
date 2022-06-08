@@ -80,7 +80,7 @@ class MainApplication : Application() {
                 LogUtils.logReader("==========End command reading UHF==========")
 
                 val current = System.currentTimeMillis()
-                if (AppContainer.GlobalVariable.isBackend && !AppContainer.GlobalVariable.isRegisterBackend) {
+                if (AppContainer.GlobalVariable.isBackend) {
                     AppContainer.GlobalVariable.listEPC = AppContainer.GlobalVariable.listEPC.distinct().toMutableList()
                     sendBroadcastRefreshTags()
                 } else {

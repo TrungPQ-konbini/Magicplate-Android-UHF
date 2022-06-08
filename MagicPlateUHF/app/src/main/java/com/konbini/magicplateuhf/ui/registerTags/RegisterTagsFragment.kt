@@ -110,7 +110,6 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onStart() {
         super.onStart()
-        AppContainer.GlobalVariable.isRegisterBackend = true
         AppContainer.GlobalVariable.allowReadTags = false
         val filterIntent = IntentFilter()
         filterIntent.addAction("REFRESH_READER_TAGS")
@@ -120,7 +119,6 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onStop() {
         try {
-            AppContainer.GlobalVariable.isRegisterBackend = false
             AppContainer.GlobalVariable.allowReadTags = true
             AppContainer.GlobalVariable.listEPC.clear()
             //Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())

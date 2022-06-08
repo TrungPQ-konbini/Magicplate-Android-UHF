@@ -158,7 +158,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     AppContainer.CurrentTransaction.listTagEntity.forEach { tagEntity ->
                         content += "${tagEntity.strEPC} | ${tagEntity.plateModelTitle} \n"
                     }
-                    binding.rfidRealTimeTags.text = content
+                    if (binding.rfidMaskReading.isVisible)
+                        binding.rfidRealTimeTags.text = content
                 }
                 "NEW_BARCODE" -> {
                     val paymentState = AppContainer.CurrentTransaction.paymentState
@@ -313,7 +314,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     override fun onResume() {
         super.onResume()
         initData()
-        binding.rfidMaskReading.bringToFront()
     }
 
     override fun onStop() {
