@@ -6,6 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.sales.magicPlate.MagicPlateFragment">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_vertical_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_vertical_50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line_horizontal_70"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loadingPanel"
         android:layout_width="match_parent"
@@ -64,20 +85,6 @@
                 android:layout_weight="2"
                 android:background="@drawable/card_shadow_white">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/line_vertical_50"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.50" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/line_horizontal_70"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.70" />
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rfidProducts"
                     android:layout_width="match_parent"
@@ -88,33 +95,6 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/titleHeader" />
-
-                <LinearLayout
-                    android:id="@+id/rfidMaskReading"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:alpha="0.35"
-                    android:elevation="15dp"
-                    android:visibility="gone"
-                    android:background="@drawable/card_shadow_grey"
-                    android:minHeight="250dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toTopOf="@id/titleBottom"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="@id/line_vertical_50"
-                    app:layout_constraintTop_toBottomOf="@id/line_horizontal_70">
-
-                    <TextView
-                        android:id="@+id/rfidRealTimeTags"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
-                        android:scrollbarFadeDuration="0"
-                        android:scrollbarAlwaysDrawVerticalTrack="true"
-                        android:scrollbars="vertical"
-                        android:textColor="@color/white"
-                        android:textStyle="italic" />
-                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/titleHeader"
@@ -369,4 +349,31 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/rfidMaskReading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0.25"
+        android:visibility="gone"
+        android:elevation="15dp"
+        android:background="@drawable/card_shadow_grey"
+        android:minHeight="250dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@id/line_horizontal_70"
+        app:layout_constraintRight_toRightOf="@id/line_vertical_30"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <TextView
+            android:id="@+id/rfidRealTimeTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:scrollbarFadeDuration="0"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical"
+            android:textColor="@color/white"
+            android:textStyle="italic" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
