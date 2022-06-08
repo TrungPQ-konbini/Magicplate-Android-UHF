@@ -173,7 +173,8 @@ class MainApplication : Application() {
                 }
             } else {
                 if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    if (AppContainer.GlobalVariable.listEPC.size > AppContainer.CurrentTransaction.listEPC.size) {
+                    //if (AppContainer.GlobalVariable.listEPC.size > AppContainer.CurrentTransaction.listEPC.size) {
+                    if (!AppSettings.Options.IgnoreWhenRemovingTags) {
                         AppContainer.CurrentTransaction.listEPC.clear()
                         AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
                     }
