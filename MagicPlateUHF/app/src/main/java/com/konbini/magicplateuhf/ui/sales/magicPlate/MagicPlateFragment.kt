@@ -61,11 +61,15 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
         var displayName = ""
         var balance = 0F
+
+        const val ALARM_DELAY = 1000
     }
 
     private var orderNumber = 0
     private val gson = Gson()
     private var contentReceipt = ""
+
+    private var timeAlarm = 0L
 
     // Variable for Discount
     private var barcode: String = ""
@@ -76,6 +80,23 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                "REFRESH_READER_TAGS" -> {
+                    // Add to Mask real-time reading tags
+                    var content = String.format(
+                        getString(R.string.title_count_n_tags),
+                        AppContainer.GlobalVariable.listEPC.size
+                    )
+                    if (AppContainer.GlobalVariable.listEPC.size > 0) {
+                        content += "\n==============================\n"
+                        val listTagEntity =
+                            AppContainer.GlobalVariable.getListTagEntity(AppContainer.GlobalVariable.listEPC)
+                        listTagEntity.forEach { tagEntity ->
+                            content += "${tagEntity.strEPC} | ${tagEntity.plateModelTitle} \n"
+                        }
+                    }
+                    if (binding.rfidMaskReading.isVisible)
+                        binding.rfidRealTimeTags.text = content
+                }
                 "REFRESH_TAGS" -> {
                     when (AppContainer.CurrentTransaction.paymentState) {
                         /**
@@ -84,14 +105,20 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                          */
                         PaymentState.ReadyToPay,
                         PaymentState.InProgress -> {
+                            val current = System.currentTimeMillis()
                             // Check Cart Locked Change
                             when (AppContainer.CurrentTransaction.checkCartHasBarcodeOrTags()) {
                                 // cart has only tags
                                 0 -> {
                                     if (AppContainer.CurrentTransaction.cart.isEmpty()) {
-                                        MainApplication.mAudioManager.soundBuzzer()
-                                        setBlink(AlarmType.ERROR)
+                                        val offset = current - timeAlarm
+                                        if (offset > ALARM_DELAY) {
+                                            MainApplication.mAudioManager.soundBuzzer()
+                                            setBlink(AlarmType.ERROR)
+                                        }
                                         return
+                                    } else {
+                                        timeAlarm = 0L
                                     }
                                 }
                                 // cart has only barcodes
@@ -104,9 +131,14 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                         cartEntity.strEPC.isNotEmpty()
                                     }
                                     if (cartWithTag.isEmpty()) {
-                                        MainApplication.mAudioManager.soundBuzzer()
-                                        setBlink(AlarmType.ERROR)
+                                        val offset = current - timeAlarm
+                                        if (offset > ALARM_DELAY) {
+                                            MainApplication.mAudioManager.soundBuzzer()
+                                            setBlink(AlarmType.ERROR)
+                                        }
                                         return
+                                    } else {
+                                        timeAlarm = 0L
                                     }
                                 }
                             }
@@ -149,17 +181,6 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
                         }
                     }
-                    // Add to Mask real-time reading tags
-                    var content = String.format(
-                        getString(R.string.title_count_n_tags),
-                        AppContainer.CurrentTransaction.listTagEntity.size
-                    )
-                    content += "\n\n"
-                    AppContainer.CurrentTransaction.listTagEntity.forEach { tagEntity ->
-                        content += "${tagEntity.strEPC} | ${tagEntity.plateModelTitle} \n"
-                    }
-                    if (binding.rfidMaskReading.isVisible)
-                        binding.rfidRealTimeTags.text = content
                 }
                 "NEW_BARCODE" -> {
                     val paymentState = AppContainer.CurrentTransaction.paymentState
@@ -304,6 +325,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val filterIntent = IntentFilter()
         filterIntent.addAction("NEW_BARCODE")
         filterIntent.addAction("REFRESH_TAGS")
+        filterIntent.addAction("REFRESH_READER_TAGS")
         filterIntent.addAction("ACCEPT_OPTIONS")
         filterIntent.addAction("MQTT_SYNC_DATA")
         filterIntent.addAction("KEY_CODE")

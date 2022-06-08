@@ -31,44 +31,55 @@ object AppContainer {
         var listUsers: MutableList<UserEntity> = mutableListOf()
 
         fun getListTagEntity(listEPC: List<String>): MutableList<TagEntity> {
-            val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
-            val listTagEntity: MutableList<TagEntity> = mutableListOf()
+            try {
+                val listPlatesModel = AppContainer.GlobalVariable.listPlatesModel
+                val listTagEntity: MutableList<TagEntity> = mutableListOf()
 
-            Log.e(
-                MainApplication.TAG,
-                "$======================================================================="
-            )
-            listEPC.forEach { _epc ->
-                val tagEntity: TagEntity? = CommonUtil.convertEpcToTagEntity(_epc)
-                if (tagEntity != null) {
-                    val plateModelEntity =
-                        listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode.toInt() == tagEntity.plateModel?.toInt() }
-                    if (plateModelEntity != null) {
-                        tagEntity.plateModelTitle = plateModelEntity.plateModelTitle
-                    } else {
-                        if (tagEntity.plateModel == AppSettings.UHFStructure.CustomPrice.toInt(16).toString()) {
-                            // Check timestamp
-                            currentTimeBock?.let {
-                                if (currentTimeBock!!.fromHour.isNotEmpty() && currentTimeBock!!.toHour.isNotEmpty()) {
-                                    val timestamp = tagEntity.timestamp?.toLong()!! * 1000
-                                    val startTimeBlock = currentTimeBock?.fromHour?.toInt()?.let { CommonUtil.atTimeOfDay(it) }
-                                    val endTimeBlock = currentTimeBock?.toHour?.toInt()?.let { CommonUtil.atTimeOfDay(it) }
+                Log.e(
+                    MainApplication.TAG,
+                    "$======================================================================="
+                )
+                listEPC.forEach { _epc ->
+                    val tagEntity: TagEntity? = CommonUtil.convertEpcToTagEntity(_epc)
+                    if (tagEntity != null) {
+                        val plateModelEntity =
+                            listPlatesModel.find { _plateModelEntity -> _plateModelEntity.plateModelCode.toInt() == tagEntity.plateModel?.toInt() }
+                        if (plateModelEntity != null) {
+                            tagEntity.plateModelTitle = plateModelEntity.plateModelTitle
+                        } else {
+                            if (tagEntity.plateModel == AppSettings.UHFStructure.CustomPrice.toInt(
+                                    16
+                                ).toString()
+                            ) {
+                                // Check timestamp
+                                currentTimeBock?.let {
+                                    if (currentTimeBock!!.fromHour.isNotEmpty() && currentTimeBock!!.toHour.isNotEmpty()) {
+                                        val timestamp = tagEntity.timestamp?.toLong()!! * 1000
+                                        val startTimeBlock = currentTimeBock?.fromHour?.toInt()
+                                            ?.let { CommonUtil.atTimeOfDay(it) }
+                                        val endTimeBlock = currentTimeBock?.toHour?.toInt()
+                                            ?.let { CommonUtil.atTimeOfDay(it) }
 
-                                    if (timestamp >= startTimeBlock!! && timestamp <= endTimeBlock!!) {
-                                        tagEntity.plateModelTitle = MainApplication.instance.resources.getString(R.string.title_custom_price)
-                                    } else {
-                                        tagEntity.customPrice = "000000"
-                                        tagEntity.plateModelTitle = MainApplication.instance.resources.getString(R.string.title_expired_custom_price)
+                                        if (timestamp >= startTimeBlock!! && timestamp <= endTimeBlock!!) {
+                                            tagEntity.plateModelTitle =
+                                                MainApplication.instance.resources.getString(R.string.title_custom_price)
+                                        } else {
+                                            tagEntity.customPrice = "000000"
+                                            tagEntity.plateModelTitle =
+                                                MainApplication.instance.resources.getString(R.string.title_expired_custom_price)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    listTagEntity.add(tagEntity)
+                        listTagEntity.add(tagEntity)
+                    }
                 }
+                return listTagEntity
+            } catch (ex: Exception) {
+                return mutableListOf()
             }
-            return listTagEntity
         }
     }
 

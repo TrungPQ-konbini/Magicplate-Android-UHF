@@ -74,7 +74,7 @@ class MainApplication : Application() {
                 LocalBroadcastManager.getInstance(instance.applicationContext).sendBroadcast(intent)
 
                 Log.e(
-                    TAG,
+                    "EKRON",
                     "==========End command reading UHF=========="
                 )
                 LogUtils.logReader("==========End command reading UHF==========")
@@ -120,7 +120,7 @@ class MainApplication : Application() {
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
                     //Log.e("EKRON", "roundReadTag: $roundReadTag")
                     Log.e(
-                        TAG,
+                        "EKRON",
                         "==========Start command reading UHF=========="
                     )
                     //LogUtils.logReader("roundReadTag: $roundReadTag")
