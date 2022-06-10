@@ -79,6 +79,17 @@ object LogUtils {
         writeLog(log, MainApplication.shared().applicationContext, "Api")
     }
 
+    fun logLogcat(context: Context) {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val calendarTime = Calendar.getInstance().time
+        val currentDate = formatter.format(calendarTime)
+
+        val filename = "${currentDate}_Logcat.txt"
+        val outputFile = File(context.externalCacheDir, filename)
+        Runtime.getRuntime().exec("logcat -f ${outputFile.absolutePath} *:W")
+
+    }
+
     @SuppressLint("SimpleDateFormat")
     private fun writeLog(text: String?, context: Context, fileName: String = "Info") {
         val formatter = SimpleDateFormat("yyyy-MM-dd")

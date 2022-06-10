@@ -1280,7 +1280,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
                 }, {
                     // Cancel
-                    activity?.runOnUiThread {}
+                    activity?.runOnUiThread {
+                        LogUtils.logInfo("MasterCard | Cancel payment")
+                        cancelPayment()
+                    }
                 })
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
@@ -1336,7 +1339,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
                 }, {
                     // Cancel
-                    activity?.runOnUiThread {}
+                    activity?.runOnUiThread {
+                        LogUtils.logInfo("EzLink | Cancel payment")
+                        cancelPayment()
+                    }
                 })
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
@@ -1392,7 +1398,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     }
                 }, {
                     // Cancel
-                    activity?.runOnUiThread {}
+                    activity?.runOnUiThread {
+                        LogUtils.logInfo("PayNow | Cancel payment")
+                        cancelPayment()
+                    }
                 })
             } catch (ex: Exception) {
                 LogUtils.logError(ex)

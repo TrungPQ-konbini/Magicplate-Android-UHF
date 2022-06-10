@@ -62,7 +62,6 @@ class MainApplication : Application() {
                 Log.e(TAG, tag.strEPC)
                 LogUtils.logReader(tag.strEPC)
                 AppContainer.GlobalVariable.listEPC.add(tag.strEPC.replace("\\s".toRegex(), ""))
-                Log.e("EKRON", "Add item to AppContainer.GlobalVariable.listEPC")
             }
 
             override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
@@ -73,117 +72,89 @@ class MainApplication : Application() {
                 intent.action = "REFRESH_READER_TAGS"
                 LocalBroadcastManager.getInstance(instance.applicationContext).sendBroadcast(intent)
 
-                Log.e(
-                    "EKRON",
-                    "==========End command reading UHF=========="
-                )
                 LogUtils.logReader("==========End command reading UHF==========")
 
-                val current = System.currentTimeMillis()
-                if (AppContainer.GlobalVariable.isBackend) {
-                    AppContainer.GlobalVariable.listEPC = AppContainer.GlobalVariable.listEPC.distinct().toMutableList()
-                    sendBroadcastRefreshTags()
-                } else {
-                    if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
-                        if (AppContainer.CurrentTransaction.listEPC.size > AppContainer.GlobalVariable.listEPC.size) {
-                            if (timeTagSizeChanged == 0L) {
-                                timeTagSizeChanged = current
-                                Log.e("EKRON", "timeTagSizeChanged == 0L")
-                            } else {
-                                val offset = current - timeTagSizeChanged
-                                if (offset < AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toLong() &&
-                                    AppContainer.CurrentTransaction.listEPC.isNotEmpty()
-                                ) {
-                                    Log.e(TAG, "$current | $offset => Ignore")
-                                    Log.e("EKRON", "$current | $offset => Ignore")
-                                } else {
-                                    sendBroadcastRefreshTags()
-                                }
-                            }
-                        } else {
-                            sendBroadcastRefreshTags()
-                        }
-                    } else {
-                        sendBroadcastRefreshTags()
-                    }
-                }
+//                val current = System.currentTimeMillis()
+//                if (AppContainer.GlobalVariable.isBackend) {
+//                    sendBroadcastRefreshTags()
+//                } else {
+//                    if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
+//                        if (AppContainer.CurrentTransaction.listEPC.size > AppContainer.GlobalVariable.listEPC.size) {
+//                            if (timeTagSizeChanged == 0L) {
+//                                timeTagSizeChanged = current
+//                            } else {
+//                                val offset = current - timeTagSizeChanged
+//                                if (offset < AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toLong() &&
+//                                    AppContainer.CurrentTransaction.listEPC.isNotEmpty()
+//                                ) {
+//                                    Log.e(TAG, "$current | $offset => Ignore")
+//                                } else {
+//                                    sendBroadcastRefreshTags()
+//                                }
+//                            }
+//                        } else {
+//                            sendBroadcastRefreshTags()
+//                        }
+//                    } else {
+//                        sendBroadcastRefreshTags()
+//                    }
+//                }
+
+                sendBroadcastRefreshTags()
 
                 if (AppContainer.GlobalVariable.allowReadTags) {
-                    //roundReadTag += 1
-                    //Log.e("EKRON", "Clear AppContainer.GlobalVariable.listEPC")
-                    LogUtils.logReader("Clear AppContainer.GlobalVariable.listEPC")
                     AppContainer.GlobalVariable.listEPC.clear()
 
-                    Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
-
                     // Start reading UHF
-                    mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
-                    //Log.e("EKRON", "roundReadTag: $roundReadTag")
-                    Log.e(
-                        "EKRON",
-                        "==========Start command reading UHF=========="
-                    )
-                    //LogUtils.logReader("roundReadTag: $roundReadTag")
+                    startRealTimeInventory()
+
                     LogUtils.logReader("==========Start command reading UHF==========")
                 }
             }
         }
 
         private fun sendBroadcastRefreshTags() {
-            Log.e(
-                TAG,
-                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
-            )
-//            Log.e(
-//                "EKRON",
-//                "listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}"
-//            )
-            LogUtils.logReader("listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}")
-            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
-                if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
-                    //Log.e("EKRON", "Start new Transaction")
-                    AppContainer.CurrentTransaction.paymentState = PaymentState.Init
-                    LogUtils.logInfo("Start new Transaction")
-                } else {
-                    AppContainer.CurrentTransaction.listEPC.clear()
-                }
-            }
-            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init
-                && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
-                && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
-            ) {
-                Log.e("EKRON", "State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
-                return
-            }
-
-            if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
-                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    Log.e("TrungPQ", Gson().toJson(AppContainer.GlobalVariable.listEPC))
-                    AppContainer.GlobalVariable.listEPC.forEach { _epc ->
-                        if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-                            Log.e("TrungPQ", "Add Tag | $_epc")
-                            AppContainer.CurrentTransaction.listEPC.add(_epc)
-                        }
-                    }
-                } else {
-                    if (AppContainer.CurrentTransaction.cart.isEmpty())
-                        AppContainer.CurrentTransaction.currentDiscount = 0F
-                    AppContainer.CurrentTransaction.listEPC.clear()
-                    Log.e("TrungPQ", "Clear")
-                }
-            } else {
-                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-                    //if (AppContainer.GlobalVariable.listEPC.size > AppContainer.CurrentTransaction.listEPC.size) {
-                    if (!AppSettings.Options.IgnoreWhenRemovingTags) {
-                        AppContainer.CurrentTransaction.listEPC.clear()
-                        AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
-                    }
-                } else {
-                    if (AppContainer.CurrentTransaction.cart.isEmpty())
-                        AppContainer.CurrentTransaction.currentDiscount = 0F
-                    AppContainer.CurrentTransaction.listEPC.clear()
-                }
-            }
+//            LogUtils.logReader("listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}")
+//            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
+//                if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
+//                    AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+//                    LogUtils.logInfo("Start new Transaction")
+//                } else {
+//                    AppContainer.CurrentTransaction.listEPC.clear()
+//                }
+//            }
+//            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init
+//                && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
+//                && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
+//            ) {
+//                LogUtils.logReader("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
+//                return
+//            }
+//
+//            if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
+//                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+//                    AppContainer.GlobalVariable.listEPC.forEach { _epc ->
+//                        if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
+//                            AppContainer.CurrentTransaction.listEPC.add(_epc)
+//                        }
+//                    }
+//                } else {
+//                    if (AppContainer.CurrentTransaction.cart.isEmpty())
+//                        AppContainer.CurrentTransaction.currentDiscount = 0F
+//                    AppContainer.CurrentTransaction.listEPC.clear()
+//                }
+//            } else {
+//                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+//                    if (!AppSettings.Options.IgnoreWhenRemovingTags) {
+//                        AppContainer.CurrentTransaction.listEPC.clear()
+//                        AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+//                    }
+//                } else {
+//                    if (AppContainer.CurrentTransaction.cart.isEmpty())
+//                        AppContainer.CurrentTransaction.currentDiscount = 0F
+//                    AppContainer.CurrentTransaction.listEPC.clear()
+//                }
+//            }
 
             // Get list tags
             val listTagEntity =
@@ -211,8 +182,10 @@ class MainApplication : Application() {
         fun startRealTimeInventory() {
             try {
                 AppContainer.GlobalVariable.allowReadTags = true
-                if (this::mReaderUHF.isInitialized)
+                if (this::mReaderUHF.isInitialized) {
+                    Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
+                }
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
             }
@@ -252,7 +225,7 @@ class MainApplication : Application() {
                         mReaderUHF = RFIDReaderHelper.getDefaultHelper()
                         mReaderUHF.unRegisterObserver(rxObserver)
                         mReaderUHF.registerObserver(rxObserver)
-                        Thread.sleep(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
+
                         startRealTimeInventory()
                     } catch (ex: Exception) {
                         Log.e(SalesActivity.TAG, ex.toString())
@@ -314,6 +287,7 @@ class MainApplication : Application() {
         }
 
         LogUtils.logInfo("Start App")
+        LogUtils.logLogcat(this)
         initSetting()
         mainAppInit?.invoke()
         instance = this
