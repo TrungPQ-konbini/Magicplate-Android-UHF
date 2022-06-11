@@ -157,22 +157,22 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         }
                         PaymentState.Init,
                         PaymentState.Preparing -> {
-                            // Check menu created
-                            if (AppContainer.GlobalVariable.listMenusToday.isEmpty()) {
-                                MainApplication.mAudioManager.soundBuzzer()
-                                setBlink(AlarmType.ERROR)
-                                displayMessage(getString(R.string.message_menu_not_create_yet))
-                                return
-                            }
-
-                            // Check tag is register
-                            val tagsRegistered = AppContainer.CurrentTransaction.cart.filter { cartEntity -> cartEntity.strEPC.isNotEmpty() }
-                            if (tagsRegistered.size != AppContainer.CurrentTransaction.listTagEntity.size) {
-                                MainApplication.mAudioManager.soundBuzzer()
-                                setBlink(AlarmType.ERROR)
-                                displayMessage(getString(R.string.message_plates_not_register))
-                                return
-                            }
+//                            // Check menu created
+////                            if (AppContainer.GlobalVariable.listMenusToday.isEmpty()) {
+////                                MainApplication.mAudioManager.soundBuzzer()
+////                                setBlink(AlarmType.ERROR)
+////                                displayMessage(getString(R.string.message_menu_not_create_yet))
+////                                return
+////                            }
+////
+////                            // Check tag is register
+////                            val tagsRegistered = AppContainer.CurrentTransaction.cart.filter { cartEntity -> cartEntity.strEPC.isNotEmpty() }
+////                            if (tagsRegistered.size != AppContainer.CurrentTransaction.listTagEntity.size) {
+////                                MainApplication.mAudioManager.soundBuzzer()
+////                                setBlink(AlarmType.ERROR)
+////                                displayMessage(getString(R.string.message_plates_not_register))
+////                                return
+////                            }
 
                             // Refresh cart
                             refreshCart()
