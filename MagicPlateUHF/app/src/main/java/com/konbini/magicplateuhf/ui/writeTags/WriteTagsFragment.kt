@@ -88,6 +88,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     override fun onStop() {
+        AppContainer.GlobalVariable.allowWriteTags = false
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(changeTagReceiver)
         super.onStop()
     }
@@ -250,6 +251,7 @@ class WriteTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     )
 
                     delay(1000)
+                    AppContainer.GlobalVariable.allowWriteTags = false
                     // Start reading UHF
                     MainApplication.startRealTimeInventory()
                 }

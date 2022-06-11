@@ -452,14 +452,12 @@ class RegisterTagsFragment : Fragment(), SearchView.OnQueryTextListener,
                     delay(300)
                     serialNumber = 0
 
-                    // Start reading UHF
-
                     isFinishWrite = true
+                    AppContainer.GlobalVariable.allowWriteTags = false
                     adapter.setItems(ArrayList<TagEntity>())
                     AppContainer.GlobalVariable.listEPC.clear()
-                    //delay(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
-                    //mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
 
+                    // Start reading UHF
                     delay(AppSettings.Hardware.Comport.DelayTimeReadTags.toLong())
                     mReaderUHF.realTimeInventory(0xff.toByte(), 0x01.toByte())
 

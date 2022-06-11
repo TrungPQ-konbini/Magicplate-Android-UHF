@@ -74,33 +74,31 @@ class MainApplication : Application() {
 
                 LogUtils.logReader("==========End command reading UHF==========")
 
-//                val current = System.currentTimeMillis()
-//                if (AppContainer.GlobalVariable.isBackend) {
-//                    sendBroadcastRefreshTags()
-//                } else {
-//                    if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
-//                        if (AppContainer.CurrentTransaction.listEPC.size > AppContainer.GlobalVariable.listEPC.size) {
-//                            if (timeTagSizeChanged == 0L) {
-//                                timeTagSizeChanged = current
-//                            } else {
-//                                val offset = current - timeTagSizeChanged
-//                                if (offset < AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toLong() &&
-//                                    AppContainer.CurrentTransaction.listEPC.isNotEmpty()
-//                                ) {
-//                                    Log.e(TAG, "$current | $offset => Ignore")
-//                                } else {
-//                                    sendBroadcastRefreshTags()
-//                                }
-//                            }
-//                        } else {
-//                            sendBroadcastRefreshTags()
-//                        }
-//                    } else {
-//                        sendBroadcastRefreshTags()
-//                    }
-//                }
-
-                sendBroadcastRefreshTags()
+                val current = System.currentTimeMillis()
+                if (AppContainer.GlobalVariable.isBackend) {
+                    sendBroadcastRefreshTags()
+                } else {
+                    if (AppContainer.CurrentTransaction.listEPC.size != AppContainer.GlobalVariable.listEPC.size) {
+                        if (AppContainer.CurrentTransaction.listEPC.size > AppContainer.GlobalVariable.listEPC.size) {
+                            if (timeTagSizeChanged == 0L) {
+                                timeTagSizeChanged = current
+                            } else {
+                                val offset = current - timeTagSizeChanged
+                                if (offset < AppSettings.Hardware.Comport.DelayTimeDetectTagsChange.toLong() &&
+                                    AppContainer.CurrentTransaction.listEPC.isNotEmpty()
+                                ) {
+                                    Log.e(TAG, "$current | $offset => Ignore")
+                                } else {
+                                    sendBroadcastRefreshTags()
+                                }
+                            }
+                        } else {
+                            sendBroadcastRefreshTags()
+                        }
+                    } else {
+                        sendBroadcastRefreshTags()
+                    }
+                }
 
                 if (AppContainer.GlobalVariable.allowReadTags) {
                     AppContainer.GlobalVariable.listEPC.clear()
@@ -114,47 +112,47 @@ class MainApplication : Application() {
         }
 
         private fun sendBroadcastRefreshTags() {
-//            LogUtils.logReader("listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}")
-//            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
-//                if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
-//                    AppContainer.CurrentTransaction.paymentState = PaymentState.Init
-//                    LogUtils.logInfo("Start new Transaction")
-//                } else {
-//                    AppContainer.CurrentTransaction.listEPC.clear()
-//                }
-//            }
-//            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init
-//                && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
-//                && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
-//            ) {
-//                LogUtils.logReader("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
-//                return
-//            }
-//
-//            if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
-//                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-//                    AppContainer.GlobalVariable.listEPC.forEach { _epc ->
-//                        if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
-//                            AppContainer.CurrentTransaction.listEPC.add(_epc)
-//                        }
-//                    }
-//                } else {
-//                    if (AppContainer.CurrentTransaction.cart.isEmpty())
-//                        AppContainer.CurrentTransaction.currentDiscount = 0F
-//                    AppContainer.CurrentTransaction.listEPC.clear()
-//                }
-//            } else {
-//                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
-//                    if (!AppSettings.Options.IgnoreWhenRemovingTags) {
-//                        AppContainer.CurrentTransaction.listEPC.clear()
-//                        AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
-//                    }
-//                } else {
-//                    if (AppContainer.CurrentTransaction.cart.isEmpty())
-//                        AppContainer.CurrentTransaction.currentDiscount = 0F
-//                    AppContainer.CurrentTransaction.listEPC.clear()
-//                }
-//            }
+            LogUtils.logReader("listEPC: ${AppContainer.GlobalVariable.listEPC.size} | tagSizeOld: ${AppContainer.CurrentTransaction.listEPC.size}")
+            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
+                if (AppContainer.GlobalVariable.listEPC.isEmpty()) {
+                    AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+                    LogUtils.logInfo("Start new Transaction")
+                } else {
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                }
+            }
+            if (AppContainer.CurrentTransaction.paymentState != PaymentState.Init
+                && AppContainer.CurrentTransaction.paymentState != PaymentState.Preparing
+                && AppContainer.CurrentTransaction.paymentState != PaymentState.ReadyToPay
+            ) {
+                LogUtils.logReader("State ${AppContainer.CurrentTransaction.paymentState} | Not refresh tags")
+                return
+            }
+
+            if (AppSettings.Options.IgnoreWhenRemovingTags && !AppContainer.GlobalVariable.isBackend) {
+                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+                    AppContainer.GlobalVariable.listEPC.forEach { _epc ->
+                        if (!AppContainer.CurrentTransaction.listEPC.contains(_epc)) {
+                            AppContainer.CurrentTransaction.listEPC.add(_epc)
+                        }
+                    }
+                } else {
+                    if (AppContainer.CurrentTransaction.cart.isEmpty())
+                        AppContainer.CurrentTransaction.currentDiscount = 0F
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                }
+            } else {
+                if (AppContainer.GlobalVariable.listEPC.isNotEmpty()) {
+                    if (!AppSettings.Options.IgnoreWhenRemovingTags) {
+                        AppContainer.CurrentTransaction.listEPC.clear()
+                        AppContainer.CurrentTransaction.listEPC.addAll(AppContainer.GlobalVariable.listEPC)
+                    }
+                } else {
+                    if (AppContainer.CurrentTransaction.cart.isEmpty())
+                        AppContainer.CurrentTransaction.currentDiscount = 0F
+                    AppContainer.CurrentTransaction.listEPC.clear()
+                }
+            }
 
             // Get list tags
             val listTagEntity =
