@@ -98,7 +98,8 @@ class SalesActivity : AppCompatActivity() {
     override fun dispatchKeyEvent(e: KeyEvent): Boolean {
         if (e.action == KeyEvent.ACTION_DOWN) {
             val pressedKey = e.unicodeChar.toChar()
-            barcode += pressedKey
+            if (e.keyCode != 115)
+                barcode += pressedKey
         }
         Log.e("KEY_CODE", e.keyCode.toString())
         if (e.action == KeyEvent.ACTION_DOWN) {

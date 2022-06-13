@@ -455,7 +455,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
                             // Print Receipt
                             LogUtils.logInfo("Start Print receipt")
-                            printReceipt(AppContainer.CurrentTransaction.cartLocked)
+                            val cartLocked: MutableList<CartEntity> = ArrayList(AppContainer.CurrentTransaction.cartLocked)
+                            printReceipt(cartLocked)
                         }
 
                         Log.e("EKRON", "PaymentState.Success")
@@ -1201,7 +1202,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
             // Print Receipt
             LogUtils.logInfo("Start Print receipt")
-            printReceipt(AppContainer.CurrentTransaction.cartLocked)
+            val cartLocked: MutableList<CartEntity> = ArrayList(AppContainer.CurrentTransaction.cartLocked)
+            printReceipt(cartLocked)
         }
 
         val message = getString(R.string.message_put_plate_on_the_tray)
@@ -1662,7 +1664,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                     // TCP
                     printReceiptTCP(cartLocked)
                 } else {
-                    contentReceipt = formatReceipt(AppContainer.CurrentTransaction.cartLocked)
+                    contentReceipt = formatReceipt(cartLocked)
+                    Log.e("PRINTER", contentReceipt)
                     // USB
                     printReceiptUSB()
                 }
@@ -1671,6 +1674,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     }
 
     private fun printReceiptBluetooth(cartLocked: MutableList<CartEntity>) {
+
         val device = BluetoothPrintersConnections.selectFirstPaired()
         val printer =
             EscPosPrinter(device, 203, /*AppSettings.ReceiptPrinter.WidthPaper.toFloat()*/48f, 32)

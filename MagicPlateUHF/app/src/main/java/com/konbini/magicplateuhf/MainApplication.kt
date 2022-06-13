@@ -31,6 +31,7 @@ import dagger.hilt.android.HiltAndroidApp
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import kotlin.random.Random
 
 
 @HiltAndroidApp
@@ -65,6 +66,8 @@ class MainApplication : Application() {
             }
 
             override fun onInventoryTagEnd(endTag: RXInventoryTag.RXInventoryTagEnd) {
+                //val num = Random.nextInt(1)
+                //if (num == 0 && AppContainer.GlobalVariable.listEPC.isNotEmpty()) AppContainer.GlobalVariable.listEPC.removeAt(0)
                 // Distinct list EPC
                 AppContainer.GlobalVariable.listEPC = AppContainer.GlobalVariable.listEPC.distinct().toMutableList()
 
