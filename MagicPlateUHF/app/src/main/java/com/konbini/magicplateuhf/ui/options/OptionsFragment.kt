@@ -677,9 +677,11 @@ class OptionsFragment : Fragment() {
         binding.checkboxGetReaderLog.isChecked = AppSettings.Options.AllowGetReaderLog
         binding.checkboxCancelPayment.isChecked = AppSettings.Options.AllowAdminCancelPayment
         binding.checkboxCashPaymentApproval.isChecked = AppSettings.Options.AllowAdminCashPaymentApproval
+        binding.checkboxDiscountApproval.isChecked = AppSettings.Options.AllowAdminDiscountApproval
 
         binding.keyCodeCancelPayment.setText(AppSettings.Options.KeyCodeCancelPayment)
         binding.keyCodeCashPaymentApproval.setText(AppSettings.Options.KeyCodeCashPaymentApproval)
+        binding.keyCodeDiscountApproval.setText(AppSettings.Options.KeyCodeDiscountApproval)
 
         binding.checkboxDiscountWithFormat.isChecked = AppSettings.Options.Discount.DiscountByFormat
     }
@@ -788,7 +790,7 @@ class OptionsFragment : Fragment() {
                     val pressedKey: String = intent.getStringExtra("pressedKey").toString()
                     if (pressedKey.isNotEmpty()) {
                         if (binding.keyCodeCancelPayment.hasFocus()) {
-                            if (pressedKey != AppSettings.Options.KeyCodeCashPaymentApproval) {
+                            if (pressedKey != AppSettings.Options.KeyCodeCashPaymentApproval && pressedKey != AppSettings.Options.KeyCodeDiscountApproval) {
                                 PrefUtil.setString(
                                     "AppSettings.Options.KeyCodeCancelPayment",
                                     pressedKey
@@ -807,12 +809,31 @@ class OptionsFragment : Fragment() {
                             }
                         }
                         if (binding.keyCodeCashPaymentApproval.hasFocus()) {
-                            if (pressedKey != AppSettings.Options.KeyCodeCancelPayment) {
+                            if (pressedKey != AppSettings.Options.KeyCodeCancelPayment && pressedKey != AppSettings.Options.KeyCodeDiscountApproval) {
                                 PrefUtil.setString(
                                     "AppSettings.Options.KeyCodeCashPaymentApproval",
                                     pressedKey
                                 )
                                 binding.keyCodeCashPaymentApproval.setText(pressedKey)
+                                // Refresh Configuration
+                                AppSettings.getAllSetting()
+                            } else {
+                                AlertDialogUtil.showError(
+                                    String.format(
+                                        getString(R.string.message_error_has_been_used),
+                                        pressedKey.uppercase()
+                                    ),
+                                    requireContext()
+                                )
+                            }
+                        }
+                        if (binding.keyCodeDiscountApproval.hasFocus()) {
+                            if (pressedKey != AppSettings.Options.KeyCodeCashPaymentApproval && pressedKey != AppSettings.Options.KeyCodeCancelPayment) {
+                                PrefUtil.setString(
+                                    "AppSettings.Options.KeyCodeDiscountApproval",
+                                    pressedKey
+                                )
+                                binding.keyCodeDiscountApproval.setText(pressedKey)
                                 // Refresh Configuration
                                 AppSettings.getAllSetting()
                             } else {

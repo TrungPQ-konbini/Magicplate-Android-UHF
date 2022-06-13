@@ -62,7 +62,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         var displayName = ""
         var balance = 0F
 
-        const val ALARM_DELAY = 1000
+        val ALARM_DELAY = AppSettings.Timer.DelayAlert
     }
 
     private var orderNumber = 0
@@ -256,6 +256,19 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                 requireContext()
                             )
                         }
+                    }
+
+                    if (AppSettings.Options.AllowAdminDiscountApproval) {
+                        val pressedKey: String = intent.getStringExtra("pressedKey").toString()
+                        LogUtils.logInfo("User pressed key | $pressedKey")
+                        if (pressedKey.isNotEmpty()) {
+                            adminDiscountApproval(pressedKey)
+                        }
+                    } else {
+                        AlertDialogUtil.showError(
+                            getString(R.string.message_allow_admin_discount_approved_unchecked),
+                            requireContext()
+                        )
                     }
                 }
             }
@@ -1801,67 +1814,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun adminCancelPayment(pressedKey: String) {
         if (AppSettings.Options.AllowAdminCancelPayment) {
-            var isCorrect = false
             val currentKeyCode = AppSettings.Options.KeyCodeCancelPayment
-            when (pressedKey) {
-                "KEYCODE_NUM_LOCK" -> {
-                    if (currentKeyCode == "KEYCODE_NUM_LOCK") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_0" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_0") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_1" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_1") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_2" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_2") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_3" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_3") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_4" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_4") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_5" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_5") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_6" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_6") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_7" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_7") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_8" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_8") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_9" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_9") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_DIVIDE" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_DIVIDE") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_MULTIPLY" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_MULTIPLY") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_SUBTRACT" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_SUBTRACT") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_ADD" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_ADD") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_DOT" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_DOT") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_COMMA" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_COMMA") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_ENTER" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_ENTER") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_EQUALS" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_EQUALS") isCorrect = true
-                }
-            }
+            val isCorrect = checkKeyCode(pressedKey, currentKeyCode)
 
             if (isCorrect) {
                 val state = AppContainer.CurrentTransaction.paymentState
@@ -1876,67 +1830,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     private fun adminCashPaymentApproval(pressedKey: String) {
         if (AppSettings.Options.AllowAdminCashPaymentApproval) {
-            var isCorrect = false
             val currentKeyCode = AppSettings.Options.KeyCodeCashPaymentApproval
-            when (pressedKey) {
-                "KEYCODE_NUM_LOCK" -> {
-                    if (currentKeyCode == "KEYCODE_NUM_LOCK") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_0" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_0") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_1" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_1") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_2" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_2") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_3" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_3") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_4" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_4") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_5" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_5") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_6" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_6") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_7" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_7") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_8" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_8") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_9" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_9") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_DIVIDE" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_DIVIDE") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_MULTIPLY" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_MULTIPLY") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_SUBTRACT" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_SUBTRACT") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_ADD" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_ADD") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_DOT" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_DOT") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_COMMA" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_COMMA") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_ENTER" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_ENTER") isCorrect = true
-                }
-                "KEYCODE_NUMPAD_EQUALS" -> {
-                    if (currentKeyCode == "KEYCODE_NUMPAD_EQUALS") isCorrect = true
-                }
-            }
+            val isCorrect = checkKeyCode(pressedKey, currentKeyCode)
 
             if (isCorrect) {
                 val state = AppContainer.CurrentTransaction.paymentState
@@ -1948,6 +1843,90 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 }
             }
         }
+    }
+
+    private fun adminDiscountApproval(pressedKey: String) {
+        if (AppSettings.Options.AllowAdminDiscountApproval) {
+            val currentKeyCode = AppSettings.Options.KeyCodeDiscountApproval
+            val isCorrect = checkKeyCode(pressedKey, currentKeyCode)
+
+            if (isCorrect) {
+                val state = AppContainer.CurrentTransaction.paymentState
+                if (state == PaymentState.Init || state == PaymentState.Preparing) {
+                    displayMessage(getString(R.string.message_discount_approved_payment_admin))
+                    LogUtils.logInfo(getString(R.string.message_discount_approved_payment_admin))
+
+                    AppContainer.CurrentTransaction.currentDiscount = 1f
+                    AppContainer.CurrentTransaction.refreshCart()
+                    refreshCart()
+                }
+            }
+        }
+    }
+
+    private fun checkKeyCode(pressedKey: String, currentKeyCode: String): Boolean {
+        var isCorrect = false
+        when (pressedKey) {
+            "KEYCODE_NUM_LOCK" -> {
+                if (currentKeyCode == "KEYCODE_NUM_LOCK") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_0" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_0") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_1" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_1") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_2" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_2") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_3" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_3") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_4" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_4") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_5" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_5") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_6" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_6") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_7" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_7") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_8" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_8") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_9" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_9") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_DIVIDE" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_DIVIDE") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_MULTIPLY" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_MULTIPLY") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_SUBTRACT" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_SUBTRACT") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_ADD" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_ADD") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_DOT" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_DOT") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_COMMA" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_COMMA") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_ENTER" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_ENTER") isCorrect = true
+            }
+            "KEYCODE_NUMPAD_EQUALS" -> {
+                if (currentKeyCode == "KEYCODE_NUMPAD_EQUALS") isCorrect = true
+            }
+        }
+
+        return isCorrect
     }
 
     private fun hideDialogDiscount() {

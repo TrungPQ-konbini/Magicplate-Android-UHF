@@ -108,6 +108,7 @@ class SettingsFragment : Fragment() {
         bindCloud()
         bindWallet()
         bindMQTT()
+        bindReceipt()
         bindAlert()
         bindDiscountFormat()
     }
@@ -226,6 +227,7 @@ class SettingsFragment : Fragment() {
 
         binding.xDayStoreLocalOrders.setText(AppSettings.Timer.xDayStoreLocalOrders.toString())
         binding.xDayStoreLocalMenus.setText(AppSettings.Timer.xDayStoreLocalMenus.toString())
+        binding.delayAlert.setText(AppSettings.Timer.DelayAlert.toString())
     }
 
     private fun bindMachine() {
@@ -272,6 +274,12 @@ class SettingsFragment : Fragment() {
         binding.mqttUserName.setText(AppSettings.MQTT.UserName)
         binding.mqttPassword.setText(AppSettings.MQTT.Password)
         binding.mqttTopic.setText(AppSettings.MQTT.Topic)
+    }
+
+    private fun bindReceipt() {
+        binding.receiptPrinterIp.setText(AppSettings.ReceiptPrinter.TCP)
+        binding.receiptWidthPaper.setText(AppSettings.ReceiptPrinter.WidthPaper.toString())
+        binding.receiptContent.setText(AppSettings.ReceiptPrinter.Content)
     }
 
     private fun bindAlert() {
@@ -322,6 +330,10 @@ class SettingsFragment : Fragment() {
         val mqttPassword = binding.mqttPassword.text.toString().trim()
         val mqttTopic = binding.mqttTopic.text.toString().trim()
 
+        val receiptPrinterIp = binding.receiptPrinterIp.text.toString().trim()
+        val receiptWidthPaper = binding.receiptWidthPaper.text.toString().trim()
+        val receiptContent = binding.receiptContent.text.toString().trim()
+
         val alertTelegramUserName = binding.alertTelegramUserName.text.toString().trim()
         val alertTelegramToken = binding.alertTelegramToken.text.toString().trim()
         val alertTelegramGroup = binding.alertTelegramGroup.text.toString().trim()
@@ -335,6 +347,7 @@ class SettingsFragment : Fragment() {
         val periodicGetToken = binding.periodicGetToken.text.toString().trim()
         val xDayStoreLocalOrders = binding.xDayStoreLocalOrders.text.toString().trim()
         val xDayStoreLocalMenus = binding.xDayStoreLocalMenus.text.toString().trim()
+        val delayAlert = binding.delayAlert.text.toString().trim()
 
         val discountFormatLength = binding.discountFormatLength.text.toString().trim().toInt()
         val discountFormatPrefix = binding.discountFormatPrefix.text.toString().trim()
@@ -377,6 +390,10 @@ class SettingsFragment : Fragment() {
             "AppSettings.Timer.xDayStoreLocalMenus",
             if (xDayStoreLocalMenus.isEmpty()) 0 else xDayStoreLocalMenus.toInt()
         )
+        PrefUtil.setInt(
+            "AppSettings.Timer.DelayAlert",
+            if (delayAlert.isEmpty()) 0 else delayAlert.toInt()
+        )
 
         PrefUtil.setString("AppSettings.Machine.PinCode", machinePinCode)
         PrefUtil.setString("AppSettings.Machine.MacAddress", machineMacAddress)
@@ -400,6 +417,11 @@ class SettingsFragment : Fragment() {
         PrefUtil.setString("AppSettings.MQTT.Username", mqttUserName)
         PrefUtil.setString("AppSettings.MQTT.Password", mqttPassword)
         PrefUtil.setString("AppSettings.MQTT.Topic", mqttTopic)
+
+        PrefUtil.setString("AppSettings.ReceiptPrinter.TCP", receiptPrinterIp)
+        if (receiptWidthPaper.isNotEmpty())
+            PrefUtil.setInt("AppSettings.ReceiptPrinter.WidthPaper", receiptWidthPaper.toInt())
+        PrefUtil.setString("AppSettings.ReceiptPrinter.Content", receiptContent)
 
         PrefUtil.setString("AppSettings.Alert.Telegram.UserName", alertTelegramUserName)
         PrefUtil.setString("AppSettings.Alert.Telegram.Token", alertTelegramToken)

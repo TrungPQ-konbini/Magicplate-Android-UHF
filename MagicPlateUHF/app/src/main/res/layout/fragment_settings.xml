@@ -531,6 +531,28 @@
                         android:hint="@string/title_minute"
                         android:inputType="number" />
                 </LinearLayout>
+
+                <!--Delay Alert-->
+                <LinearLayout
+                    android:id="@+id/delayAlertPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_delay_alert" />
+
+                    <EditText
+                        android:id="@+id/delayAlert"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_minute"
+                        android:inputType="number" />
+                </LinearLayout>
             </LinearLayout>
 
             <!--Machine-->
@@ -1052,32 +1074,10 @@
                         android:text="@string/title_tcp" />
 
                     <EditText
-                        android:id="@+id/printerIp"
+                        android:id="@+id/receiptPrinterIp"
                         style="@style/customEditTextSettings"
                         android:layout_weight="1"
                         android:hint="@string/title_tcp"
-                        android:inputType="textNoSuggestions" />
-                </LinearLayout>
-
-                <!--Printer USB-->
-                <LinearLayout
-                    android:id="@+id/receiptPrinterUsbPanel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:orientation="horizontal"
-                    android:weightSum="4">
-
-                    <TextView
-                        style="@style/customTextViewSettings"
-                        android:layout_weight="3"
-                        android:text="@string/title_usb" />
-
-                    <EditText
-                        android:id="@+id/printerUsb"
-                        style="@style/customEditTextSettings"
-                        android:layout_weight="1"
-                        android:hint="@string/title_usb"
                         android:inputType="textNoSuggestions" />
                 </LinearLayout>
 

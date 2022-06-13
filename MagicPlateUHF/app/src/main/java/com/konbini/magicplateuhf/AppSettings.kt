@@ -134,6 +134,7 @@ object AppSettings {
         var xDayStoreLocalOrders = 7
         var xDayStoreLocalMenus = 7
         var DelayAfterOrderCompleted = 5 // Seconds
+        var DelayAlert = 0//Milliseconds
     }
 
     object ReceiptPrinter {
@@ -197,9 +198,11 @@ object AppSettings {
         var AllowGetReaderLog = false
         var AllowAdminCancelPayment = true
         var AllowAdminCashPaymentApproval = true
+        var AllowAdminDiscountApproval = true
         var IgnoreWhenRemovingTags = false
         var KeyCodeCancelPayment = ""
         var KeyCodeCashPaymentApproval = ""
+        var KeyCodeDiscountApproval = ""
         object Sync {
             var SyncOrderRealtime = true
             var SyncOrderPeriodicPerTimePeriod = false
