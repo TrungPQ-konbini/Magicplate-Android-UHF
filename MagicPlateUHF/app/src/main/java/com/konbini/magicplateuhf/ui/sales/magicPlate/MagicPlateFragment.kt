@@ -1778,6 +1778,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[C]<font size='tall'>Date: ${Date()}</font>\n" +
                 "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n" +
                 formatContent(cartLocked) +
+                "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
+                "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
+                "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
+                "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
                 "[L]<font size='tall'>Membership :</font>\n" +
                 "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
                 "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
@@ -1805,11 +1809,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                 "[C]--------------------------------\n" +
                 "[R]TOTAL PRICE :[R]${formatCurrency(total)}\n" +
                 "[L]\n" +
-                "[C]================================\n" +
-                "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
-                "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
-                "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
-                "[C]<font size='tall'><b>Thank you!!!</b></font>\n"
+                "[C]================================\n"
     }
 
     private fun adminCancelPayment(pressedKey: String) {
