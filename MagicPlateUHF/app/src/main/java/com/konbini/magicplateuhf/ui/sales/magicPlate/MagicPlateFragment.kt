@@ -555,27 +555,27 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
 
         // TODO: Start TrungPQ add to test
-        binding.rfidTotalCount.setSafeOnClickListener {
-            setBlink(AlarmType.SUCCESS)
-        }
-
-        binding.spinKitMessage.setSafeOnClickListener {
-            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
-            viewModel.debit()
-        }
-
-        binding.rfidMessageTitle.setSafeOnClickListener {
-            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
-                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
-            } else {
-                AppContainer.CurrentTransaction.barcode = "8885000035380"
-                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
-                val intent = Intent()
-                intent.action = "NEW_BARCODE"
-                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
-                    .sendBroadcast(intent)
-                barcode = ""
-            }
+//        binding.rfidTotalCount.setSafeOnClickListener {
+//            setBlink(AlarmType.SUCCESS)
+//        }
+//
+//        binding.spinKitMessage.setSafeOnClickListener {
+//            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
+//            viewModel.debit()
+//        }
+//
+//        binding.rfidMessageTitle.setSafeOnClickListener {
+//            if (AppContainer.CurrentTransaction.paymentState == PaymentState.Success) {
+//                AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+//            } else {
+//                AppContainer.CurrentTransaction.barcode = "8885000035380"
+//                Log.e("BARCODE_VALUE", AppContainer.CurrentTransaction.barcode)
+//                val intent = Intent()
+//                intent.action = "NEW_BARCODE"
+//                LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
+//                    .sendBroadcast(intent)
+//                barcode = ""
+//            }
 //            val timer = object: CountDownTimer(500, 100) {
 //                override fun onTick(millisUntilFinished: Long) {
 //                    // do something
@@ -603,8 +603,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 //                }
 //            }
 //            timer.start()
-
-        }
+//        }
         // TODO: End TrungPQ add to test
     }
 

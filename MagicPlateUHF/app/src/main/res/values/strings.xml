@@ -173,7 +173,7 @@
     <string name="message_syncing">Syncing Data…</string>
     <string name="message_select_to_date">Select to date</string>
     <string name="message_select_from_date">Select from date</string>
-    <string name="message_put_plate_on_the_tray">Place tray down, select payment method</string>
+    <string name="message_put_plate_on_the_tray">1. Place tray down \n 2. Select payment mode \n 3. Make payment</string>
     <string name="message_enter_pin_code">Enter Pin Code</string>
     <string name="message_enter_new_custom_price">Enter new custom price !!!</string>
     <string name="message_please_tap_card">Please tap card !!!</string>
