@@ -212,11 +212,25 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
+                android:id="@+id/layoutActionPos"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="3dp"
                 android:layout_weight="3"
                 android:orientation="vertical"
+                android:visibility="gone"
+                android:weightSum="12">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutActionMagicPlate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="3dp"
+                android:layout_weight="3"
+                android:orientation="vertical"
+                android:visibility="visible"
                 android:weightSum="12">
 
                 <LinearLayout
@@ -295,6 +309,48 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="3.5"
+                    android:visibility="gone"
+                    android:background="@drawable/card_shadow_white"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <com.github.ybq.android.spinkit.SpinKitView
+                        android:id="@+id/spinKitMessageWheelPicker"
+                        style="@style/SpinKitView.Large.Circle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:SpinKit_Color="@color/india_green" />
+
+                    <com.aigestudio.wheelpicker.WheelPicker
+                        android:id="@+id/wheelProducts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:wheel_atmospheric="true"
+                        app:wheel_curved="true"
+                        app:wheel_cyclic="true"
+                        app:wheel_item_space="@dimen/dimen_24"
+                        app:wheel_item_align="center"
+                        app:wheel_item_text_color="@color/grey"
+                        app:wheel_item_text_size="@dimen/dimen_32"
+                        app:wheel_selected_item_text_color="@color/red" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/rfidCancelPaymentWheelPicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/custom_button_mysterious_black_10"
+                        android:padding="@dimen/dimen_12"
+                        android:text="@string/title_cancel"
+                        android:textColor="@color/white"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layoutMessageTitle1111"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.5"
                     android:background="@drawable/card_shadow_white"
                     android:gravity="center"
                     android:orientation="vertical">
@@ -353,10 +409,10 @@
         android:id="@+id/rfidMaskReading"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:minHeight="250dp"
         android:alpha="0.35"
-        android:visibility="gone"
         android:background="@drawable/card_shadow_grey"
+        android:minHeight="250dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@id/line_vertical_30"
@@ -364,9 +420,9 @@
 
         <TextView
             android:id="@+id/rfidRealTimeTags"
-            android:layout_marginStart="@dimen/dp_15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_15"
             android:minHeight="250dp"
             android:textColor="@color/white"
             android:textStyle="italic" />

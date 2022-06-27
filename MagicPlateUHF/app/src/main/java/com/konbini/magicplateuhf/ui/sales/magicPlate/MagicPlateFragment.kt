@@ -327,6 +327,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupWheelPicker()
         setupRecyclerView()
         setupObservers()
         setupActions()
@@ -361,6 +362,16 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
             onSafeClick(it)
         }
         setOnClickListener(safeClickListener)
+    }
+
+    private fun setupWheelPicker() {
+        binding.wheelProducts.data = listOf(
+            "Place tray down",
+            "Select payment mode",
+            "Make payment",
+            "Processing...",
+            "Payment Success !!!"
+        )
     }
 
     /**
@@ -555,9 +566,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         }
 
         // TODO: Start TrungPQ add to test
-//        binding.rfidTotalCount.setSafeOnClickListener {
-//            setBlink(AlarmType.SUCCESS)
-//        }
+        binding.rfidTotalCount.setSafeOnClickListener {
+            //setBlink(AlarmType.SUCCESS)
+            binding.wheelProducts.selectedItemPosition = 4
+        }
 //
 //        binding.spinKitMessage.setSafeOnClickListener {
 //            AppContainer.CurrentTransaction.cardNFC = "8d2ed739"
