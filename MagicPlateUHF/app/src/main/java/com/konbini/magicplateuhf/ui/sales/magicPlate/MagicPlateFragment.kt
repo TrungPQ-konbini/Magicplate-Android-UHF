@@ -2225,7 +2225,7 @@ class MagicPlateFragment : Fragment(),
             }
             val strItem = "[L]<b>${cartEntity.productName}</b>[C]${cartEntity.quantity}[R]$price\n"
             items += strItem
-            total += (cartEntity.price.toFloat() * cartEntity.quantity)
+            total += (price.toFloat() * cartEntity.quantity)
         }
         return "[C]================================\n" +
                 "[L]\n" +
