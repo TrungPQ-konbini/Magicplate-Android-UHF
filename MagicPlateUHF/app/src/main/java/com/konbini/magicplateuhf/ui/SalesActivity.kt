@@ -19,6 +19,7 @@ import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.databinding.ActivitySalesBinding
 import com.konbini.magicplateuhf.jobs.GetTokenJobService
+import com.konbini.magicplateuhf.jobs.SyncMenuJobService
 import com.konbini.magicplateuhf.ui.plateModel.PlateModelViewModel
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.getDateJob
 import com.konbini.magicplateuhf.utils.LogUtils
@@ -37,6 +38,7 @@ class SalesActivity : AppCompatActivity() {
         const val SUCCESS_KEY = "SUCCESS"
         const val FAILED_KEY = "FAILED"
         const val JOB_GET_TOKEN_ID = 123
+        const val JOB_AUTO_SYNC_MENU = 456
     }
 
     private var barcode = ""
@@ -88,6 +90,7 @@ class SalesActivity : AppCompatActivity() {
         }
         jobStoreXDayLocalData()
         scheduleGetTokenJob()
+        scheduleAutoSyncMenuJob()
         super.onResume()
     }
 
@@ -269,5 +272,24 @@ class SalesActivity : AppCompatActivity() {
 
         val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
         LogUtils.logInfo("Job Scheduled Get Token ${if (isJobScheduledSuccess) SUCCESS_KEY else FAILED_KEY}")
+    }
+
+    private fun scheduleAutoSyncMenuJob() {
+        val periodicAutoSyncMenu: Long = AppSettings.Timer.PeriodicAutoSyncMenu.toLong() * 60 * 1000
+        val componentName = ComponentName(this, SyncMenuJobService::class.java)
+        val info = JobInfo.Builder(JOB_AUTO_SYNC_MENU, componentName)
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+            .setRequiresDeviceIdle(false)
+            .setRequiresCharging(false)
+            .setPersisted(true)
+            .setPeriodic(periodicAutoSyncMenu)
+            .build()
+
+        val jobScheduler: JobScheduler =
+            getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val resultCode = jobScheduler.schedule(info)
+
+        val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
+        LogUtils.logInfo("Job Scheduled Sync Menu ${if (isJobScheduledSuccess) SUCCESS_KEY else FAILED_KEY}")
     }
 }

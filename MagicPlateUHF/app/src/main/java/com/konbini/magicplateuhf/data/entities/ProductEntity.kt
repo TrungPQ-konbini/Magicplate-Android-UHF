@@ -18,5 +18,6 @@ data class ProductEntity(
     @ColumnInfo(name = "price") val price: String,
     @ColumnInfo(name = "regular_price") val regularPrice: String,
     @ColumnInfo(name = "sale_price") val salePrice: String,
-    @ColumnInfo(name = "menu_order") val menuOrder: Int
+    @ColumnInfo(name = "menu_order") val menuOrder: Int,
+    @ColumnInfo(name = "color") val color: String?
 ) : BaseEntity()

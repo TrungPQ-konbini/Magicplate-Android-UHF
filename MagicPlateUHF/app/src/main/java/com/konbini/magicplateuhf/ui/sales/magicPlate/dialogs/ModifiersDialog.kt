@@ -1,4 +1,4 @@
-package com.konbini.magicplateuhf.ui.sales.magicPlate
+package com.konbini.magicplateuhf.ui.sales.magicPlate.dialogs
 
 import android.app.Dialog
 import android.content.Intent
@@ -18,6 +18,7 @@ import com.konbini.magicplateuhf.data.entities.CartEntity
 import com.konbini.magicplateuhf.data.enum.MachineType
 import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.databinding.DialogOptionsBinding
+import com.konbini.magicplateuhf.ui.sales.magicPlate.adapters.OptionsAdapter
 import com.konbini.magicplateuhf.utils.autoCleared
 import java.lang.reflect.Type
 

@@ -144,49 +144,6 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/title_payment">
 
-                <LinearLayout
-                    android:id="@+id/layout_payment_type"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="5">
-
-                    <CheckBox
-                        android:id="@+id/checkbox_master_card"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_master_card" />
-
-                    <CheckBox
-                        android:id="@+id/checkbox_ezlink"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_ez_link" />
-
-                    <CheckBox
-                        android:id="@+id/checkbox_wallet"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_wallet" />
-
-                    <CheckBox
-                        android:id="@+id/checkbox_pay_now"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_pay_now" />
-
-                    <CheckBox
-                        android:id="@+id/checkbox_cash"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/title_cash" />
-                </LinearLayout>
-
                 <!--Payment Icon-->
                 <LinearLayout
                     android:id="@+id/layout_payment_icon"
@@ -209,7 +166,14 @@
                             android:layout_marginBottom="2dp"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:weightSum="5">
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_master_card"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_master_card" />
 
                             <ImageView
                                 android:id="@+id/imageMasterCardDefault"
@@ -250,7 +214,14 @@
                             android:layout_marginBottom="2dp"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:weightSum="5">
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_ezlink"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_ez_link" />
 
                             <ImageView
                                 android:id="@+id/imageEzLinkDefault"
@@ -291,7 +262,14 @@
                             android:layout_marginBottom="2dp"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:weightSum="5">
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_pay_now"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_pay_now" />
 
                             <ImageView
                                 android:id="@+id/imagePayNowDefault"
@@ -324,6 +302,54 @@
                                 android:text="@string/title_remove_picture"
                                 android:textColor="@color/white" />
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_select_product"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_select_product" />
+
+                            <ImageView
+                                android:id="@+id/imageSelectProductDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_exchange" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImageSelectProduct"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImageSelectProduct"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
@@ -340,7 +366,14 @@
                             android:layout_marginBottom="2dp"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:weightSum="5">
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_wallet"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_wallet" />
 
                             <ImageView
                                 android:id="@+id/imageWalletDefault"
@@ -381,7 +414,14 @@
                             android:layout_marginBottom="2dp"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:weightSum="5">
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_cash"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_cash" />
 
                             <ImageView
                                 android:id="@+id/imageCashDefault"
@@ -422,7 +462,14 @@
                             android:layout_marginBottom="2dp"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:weightSum="5">
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_discount"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_discount" />
 
                             <ImageView
                                 android:id="@+id/imageDiscountDefault"
@@ -447,6 +494,54 @@
 
                             <androidx.appcompat.widget.AppCompatButton
                                 android:id="@+id/btnClearImageDiscount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_red_10"
+                                android:text="@string/title_remove_picture"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="7">
+
+                            <CheckBox
+                                android:id="@+id/checkbox_top_up"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:text="@string/title_top_up" />
+
+                            <ImageView
+                                android:id="@+id/imageTopUpDefault"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/card_shadow_white"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_top_up" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/buttonAddImageTopUp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight="2"
+                                android:background="@drawable/custom_button_green_10"
+                                android:text="@string/title_add_picture"
+                                android:textColor="@color/white" />
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btnClearImageTopUp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -787,6 +882,21 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/title_get_reader_log" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_auto_sync_menu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_auto_sync_menu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/title_auto_sync_menu" />
                     </LinearLayout>
                 </LinearLayout>
 

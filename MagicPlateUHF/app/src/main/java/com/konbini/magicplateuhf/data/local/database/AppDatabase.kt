@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.konbini.magicplateuhf.data.entities.*
 import com.konbini.magicplateuhf.data.local.category.CategoryDao
-import com.konbini.magicplateuhf.data.local.database.Migration.MIGRATION_1_2
 import com.konbini.magicplateuhf.data.local.menu.MenuDao
 import com.konbini.magicplateuhf.data.local.offlineData.OfflineDataDao
 import com.konbini.magicplateuhf.data.local.plateModel.PlateModelDao
@@ -25,7 +24,7 @@ import com.konbini.magicplateuhf.data.local.user.UserDao
         OfflineDataEntity::class,
         TransactionEntity::class,
         UserEntity::class
-    ], version = 1, exportSchema = false
+    ], version = 4, exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {
 
@@ -51,7 +50,9 @@ abstract class AppDatabase: RoomDatabase() {
         private fun buildDatabase(appContext: Context) =
             Room.databaseBuilder(appContext, AppDatabase::class.java, "MagicPlateUHF")
                 .fallbackToDestructiveMigration()
-                //.addMigrations(Migration.MIGRATION_1_3_USER)
+                .addMigrations(Migration.MIGRATION_1_2)
+                .addMigrations(Migration.MIGRATION_1_3)
+                .addMigrations(Migration.MIGRATION_1_4)
                 .build()
     }
 }

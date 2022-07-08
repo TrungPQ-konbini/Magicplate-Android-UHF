@@ -145,6 +145,7 @@ class SettingsViewModel @Inject constructor(
             options = options,
             quantity = 1,
             menuOrder = productResponse.menuOrder ?: 0,
+            color = ""
         )
     }
 

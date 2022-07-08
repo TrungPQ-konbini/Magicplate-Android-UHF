@@ -224,6 +224,7 @@ class SettingsFragment : Fragment() {
 
         binding.periodicSyncOffline.setText(AppSettings.Timer.PeriodicSyncOffline.toString())
         binding.periodicGetToken.setText(AppSettings.Timer.PeriodicGetToken.toString())
+        binding.periodicAutoSyncMenu.setText(AppSettings.Timer.PeriodicAutoSyncMenu.toString())
 
         binding.xDayStoreLocalOrders.setText(AppSettings.Timer.xDayStoreLocalOrders.toString())
         binding.xDayStoreLocalMenus.setText(AppSettings.Timer.xDayStoreLocalMenus.toString())
@@ -345,6 +346,7 @@ class SettingsFragment : Fragment() {
 
         val periodicSyncOffline = binding.periodicSyncOffline.text.toString().trim()
         val periodicGetToken = binding.periodicGetToken.text.toString().trim()
+        val periodicAutoSyncMenu = binding.periodicAutoSyncMenu.text.toString().trim()
         val xDayStoreLocalOrders = binding.xDayStoreLocalOrders.text.toString().trim()
         val xDayStoreLocalMenus = binding.xDayStoreLocalMenus.text.toString().trim()
         val delayAlert = binding.delayAlert.text.toString().trim()
@@ -381,6 +383,10 @@ class SettingsFragment : Fragment() {
         PrefUtil.setInt(
             "AppSettings.Timer.PeriodicGetToken",
             if (periodicGetToken.isEmpty()) 0 else periodicGetToken.toInt()
+        )
+        PrefUtil.setInt(
+            "AppSettings.Timer.PeriodicAutoSyncMenu",
+            if (periodicAutoSyncMenu.isEmpty()) 0 else periodicAutoSyncMenu.toInt()
         )
         PrefUtil.setInt(
             "AppSettings.Timer.xDayStoreLocalOrders",

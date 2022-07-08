@@ -6,5 +6,7 @@ enum class PaymentModeType(val value: String) {
     EZ_LINK("EZ_LINK"),
     PAY_NOW("PAY_NOW"),
     CASH("CASH"),
-    DISCOUNT("DISCOUNT")
+    DISCOUNT("DISCOUNT"),
+    SELECT_PRODUCT("SELECT_PRODUCT"),
+    TOP_UP("TOP_UP")
 }

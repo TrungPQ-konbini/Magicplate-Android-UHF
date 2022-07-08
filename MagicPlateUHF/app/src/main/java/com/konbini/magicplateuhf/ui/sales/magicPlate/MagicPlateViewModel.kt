@@ -14,13 +14,11 @@ import com.konbini.magicplateuhf.data.entities.TimeBlockEntity
 import com.konbini.magicplateuhf.data.entities.TransactionEntity
 import com.konbini.magicplateuhf.data.enum.PaymentModeType
 import com.konbini.magicplateuhf.data.enum.PaymentState
+import com.konbini.magicplateuhf.data.remote.wallet.request.CreditRequest
 import com.konbini.magicplateuhf.data.remote.wallet.request.DebitRequest
 import com.konbini.magicplateuhf.data.remote.wallet.response.ErrorResponse
 import com.konbini.magicplateuhf.data.repository.*
-import com.konbini.magicplateuhf.utils.CommonUtil
-import com.konbini.magicplateuhf.utils.LogUtils
-import com.konbini.magicplateuhf.utils.Resource
-import com.konbini.magicplateuhf.utils.State
+import com.konbini.magicplateuhf.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +33,7 @@ import javax.inject.Inject
 class MagicPlateViewModel @Inject constructor(
     private val timeBlockRepository: TimeBlockRepository,
     private val menuRepository: MenuRepository,
+    private val categoryRepository: CategoryRepository,
     private val productRepository: ProductRepository,
     private val walletRepository: WalletRepository,
     private val transactionRepository: TransactionRepository,
@@ -51,9 +50,14 @@ class MagicPlateViewModel @Inject constructor(
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
 
+    private val _stateTopUp = MutableStateFlow(State())
+    val stateTopUp: StateFlow<State> = _stateTopUp
+
     suspend fun getAllUsers() = userRepository.getAll()
 
     suspend fun getLastTransactionId() = transactionRepository.getLastTransactionId()
+
+    suspend fun getAllCategories() = categoryRepository.getAll()
 
     suspend fun getAllProducts() = productRepository.getAll()
 
@@ -97,7 +101,24 @@ class MagicPlateViewModel @Inject constructor(
                 listMenusToday.add(menuEntity)
             }
         }
-        return listMenusToday
+
+        return if (listMenusToday.isNullOrEmpty()) {
+            if (AppSettings.Machine.MostRecentMenuUsed.isNotEmpty()) {
+                gson.fromJson(
+                    AppSettings.Machine.MostRecentMenuUsed,
+                    Array<MenuEntity>::class.java
+                ).asList().toMutableList()
+            } else {
+                mutableListOf()
+            }
+        } else {
+            PrefUtil.setString("AppSettings.Machine.MostRecentMenuUsed", gson.toJson(listMenusToday))
+            
+            // Refresh Configuration
+            AppSettings.getAllSetting()
+
+            listMenusToday
+        }
     }
 
     fun debit() {
@@ -119,11 +140,11 @@ class MagicPlateViewModel @Inject constructor(
 
                 // Debit wallet
                 val requestDebit = DebitRequest(
-                    AppContainer.GlobalVariable.currentToken,
-                    AppContainer.CurrentTransaction.cardNFC,
-                    "ccw_id1",
-                    AppContainer.CurrentTransaction.totalPrice,
-                    "$source\n" +
+                    accessToken = AppContainer.GlobalVariable.currentToken,
+                    userId = AppContainer.CurrentTransaction.cardNFC,
+                    userIdType = "ccw_id1",
+                    amount = AppContainer.CurrentTransaction.totalPrice,
+                    description = "$source\n" +
                             "$terminal\n" +
                             "$store\n" +
                             "Machine: $macAddress"
@@ -202,6 +223,116 @@ class MagicPlateViewModel @Inject constructor(
                 exception.message?.let { Log.e(TAG, it) }
                 LogUtils.logInfo(exception.message ?: "Error Occurred!")
                 _state.emit(
+                    State(
+                        Resource.Status.ERROR,
+                        exception.message ?: "Error Occurred!"
+                    )
+                )
+            }
+        }
+    }
+
+    fun credit(cardNumber: String) {
+        viewModelScope.launch {
+            val calendar = Calendar.getInstance()
+            val currentTime = calendar.timeInMillis
+            _stateTopUp.emit(
+                State(
+                    Resource.Status.LOADING,
+                    resources.getString(R.string.message_processing)
+                )
+            )
+            try {
+                // Params
+                val macAddress = AppSettings.Machine.MacAddress
+                val source = AppSettings.Machine.Source
+                val terminal = AppSettings.Machine.Terminal
+                val store = AppSettings.Machine.Store
+
+                // Credit wallet
+                val requestCredit = CreditRequest(
+                    accessToken = AppContainer.GlobalVariable.currentToken,
+                    userId = AppContainer.CurrentTransaction.cardNFC,
+                    userIdType = "ccw_id1",
+                    amount = AppContainer.CurrentTransaction.totalPrice,
+                    description = "$source\n" +
+                            "$terminal\n" +
+                            "$store\n" +
+                            "Machine: $macAddress"
+                )
+                val credit =
+                    withContext(Dispatchers.Default) {
+                        walletRepository.credit(AppSettings.Cloud.Host, requestCredit)
+                    }
+                if (credit.status == Resource.Status.SUCCESS) {
+                    credit.data?.let { _responseCredit ->
+                        // Save transaction
+                        val transaction = TransactionEntity(
+                            0,
+                            uuid = UUID.randomUUID().toString(),
+                            amount = AppContainer.CurrentTransaction.totalPrice.toString(),
+                            discountPercent = "0.0",
+                            taxPercent = "0.0",
+                            buyer = _responseCredit.displayName ?: "",
+                            beginImage = "n/a",
+                            endImage = "n/a",
+                            details = PaymentModeType.TOP_UP.value,
+                            paymentDetail = AppContainer.CurrentTransaction.paymentModeType!!.value,
+                            paymentTime = currentTime.toString(),
+                            paymentState = PaymentState.Success.name,
+                            paymentType = AppContainer.CurrentTransaction.paymentModeType!!.value,
+                            cardType = AppContainer.CurrentTransaction.paymentModeType!!.value,
+                            cardNumber = cardNumber,
+                            approveCode = "n/a",
+                            note = "n/a"
+                        )
+                        transaction.dateCreated = currentTime.toString()
+                        insert(transaction)
+
+                        val msg = String.format(
+                            resources.getString(R.string.message_success_payment_balance),
+                            CommonUtil.formatCurrency(AppContainer.CurrentTransaction.totalPrice),
+                            CommonUtil.formatCurrency(_responseCredit.balance ?: 0F)
+                        )
+
+                        MagicPlateFragment.displayName = _responseCredit.displayName ?: "N/A"
+                        MagicPlateFragment.balance = _responseCredit.balance ?: 0F
+
+                        _stateTopUp.emit(
+                            State(
+                                status = Resource.Status.SUCCESS,
+                                message = msg
+                            )
+                        )
+                    }
+                } else {
+                    var messageDetail = ""
+                    // Debit fail
+                    val message = credit.message
+                    try {
+                        val errorResponse =
+                            gson.fromJson(message, ErrorResponse::class.java)
+                        messageDetail =
+                            "${errorResponse.errorCode} - ${errorResponse.message}"
+                        _stateTopUp.emit(
+                            State(
+                                Resource.Status.ERROR,
+                                "Error: $messageDetail"
+                            )
+                        )
+                    } catch (ex: JsonParseException) {
+                        _stateTopUp.emit(
+                            State(
+                                Resource.Status.ERROR,
+                                "Error: $message"
+                            )
+                        )
+                    }
+                }
+            } catch (exception: Exception) {
+                exception.message?.let { Log.e(TAG, it) }
+                LogUtils.logInfo(exception.message ?: "Error Occurred!")
+                _stateTopUp.emit(
                     State(
                         Resource.Status.ERROR,
                         exception.message ?: "Error Occurred!"

@@ -1,4 +1,4 @@
-package com.konbini.magicplateuhf.ui.sales.magicPlate
+package com.konbini.magicplateuhf.ui.sales.magicPlate.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,7 +21,6 @@ import com.konbini.magicplateuhf.data.remote.product.response.Option
 import com.konbini.magicplateuhf.databinding.ItemCartBinding
 import com.konbini.magicplateuhf.utils.CommonUtil
 import java.lang.reflect.Type
-
 
 class CartAdapter(
     private val context: Context,

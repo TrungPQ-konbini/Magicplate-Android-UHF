@@ -99,27 +99,28 @@ object AppSettings {
         var Terminal = "Magic Plate Office Test"
         var Store = "Konbini"
         var LengthEPC = 24 // 12 Bytes
+        var MostRecentMenuUsed = ""
     }
 
     object Cloud {
-        var Host = "https://yourbrighterfoodhall.whew.life"
-        var ConsumerKey = "ck_45aad49b5848880b08af254d4ce2be8d5f9be92c"
-        var ConsumerSecret = "cs_ed326ac24e60f00f71cf1b8d22afe9cdb317afd9"
-        var ClientId = "jlDNi2cP2HaEY8FjR8CfdkHX3OzELna3VhzzLiCf"
-        var ClientSecret = "LWd2tMqZ6mvBa71clGWAFPhBOwZ9tWjHBLru1mjC"
+        var Host = "https://dev.ineedfood.today"
+        var ConsumerKey = "ck_fdd0fe41326abfb54a33d0b7c5af67b0d3beab0b"
+        var ConsumerSecret = "cs_d8873fcfff5d8d2bacc3af12bb9fff3245eaf75e"
+        var ClientId = "jh2UsnTuLa5fl5BHYm8IU3zMTskV3sqwuWQZTD7N"
+        var ClientSecret = "gupVBZmqVHuDPH51AxCV5lM6WWOlGDTgpvWl9I54"
         var OrderStatus = "completed"
         var AllOrderStatus = ""
         var ProductIdForCustomPrice = 0
     }
 
     object Wallet {
-        var Host = "https://yourbrighterfoodhall.whew.life"
-        var ClientId = "jlDNi2cP2HaEY8FjR8CfdkHX3OzELna3VhzzLiCf"
-        var ClientSecret = "LWd2tMqZ6mvBa71clGWAFPhBOwZ9tWjHBLru1mjC"
+        var Host = "https://dev.ineedfood.today"
+        var ClientId = "jh2UsnTuLa5fl5BHYm8IU3zMTskV3sqwuWQZTD7N"
+        var ClientSecret = "gupVBZmqVHuDPH51AxCV5lM6WWOlGDTgpvWl9I54"
     }
 
     object MQTT {
-        var Host = "tcp://yourbrighterfoodhall.whew.life:1883"
+        var Host = "tcp://dev.ineedfood.today:1883"
         var UserName = "konbini"
         var Password = "k0nbini"
         var Topic = "magicplate"
@@ -130,6 +131,7 @@ object AppSettings {
         var SpecifiedTimeMinute = 0
         var PeriodicSyncOffline = 10// minutes
         var PeriodicGetToken = 60// minutes
+        var PeriodicAutoSyncMenu = 60// minutes
         var PeriodicSyncTransaction = 60// minutes
         var xDayStoreLocalOrders = 7
         var xDayStoreLocalMenus = 7
@@ -158,6 +160,10 @@ object AppSettings {
         }
     }
 
+    object Shortcut {
+        var Amount = "1,2,5,10,20,50,100,200"
+    }
+
     object Options {
         var ConnectHardware = false
         var AcsReader = AcsReaderType.WHITE.value
@@ -174,8 +180,12 @@ object AppSettings {
             var pathImagePayNow = ""
             var Cash = false
             var pathImageCash = ""
+            var SelectProduct = false
+            var pathImageSelectProduct = ""
             var Discount = false
             var pathImageDiscount = ""
+            var TopUp = false
+            var pathImageTopUp = ""
             var DeviceType = PaymentDeviceType.IUC.value
         }
         object Printer {
@@ -196,6 +206,7 @@ object AppSettings {
         var ShowCancelPaymentButton = true
         var NotAllowWalletNonRfid = true
         var AllowGetReaderLog = false
+        var AllowAutoSyncMenu = false
         var AllowAdminCancelPayment = true
         var AllowAdminCashPaymentApproval = true
         var AllowAdminDiscountApproval = true

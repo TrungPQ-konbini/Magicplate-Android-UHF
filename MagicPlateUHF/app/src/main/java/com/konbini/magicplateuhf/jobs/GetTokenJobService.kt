@@ -11,17 +11,15 @@ import com.konbini.magicplateuhf.data.repository.WalletRepository
 import com.konbini.magicplateuhf.utils.LogUtils
 import com.konbini.magicplateuhf.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import javax.inject.Inject
 import kotlin.coroutines.EmptyCoroutineContext
 
 @AndroidEntryPoint
 class GetTokenJobService : JobService() {
 
-    @Inject
-    lateinit var walletRepository: WalletRepository
+    @Inject lateinit var walletRepository: WalletRepository
     private val serviceScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext)
 
     companion object {
@@ -58,9 +56,13 @@ class GetTokenJobService : JobService() {
                             AppSettings.Cloud.ClientId,
                             AppSettings.Cloud.ClientSecret
                         )
-                        val tokenWallet = async {
-                            walletRepository.getAccessToken(AppSettings.Cloud.Host, requestTokenWallet)
-                        }.await()
+                        val tokenWallet =
+                            withContext(Dispatchers.Default) {
+                                walletRepository.getAccessToken(
+                                    AppSettings.Cloud.Host,
+                                    requestTokenWallet
+                                )
+                            }
 
                         if (tokenWallet.status == Resource.Status.SUCCESS) {
                             tokenWallet.data?.let { _walletTokenResponse ->

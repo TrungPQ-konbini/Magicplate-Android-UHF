@@ -1,4 +1,4 @@
-package com.konbini.magicplateuhf.ui.sales.magicPlate
+package com.konbini.magicplateuhf.ui.sales.magicPlate.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

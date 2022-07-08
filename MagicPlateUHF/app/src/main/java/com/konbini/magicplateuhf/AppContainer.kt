@@ -84,12 +84,14 @@ object AppContainer {
     }
 
     object CurrentTransaction {
+        var isTopUp = false
         var ccwId1: String = ""
         var currentDiscount: Float = 0F
         var cardNFC = ""
         var barcode = ""
         var countItems = 0
         var totalPrice = 0F
+        var selectedCategory = 0
         var paymentModeType: PaymentModeType? = null
         var paymentState: PaymentState = PaymentState.Init
         var listEPC: MutableList<String> = mutableListOf()
@@ -100,11 +102,13 @@ object AppContainer {
         var option: Option = Option()
 
         fun resetTemporaryInfo() {
+            isTopUp = false
             ccwId1 = ""
             cardNFC = ""
             barcode = ""
             countItems = 0
             totalPrice = 0F
+            selectedCategory = 0
             paymentModeType = null
             currentDiscount = 0F
             listEPC.clear()

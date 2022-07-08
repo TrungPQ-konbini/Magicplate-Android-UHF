@@ -1,4 +1,4 @@
-package com.konbini.magicplateuhf.ui.sales.magicPlate
+package com.konbini.magicplateuhf.ui.sales.magicPlate.adapters
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
@@ -150,6 +150,38 @@ class PaymentViewHolder(
                         ContextCompat.getDrawable(
                             itemView.context,
                             R.drawable.ic_discounts
+                        )
+                    )
+                }
+            }
+            PaymentModeType.SELECT_PRODUCT.value -> {
+                if (AppSettings.Options.Payment.pathImageSelectProduct.isNotEmpty()) {
+                    val imgFile = File(AppSettings.Options.Payment.pathImageSelectProduct)
+                    if (imgFile.exists()) {
+                        val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                        itemBinding.btnCardType.setImageBitmap(imgBitmap)
+                    }
+                } else {
+                    itemBinding.btnCardType.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            itemView.context,
+                            R.drawable.ic_exchange
+                        )
+                    )
+                }
+            }
+            PaymentModeType.TOP_UP.value -> {
+                if (AppSettings.Options.Payment.pathImageTopUp.isNotEmpty()) {
+                    val imgFile = File(AppSettings.Options.Payment.pathImageTopUp)
+                    if (imgFile.exists()) {
+                        val imgBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                        itemBinding.btnCardType.setImageBitmap(imgBitmap)
+                    }
+                } else {
+                    itemBinding.btnCardType.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            itemView.context,
+                            R.drawable.ic_top_up
                         )
                     )
                 }

@@ -472,6 +472,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
+                    android:gravity="center"
                     android:orientation="horizontal"
                     android:weightSum="4">
 
@@ -482,6 +483,29 @@
 
                     <EditText
                         android:id="@+id/periodicGetToken"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_minute"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <!--PeriodicAutoSyncMenu-->
+                <LinearLayout
+                    android:id="@+id/periodicAutoSyncMenuPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_periodic_auto_sync_menu" />
+
+                    <EditText
+                        android:id="@+id/periodicAutoSyncMenu"
                         style="@style/customEditTextSettings"
                         android:layout_weight="1"
                         android:hint="@string/title_minute"

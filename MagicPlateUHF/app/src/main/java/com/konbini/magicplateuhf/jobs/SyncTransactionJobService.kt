@@ -16,8 +16,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 @AndroidEntryPoint
 class SyncTransactionJobService : JobService() {
 
-    @Inject
-    lateinit var offlineDataRepository: OfflineDataRepository
+    @Inject lateinit var offlineDataRepository: OfflineDataRepository
     private val serviceScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext)
 
     companion object {
@@ -44,8 +43,8 @@ class SyncTransactionJobService : JobService() {
                 }
                 serviceScope.launch {
                     try {
-                        LogUtils.logOffline("Start Sync")
-                        Log.e(TAG, "Start Sync")
+                        LogUtils.logInfo("Start Sync Transactions")
+                        Log.e(TAG, "Start Sync Transactions")
                         AppContainer.GlobalVariable.isSyncTransaction = true
                         offlineDataRepository.processOfflineData()
                     } catch (ex: Exception) {

@@ -42,7 +42,7 @@ class TransactionFragment : Fragment(), SearchView.OnQueryTextListener,
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
             val myFormat = "dd/M/yyyy" // mention the format you need
-            val sdf = SimpleDateFormat(myFormat, Locale.US)
+            val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
             if (typeDate == FROM)
                 binding.dateFrom.setText(sdf.format(calendar.time))
             else

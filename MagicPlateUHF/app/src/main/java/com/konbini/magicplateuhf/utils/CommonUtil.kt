@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.animation.Animation
+import android.view.animation.TranslateAnimation
 import com.google.gson.Gson
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
@@ -91,7 +92,7 @@ class CommonUtil {
         fun formatCurrency(value: Float, title: String = ""): String {
             var currency = 0F
             if (value > 0) currency = value
-            val format: NumberFormat = NumberFormat.getCurrencyInstance(Locale.CANADA)
+            val format: NumberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
             if (title.isNotEmpty()) {
                 return title + format.format(currency)
             }
@@ -174,21 +175,23 @@ class CommonUtil {
 
         fun formatSubmitTransactionRequest(transactionEntity: TransactionEntity): SubmitTransactionRequest {
             val formatterTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
-            // get old cart
-            val cart =
-                Gson().fromJson(transactionEntity.details, Array<CartEntity>::class.java).asList()
-
             val listProducts: MutableList<SubmitTransactionRequestProducts> = mutableListOf()
 
-            cart.forEach { _cartEntity ->
-                val product = SubmitTransactionRequestProducts(
-                    productId = _cartEntity.productId.toInt(),
-                    productQuantity = _cartEntity.quantity,
-                    isCustomPrice = true,
-                    customPrice = if (_cartEntity.salePrice.isEmpty()) _cartEntity.price.toDouble() else _cartEntity.salePrice.toDouble()
-                )
-                listProducts.add(product)
+            if (transactionEntity.details != PaymentModeType.TOP_UP.value) {
+                // get old cart
+                val cart =
+                    Gson().fromJson(transactionEntity.details, Array<CartEntity>::class.java)
+                        .asList()
+
+                cart.forEach { _cartEntity ->
+                    val product = SubmitTransactionRequestProducts(
+                        productId = _cartEntity.productId.toInt(),
+                        productQuantity = _cartEntity.quantity,
+                        isCustomPrice = true,
+                        customPrice = if (_cartEntity.salePrice.isEmpty()) _cartEntity.price.toDouble() else _cartEntity.salePrice.toDouble()
+                    )
+                    listProducts.add(product)
+                }
             }
 
             return SubmitTransactionRequest(
@@ -426,6 +429,121 @@ class CommonUtil {
         private fun turnOffApp() {
             LogUtils.logInfo("Shutdown app !!!")
             exitProcess(0)
+        }
+
+        fun checkKeyCodeExists(pressedKey: String, currentKeyCode: String): Boolean {
+            var isCorrect = false
+            when (pressedKey) {
+                "KEYCODE_NUM_LOCK" -> {
+                    if (currentKeyCode == "KEYCODE_NUM_LOCK") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_0" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_0") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_1" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_1") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_2" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_2") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_3" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_3") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_4" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_4") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_5" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_5") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_6" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_6") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_7" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_7") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_8" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_8") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_9" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_9") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_DIVIDE" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_DIVIDE") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_MULTIPLY" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_MULTIPLY") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_SUBTRACT" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_SUBTRACT") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_ADD" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_ADD") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_DOT" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_DOT") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_COMMA" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_COMMA") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_ENTER" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_ENTER") isCorrect = true
+                }
+                "KEYCODE_NUMPAD_EQUALS" -> {
+                    if (currentKeyCode == "KEYCODE_NUMPAD_EQUALS") isCorrect = true
+                }
+            }
+
+            return isCorrect
+        }
+
+        fun slideUp(view: View) {
+            view.visibility = View.VISIBLE
+            val animate = TranslateAnimation(
+                0f,  // fromXDelta
+                0f,  // toXDelta
+                view.height.toFloat(),  // fromYDelta
+                0f
+            ) // toYDelta
+            animate.duration = 500
+            animate.fillAfter = true
+            view.startAnimation(animate)
+        }
+
+        fun slideDown(view: View) {
+            val animate = TranslateAnimation(
+                0f,  // fromXDelta
+                0f,  // toXDelta
+                0f,  // fromYDelta
+                view.height.toFloat()
+            ) // toYDelta
+            animate.duration = 500
+            animate.fillAfter = true
+            view.startAnimation(animate)
+        }
+
+        fun slideLeft(view: View) {
+            view.visibility = View.VISIBLE
+            val animate = TranslateAnimation(
+                0f,  // fromXDelta
+                view.width.toFloat(),  // toXDelta
+                0f,  // fromYDelta
+                0f
+            ) // toYDelta
+            animate.duration = 500
+            animate.fillAfter = true
+            view.startAnimation(animate)
+        }
+
+        fun slideRight(view: View) {
+            val animate = TranslateAnimation(
+                view.width.toFloat(),  // fromXDelta
+                0f,  // toXDelta
+                0f,  // fromYDelta
+                0f
+            ) // toYDelta
+            animate.duration = 500
+            animate.fillAfter = true
+            view.startAnimation(animate)
         }
     }
 }
