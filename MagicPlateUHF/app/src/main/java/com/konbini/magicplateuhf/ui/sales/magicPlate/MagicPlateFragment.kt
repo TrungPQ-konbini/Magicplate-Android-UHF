@@ -552,7 +552,7 @@ class MagicPlateFragment : Fragment(),
                                 LogUtils.logInfo("Start Print receipt")
                                 val cartLocked: MutableList<CartEntity> =
                                     ArrayList(AppContainer.CurrentTransaction.cartLocked)
-                                printReceipt(cartLocked)
+                                printReceipt(cartLocked,AppContainer.CurrentTransaction.currentDiscount)
                             }
 
                             Log.e("EKRON", "PaymentState.Success")
@@ -1606,7 +1606,7 @@ class MagicPlateFragment : Fragment(),
             LogUtils.logInfo("Start Print receipt")
             val cartLocked: MutableList<CartEntity> =
                 ArrayList(AppContainer.CurrentTransaction.cartLocked)
-            printReceipt(cartLocked)
+            printReceipt(cartLocked, AppContainer.CurrentTransaction.currentDiscount)
         }
 
         val message = getString(R.string.message_put_plate_on_the_tray)
@@ -2083,7 +2083,7 @@ class MagicPlateFragment : Fragment(),
 
     }
 
-    private fun printReceipt(cartLocked: MutableList<CartEntity>) {
+    private fun printReceipt(cartLocked: MutableList<CartEntity>, currentDiscount: Float) {
         viewLifecycleOwner.lifecycleScope.launch {
             contentReceipt = ""
             val lastNumber = viewModel.getLastTransactionId()
@@ -2093,13 +2093,13 @@ class MagicPlateFragment : Fragment(),
 
             if (AppSettings.Options.Printer.Bluetooth) {
                 // Bluetooth
-                printReceiptBluetooth(cartLocked)
+                printReceiptBluetooth(cartLocked, currentDiscount)
             } else {
                 if (AppSettings.Options.Printer.TCP) {
                     // TCP
-                    printReceiptTCP(cartLocked)
+                    printReceiptTCP(cartLocked, currentDiscount)
                 } else {
-                    contentReceipt = formatReceipt(cartLocked)
+                    contentReceipt = formatReceipt(cartLocked, currentDiscount)
                     Log.e("PRINTER", contentReceipt)
                     // USB
                     printReceiptUSB()
@@ -2108,16 +2108,16 @@ class MagicPlateFragment : Fragment(),
         }
     }
 
-    private fun printReceiptBluetooth(cartLocked: MutableList<CartEntity>) {
+    private fun printReceiptBluetooth(cartLocked: MutableList<CartEntity>, currentDiscount: Float) {
 
         val device = BluetoothPrintersConnections.selectFirstPaired()
         val printer =
             EscPosPrinter(device, 203, /*AppSettings.ReceiptPrinter.WidthPaper.toFloat()*/48f, 32)
-        val content = formatReceipt(cartLocked)
+        val content = formatReceipt(cartLocked, currentDiscount)
         printer.printFormattedTextAndCut(content)
     }
 
-    private fun printReceiptTCP(cartLocked: MutableList<CartEntity>) {
+    private fun printReceiptTCP(cartLocked: MutableList<CartEntity>, currentDiscount: Float) {
         val ip = AppSettings.ReceiptPrinter.TCP
         if (ip.isNotEmpty()) {
             val printer = EscPosPrinter(
@@ -2126,7 +2126,7 @@ class MagicPlateFragment : Fragment(),
                 AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
                 32
             )
-            val content = formatReceipt(cartLocked)
+            val content = formatReceipt(cartLocked, currentDiscount)
             printer.printFormattedTextAndCut(content)
         } else {
             AlertDialogUtil.showError(
@@ -2194,12 +2194,12 @@ class MagicPlateFragment : Fragment(),
         }
     }
 
-    private fun formatReceipt(cartLocked: MutableList<CartEntity>): String {
+    private fun formatReceipt(cartLocked: MutableList<CartEntity>, currentDiscount: Float): String {
         return "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
                 "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
                 "[C]<font size='tall'>Date: ${Date()}</font>\n" +
                 "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n" +
-                formatContent(cartLocked) +
+                formatContent(cartLocked, currentDiscount) +
                 "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
                 "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
                 "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
@@ -2215,11 +2215,14 @@ class MagicPlateFragment : Fragment(),
                 "[L]\n"
     }
 
-    private fun formatContent(cartLocked: MutableList<CartEntity>): String {
+    private fun formatContent(cartLocked: MutableList<CartEntity>, currentDiscount: Float): String {
         var total = 0F
         var items = ""
         cartLocked.forEach { cartEntity ->
-            val price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+            var price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+            if (currentDiscount > 0) {
+                price = formatCurrency(cartEntity.salePrice.toFloat() * cartEntity.quantity)
+            }
             val strItem = "[L]<b>${cartEntity.productName}</b>[C]${cartEntity.quantity}[R]$price\n"
             items += strItem
             total += (cartEntity.price.toFloat() * cartEntity.quantity)
