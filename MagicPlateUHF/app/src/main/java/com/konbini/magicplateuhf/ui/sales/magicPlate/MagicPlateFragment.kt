@@ -2381,13 +2381,13 @@ class MagicPlateFragment : Fragment(),
     }
 
     private fun formatHeader(): String {
+        val formatterTime = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
         return if (AppSettings.ReceiptPrinter.Header.isEmpty()) {
             "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
                     "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
-                    "[C]<font size='tall'>Date: ${Date()}</font>\n" +
+                    "[C]<font size='tall'>Date/Time: ${formatterTime.format(Date())}</font>\n" +
                     "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n"
         } else {
-            val formatterTime = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
             AppSettings.ReceiptPrinter.Header
                 .replace("[Store]", AppSettings.Machine.Store)
                 .replace("[Terminal]", AppSettings.Machine.Terminal)
