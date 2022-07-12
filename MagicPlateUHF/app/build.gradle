@@ -126,10 +126,6 @@ dependencies {
     // Spinner
     implementation'com.github.devdhar04:MaterialSpinner:v0.1.2'
 
-    // SunMi Printer
-    implementation files('libs/core-3.3.0.jar')
-    implementation 'com.sunmi:printerlibrary:1.0.18'
-
     // MQTT
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.4'
