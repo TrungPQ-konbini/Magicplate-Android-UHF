@@ -338,6 +338,12 @@ class MagicPlateFragment : Fragment(),
     override fun onResume() {
         super.onResume()
         initData()
+
+        binding.textInputEditTextTopUpAmount.addTextChangedListener(
+            CurrencyTextWatcher(
+                binding.textInputEditTextTopUpAmount
+            )
+        )
     }
 
     override fun onStop() {
@@ -357,7 +363,7 @@ class MagicPlateFragment : Fragment(),
      *
      */
     private fun setupWheelPicker() {
-        listShortcut = AppSettings.Shortcut.Amount.split(",").map { it.toDouble() }.toMutableList()
+        listShortcut = AppSettings.Shortcut.TopUp.split(",").map { it.toDouble() }.toMutableList()
         val data = mutableListOf<String>()
         listShortcut.forEach { shortcut ->
             data.add(formatCurrency(shortcut.toFloat()))
@@ -552,7 +558,10 @@ class MagicPlateFragment : Fragment(),
                                 LogUtils.logInfo("Start Print receipt")
                                 val cartLocked: MutableList<CartEntity> =
                                     ArrayList(AppContainer.CurrentTransaction.cartLocked)
-                                printReceipt(cartLocked,AppContainer.CurrentTransaction.currentDiscount)
+                                printReceipt(
+                                    cartLocked,
+                                    AppContainer.CurrentTransaction.currentDiscount
+                                )
                             }
 
                             Log.e("EKRON", "PaymentState.Success")
@@ -734,8 +743,18 @@ class MagicPlateFragment : Fragment(),
 //                    .sendBroadcast(intent)
 //            }
 
-            AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.TOP_UP
-            viewModel.credit("")
+            if (AppContainer.CurrentTransaction.isTopUp) {
+                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.TOP_UP
+                viewModel.credit("")
+            } else {
+                val state = AppContainer.CurrentTransaction.paymentState
+                if (state == PaymentState.ReadyToPay) {
+                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
+                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
+
+                    handlePaymentSuccess(PaymentModeType.CASH.value)
+                }
+            }
         }
         // TODO: End TrungPQ add to test
     }
@@ -786,13 +805,25 @@ class MagicPlateFragment : Fragment(),
         }
         when (payment) {
             PaymentModeType.MASTER_CARD.value -> {
-                handleClickedMasterCardPayment()
+                if (AppContainer.CurrentTransaction.isTopUp) {
+                    handleClickedMasterCardPaymentWithTopUp()
+                } else {
+                    handleClickedMasterCardPayment()
+                }
             }
             PaymentModeType.EZ_LINK.value -> {
-                handleClickedEzLinkPayment()
+                if (AppContainer.CurrentTransaction.isTopUp) {
+                    handleClickedEzLinkPaymentWithTopUp()
+                } else {
+                    handleClickedEzLinkPayment()
+                }
             }
             PaymentModeType.PAY_NOW.value -> {
-                handleClickedPayNowPayment()
+                if (AppContainer.CurrentTransaction.isTopUp) {
+                    handleClickedPayNowPaymentWithTopUp()
+                } else {
+                    handleClickedPayNowPayment()
+                }
             }
             PaymentModeType.KONBINI_WALLET.value -> {
                 handleClickedWalletPayment()
@@ -1021,6 +1052,48 @@ class MagicPlateFragment : Fragment(),
         listenerMasterCard()
     }
 
+    private fun handleClickedMasterCardPaymentWithTopUp() {
+        // Validate
+        if (binding.textInputEditTextTopUpCcw.text.toString().isEmpty() ||
+            binding.textInputEditTextTopUpAmount.text.toString().isEmpty()
+        ) {
+            AlertDialogUtil.showWarning(
+                getString(R.string.message_warning_ccw_id_and_amount_is_required),
+                requireContext()
+            )
+            return
+        }
+
+        val currency = Currency.getInstance(Locale.getDefault())
+        val symbol: String = currency.symbol
+
+        AppContainer.CurrentTransaction.cardNFC = binding.textInputEditTextTopUpCcw.text.toString()
+        AppContainer.CurrentTransaction.totalPrice =
+            binding.textInputEditTextTopUpAmount.text.toString().replace(symbol, "").toFloat()
+        handleClickedTopUpButton(isProcessingPayment = true)
+
+        handleClickedSelectProductButton(true)
+
+        lastTimeClicked = SystemClock.elapsedRealtime()
+        LogUtils.logInfo("User clicked ${PaymentModeType.MASTER_CARD.value}")
+
+        changeColorWhenSelectPayment()
+
+        // Start countdown timeout and voice
+        timerTimeoutPayment.start()
+        MainApplication.mAudioManager.soundPleaseTapCard()
+
+        // Change Payment state
+        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+        AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.MASTER_CARD
+
+        // Locked cart
+        AppContainer.CurrentTransaction.cartLocked()
+
+        // Listener MasterCard
+        listenerMasterCard()
+    }
+
     private fun handleClickedEzLinkPayment() {
         val validate = validateSelectPayment()
         if (!validate) return
@@ -1029,6 +1102,48 @@ class MagicPlateFragment : Fragment(),
         if (SystemClock.elapsedRealtime() - lastTimeClicked < defaultInterval) {
             return
         }
+
+        handleClickedSelectProductButton(true)
+
+        lastTimeClicked = SystemClock.elapsedRealtime()
+        LogUtils.logInfo("User clicked ${PaymentModeType.EZ_LINK.value}")
+
+        changeColorWhenSelectPayment()
+
+        // Start countdown timeout and voice
+        timerTimeoutPayment.start()
+        MainApplication.mAudioManager.soundPleaseTapCard()
+
+        // Change Payment state
+        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+        AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.EZ_LINK
+
+        // Locked cart
+        AppContainer.CurrentTransaction.cartLocked()
+
+        // Listener EzLink
+        listenerEzLink()
+    }
+
+    private fun handleClickedEzLinkPaymentWithTopUp() {
+        // Validate
+        if (binding.textInputEditTextTopUpCcw.text.toString().isEmpty() ||
+            binding.textInputEditTextTopUpAmount.text.toString().isEmpty()
+        ) {
+            AlertDialogUtil.showWarning(
+                getString(R.string.message_warning_ccw_id_and_amount_is_required),
+                requireContext()
+            )
+            return
+        }
+
+        val currency = Currency.getInstance(Locale.getDefault())
+        val symbol: String = currency.symbol
+
+        AppContainer.CurrentTransaction.cardNFC = binding.textInputEditTextTopUpCcw.text.toString()
+        AppContainer.CurrentTransaction.totalPrice =
+            binding.textInputEditTextTopUpAmount.text.toString().replace(symbol, "").toFloat()
+        handleClickedTopUpButton(isProcessingPayment = true)
 
         handleClickedSelectProductButton(true)
 
@@ -1078,6 +1193,45 @@ class MagicPlateFragment : Fragment(),
 
         // Locked cart
         AppContainer.CurrentTransaction.cartLocked()
+
+        // Listener PayNow
+        listenerPayNow()
+    }
+
+    private fun handleClickedPayNowPaymentWithTopUp() {
+        // Validate
+        if (binding.textInputEditTextTopUpCcw.text.toString().isEmpty() ||
+            binding.textInputEditTextTopUpAmount.text.toString().isEmpty()
+        ) {
+            AlertDialogUtil.showWarning(
+                getString(R.string.message_warning_ccw_id_and_amount_is_required),
+                requireContext()
+            )
+            return
+        }
+
+        val currency = Currency.getInstance(Locale.getDefault())
+        val symbol: String = currency.symbol
+
+        AppContainer.CurrentTransaction.cardNFC = binding.textInputEditTextTopUpCcw.text.toString()
+        AppContainer.CurrentTransaction.totalPrice =
+            binding.textInputEditTextTopUpAmount.text.toString().replace(symbol, "").toFloat()
+        handleClickedTopUpButton(isProcessingPayment = true)
+
+        handleClickedSelectProductButton(true)
+
+        lastTimeClicked = SystemClock.elapsedRealtime()
+        LogUtils.logInfo("User clicked ${PaymentModeType.PAY_NOW.value}")
+
+        changeColorWhenSelectPayment()
+
+        // Start countdown timeout and voice
+        timerTimeoutPayment.start()
+        MainApplication.mAudioManager.soundPleaseTapCard()
+
+        // Change Payment state
+        AppContainer.CurrentTransaction.paymentState = PaymentState.ReadyToPay
+        AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.PAY_NOW
 
         // Listener PayNow
         listenerPayNow()
@@ -1538,6 +1692,7 @@ class MagicPlateFragment : Fragment(),
 
         val message = getString(R.string.message_put_plate_on_the_tray)
         resetMessage(message, 0)
+        AppContainer.CurrentTransaction.paymentState = PaymentState.Init
     }
 
     private fun handleTopUpError(message: String) {
@@ -1548,7 +1703,7 @@ class MagicPlateFragment : Fragment(),
 
         val message = getString(R.string.message_put_plate_on_the_tray)
         resetMessage(message, 0)
-        AppContainer.CurrentTransaction.paymentState = PaymentState.Preparing
+        AppContainer.CurrentTransaction.paymentState = PaymentState.Init
     }
 
     /**
@@ -1935,6 +2090,9 @@ class MagicPlateFragment : Fragment(),
                                         AppContainer.CurrentTransaction.cardNFC
                                     listenerDiscount()
                                 }
+
+                                // TopUp
+                                binding.textInputEditTextTopUpCcw.setText(AppContainer.CurrentTransaction.cardNFC)
                             }
                         } catch (readerException: ReaderException) {
                             listenerAcsReader()
@@ -2182,8 +2340,7 @@ class MagicPlateFragment : Fragment(),
                                         AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
                                         32
                                     )
-                                printer.printFormattedText(contentReceipt)
-                                printer.printFormattedTextAndCut("")
+                                printer.printFormattedTextAndCut(contentReceipt)
                             }
                         }
                     }

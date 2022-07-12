@@ -66,10 +66,13 @@ class GetTokenJobService : JobService() {
 
                         if (tokenWallet.status == Resource.Status.SUCCESS) {
                             tokenWallet.data?.let { _walletTokenResponse ->
-                                if (_walletTokenResponse.access_token != null) {
-                                    AppContainer.GlobalVariable.currentToken =
-                                        _walletTokenResponse.access_token ?: ""
-                                    AppContainer.GlobalVariable.isGettingToken = false
+                                _walletTokenResponse.access_token?.let { token ->
+                                    if (token.isNotEmpty()) {
+                                        AppContainer.GlobalVariable.currentToken = token
+                                        AppContainer.GlobalVariable.isGettingToken = false
+                                        AppContainer.GlobalVariable.currentTokenLifeTimes =
+                                            _walletTokenResponse.expires_in?.toLong() ?: 0L
+                                    }
                                 }
                                 LogUtils.logInfo("[Token]: ${AppContainer.GlobalVariable.currentToken}")
                                 Log.e(TAG, "[Token]: ${AppContainer.GlobalVariable.currentToken}")
@@ -83,7 +86,11 @@ class GetTokenJobService : JobService() {
                         AppContainer.GlobalVariable.isGettingToken = false
                     }
                 }
-                Thread.sleep(AppSettings.Timer.PeriodicGetToken.toLong() * 60 * 1000)
+                if (AppContainer.GlobalVariable.currentTokenLifeTimes > 0) {
+                    Thread.sleep(AppContainer.GlobalVariable.currentTokenLifeTimes * 1000)
+                } else {
+                    Thread.sleep(AppSettings.Timer.PeriodicGetToken.toLong() * 60 * 1000)
+                }
             }
             jobFinished(params, true)
         }).start()

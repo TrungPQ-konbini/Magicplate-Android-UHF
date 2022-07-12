@@ -20,6 +20,7 @@ object AppContainer {
         var isGettingToken = false
         var isSyncTransaction = false
         var currentToken: String = ""
+        var currentTokenLifeTimes: Long = 0L //seconds
         var allowWriteTags = false
         var allowReadTags = true
         var currentTimeBock: TimeBlockEntity? = null

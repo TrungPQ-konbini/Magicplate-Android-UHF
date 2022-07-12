@@ -1328,6 +1328,29 @@
                             android:inputType="textNoSuggestions" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <!--Shortcut-->
+                <LinearLayout
+                    android:id="@+id/shortcutPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:gravity="center"
+                        android:text="@string/title_shortcut_top_up" />
+
+                    <EditText
+                        android:id="@+id/shortcutTopUp"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_shortcut_top_up"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

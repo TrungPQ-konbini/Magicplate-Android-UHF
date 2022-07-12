@@ -52,7 +52,7 @@ class SyncTransactionJobService : JobService() {
                         AppContainer.GlobalVariable.isSyncTransaction = false
                     }
                 }
-                Thread.sleep(AppSettings.Timer.PeriodicSyncTransaction.toLong() * 60 * 1000)
+                Thread.sleep(15 * 60 * 1000)
             }
             jobFinished(params, true)
         }).start()

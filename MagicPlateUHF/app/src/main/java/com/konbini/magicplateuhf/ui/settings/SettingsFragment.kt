@@ -111,6 +111,7 @@ class SettingsFragment : Fragment() {
         bindReceipt()
         bindAlert()
         bindDiscountFormat()
+        bindShortcut()
     }
 
     private fun setupActions() {
@@ -297,6 +298,10 @@ class SettingsFragment : Fragment() {
         binding.discountFormatSuffixes.setText(AppSettings.Options.Discount.SuffixesFormat)
     }
 
+    private fun bindShortcut() {
+        binding.shortcutTopUp.setText(AppSettings.Shortcut.TopUp)
+    }
+
     private fun insert() {
         val companyLogo = binding.companyLogo.text.toString().trim()
         val companyName = binding.companyName.text.toString().trim()
@@ -340,6 +345,8 @@ class SettingsFragment : Fragment() {
         val alertTelegramGroup = binding.alertTelegramGroup.text.toString().trim()
 
         val alertSlackWebhook = binding.alertSlackWebhook.text.toString().trim()
+
+        val shortcutTopUp = binding.shortcutTopUp.text.toString().trim()
 
         val hour = binding.specificTimeHour.text.toString().trim()
         val minute = binding.specificTimeMinute.text.toString().trim()
@@ -434,6 +441,8 @@ class SettingsFragment : Fragment() {
         PrefUtil.setString("AppSettings.Alert.Telegram.Group", alertTelegramGroup)
 
         PrefUtil.setString("AppSettings.Alert.Slack.Webhook", alertSlackWebhook)
+
+        PrefUtil.setString("AppSettings.Shortcut.TopUp", shortcutTopUp)
 
         PrefUtil.setInt("AppSettings.Options.Discount.LengthFormat", discountFormatLength)
         PrefUtil.setString("AppSettings.Options.Discount.PrefixFormat", discountFormatPrefix)
