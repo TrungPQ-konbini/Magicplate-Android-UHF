@@ -41,8 +41,7 @@
             android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MagicPlateUHF.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.MagicPlateUHF.NoActionBar" />
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service

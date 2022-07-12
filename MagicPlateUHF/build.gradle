@@ -29,6 +29,8 @@ task clean(type: Delete) {
 }
 
 ext {
+    def formattedDate = new Date().format('HHmmddMMYYYY')
+
     compileSdkVersion = 30
     buildToolsVersion = "30.0.3"
 
@@ -36,5 +38,5 @@ ext {
     targetSdkVersion = 30
 
     versionCode = 1
-    versionName = "0.1.3.1250130622"
+    versionName = "KoMPUHF.${formattedDate}"
 }

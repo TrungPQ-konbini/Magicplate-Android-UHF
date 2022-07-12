@@ -87,6 +87,7 @@
     <string name="title_sync_order_realtime">Sync Order Realtime</string>
     <string name="title_admin_cancel_payment">Allow Admin cancel payment</string>
     <string name="title_admin_cash_payment_approval">Allow Admin cash payment approval</string>
+    <string name="title_admin_discount_approval">Allow Admin discount approval</string>
     <string name="message_allow_admin_cash_payment_approval_unchecked">Allow admin cash payment approval is unchecked !!!</string>
 
     <string name="title_searching">Search...</string>
@@ -150,7 +151,8 @@
     <string name="title_show_cancel_payment_button">Show Cancel Payment Button</string>
     <string name="title_plate_last_serial_number">Last Serial Number</string>
     <string name="title_receipt_width_paper">Receipt Width Paper</string>
-    <string name="title_receipt_content">Receipt Content</string>
+    <string name="title_receipt_header">Receipt Header</string>
+    <string name="title_receipt_footer">Receipt Footer</string>
     <string name="title_printer">Receipt Printer</string>
     <string name="title_tcp">TCP</string>
     <string name="title_usb">USB</string>

@@ -1127,9 +1127,9 @@
                         android:inputType="number" />
                 </LinearLayout>
 
-                <!--Content-->
+                <!--Receipt Header-->
                 <LinearLayout
-                    android:id="@+id/receiptContentPanel"
+                    android:id="@+id/receiptHeaderPanel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -1139,17 +1139,42 @@
                     <TextView
                         style="@style/customTextViewSettings"
                         android:layout_weight="3"
-                        android:text="@string/title_receipt_content" />
+                        android:text="@string/title_receipt_header" />
 
                     <EditText
-                        android:id="@+id/receiptContent"
+                        android:id="@+id/receiptHeader"
                         style="@style/customEditTextSettings"
                         android:layout_weight="1"
-                        android:hint="@string/title_receipt_content"
+                        android:hint="@string/title_receipt_header"
                         android:inputType="textNoSuggestions|textMultiLine"
-                        android:lines="10"
-                        android:maxLines="10"
-                        android:minLines="10" />
+                        android:lines="8"
+                        android:maxLines="8"
+                        android:minLines="8" />
+                </LinearLayout>
+
+                <!--Receipt Footer-->
+                <LinearLayout
+                    android:id="@+id/receiptFooterPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <TextView
+                        style="@style/customTextViewSettings"
+                        android:layout_weight="3"
+                        android:text="@string/title_receipt_footer" />
+
+                    <EditText
+                        android:id="@+id/receiptFooter"
+                        style="@style/customEditTextSettings"
+                        android:layout_weight="1"
+                        android:hint="@string/title_receipt_footer"
+                        android:inputType="textNoSuggestions|textMultiLine"
+                        android:lines="8"
+                        android:maxLines="8"
+                        android:minLines="8" />
                 </LinearLayout>
             </LinearLayout>
 

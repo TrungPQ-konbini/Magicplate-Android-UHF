@@ -31,7 +31,6 @@ import com.dantsu.escposprinter.connection.usb.UsbConnection
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections
 import com.developer.kalert.KAlertDialog
 import com.google.gson.Gson
-import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
 import com.konbini.magicplateuhf.MainApplication
 import com.konbini.magicplateuhf.R
@@ -54,10 +53,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
-import kotlin.math.roundToInt
+import com.konbini.magicplateuhf.AppContainer
 
 
 @AndroidEntryPoint
@@ -743,18 +743,18 @@ class MagicPlateFragment : Fragment(),
 //                    .sendBroadcast(intent)
 //            }
 
-            if (AppContainer.CurrentTransaction.isTopUp) {
-                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.TOP_UP
-                viewModel.credit("")
-            } else {
-                val state = AppContainer.CurrentTransaction.paymentState
-                if (state == PaymentState.ReadyToPay) {
-                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
-                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
-
-                    handlePaymentSuccess(PaymentModeType.CASH.value)
-                }
-            }
+//            if (AppContainer.CurrentTransaction.isTopUp) {
+//                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.TOP_UP
+//                viewModel.credit("")
+//            } else {
+//                val state = AppContainer.CurrentTransaction.paymentState
+//                if (state == PaymentState.ReadyToPay) {
+//                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
+//                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
+//
+//                    handlePaymentSuccess(PaymentModeType.CASH.value)
+//                }
+//            }
         }
         // TODO: End TrungPQ add to test
     }
@@ -1840,7 +1840,6 @@ class MagicPlateFragment : Fragment(),
 //                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
 //                            }
 //                        }
-
                         Log.e(TAG, _message)
                         LogUtils.logInfo(_message)
                         displayMessage(_message)
@@ -1906,7 +1905,6 @@ class MagicPlateFragment : Fragment(),
 //                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
 //                            }
 //                        }
-
                         Log.e(TAG, _message)
                         LogUtils.logInfo(_message)
                         displayMessage(_message)
@@ -2352,24 +2350,52 @@ class MagicPlateFragment : Fragment(),
     }
 
     private fun formatReceipt(cartLocked: MutableList<CartEntity>, currentDiscount: Float): String {
-        return "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
-                "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
-                "[C]<font size='tall'>Date: ${Date()}</font>\n" +
-                "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n" +
+        return formatHeader() +
                 formatContent(cartLocked, currentDiscount) +
-                "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
-                "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
-                "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
-                "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
-                "[L]<font size='tall'>Membership :</font>\n" +
-                "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
-                "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
-                "[L]\n" +
-                "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
-                //"[C]<qrcode size='20'>831254784551</qrcode>" +
-                "[L]\n" +
-                "[L]\n" +
-                "[L]\n"
+                formatFooter()
+    }
+
+    private fun formatHeader(): String {
+        return if (AppSettings.ReceiptPrinter.Header.isEmpty()) {
+            "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
+            "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
+            "[C]<font size='tall'>Date: ${Date()}</font>\n" +
+            "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n"
+        } else {
+            val formatterTime = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+            AppSettings.ReceiptPrinter.Header
+                .replace("[Store]", AppSettings.Machine.Store)
+                .replace("[Terminal]", AppSettings.Machine.Terminal)
+                .replace("[Date]", formatterTime.format(Date()))
+                .replace("[OrderNumber]", "%06d".format(orderNumber))
+        }
+    }
+
+    private fun formatFooter(): String {
+        return if (AppSettings.ReceiptPrinter.Footer.isEmpty()) {
+            "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
+            "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
+            "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
+            "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
+            "[L]<font size='tall'>Membership :</font>\n" +
+            "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
+            "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
+            "[L]\n" +
+            "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
+            //"[C]<qrcode size='20'>831254784551</qrcode>" +
+            "[L]\n" +
+            "[L]\n" +
+            "[L]\n"
+        } else {
+            AppSettings.ReceiptPrinter.Footer
+                .replace("[Tel]", AppSettings.Company.Tel)
+                .replace("[Email]", AppSettings.Company.Email)
+                .replace("[Address]", AppSettings.Company.Address)
+                .replace("[Barcode]", "%012d".format(orderNumber))
+                .replace("[UserName]", if (displayName.isEmpty()) "N/A" else displayName)
+                .replace("[Balance]", if (balance == 0F) "N/A" else formatCurrency(balance))
+                .replace("[OrderNumber]", "%012d".format(orderNumber))
+        }
     }
 
     private fun formatContent(cartLocked: MutableList<CartEntity>, currentDiscount: Float): String {
