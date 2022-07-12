@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Parcelable
 import android.os.SystemClock
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StrikethroughSpan
 import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
@@ -58,6 +61,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 import com.konbini.magicplateuhf.AppContainer
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
@@ -560,7 +564,8 @@ class MagicPlateFragment : Fragment(),
                                     ArrayList(AppContainer.CurrentTransaction.cartLocked)
                                 printReceipt(
                                     cartLocked,
-                                    AppContainer.CurrentTransaction.currentDiscount
+                                    AppContainer.CurrentTransaction.currentDiscount,
+                                    if (AppContainer.CurrentTransaction.paymentModeType != null) AppContainer.CurrentTransaction.paymentModeType!!.value else "N/A"
                                 )
                             }
 
@@ -1761,7 +1766,11 @@ class MagicPlateFragment : Fragment(),
             LogUtils.logInfo("Start Print receipt")
             val cartLocked: MutableList<CartEntity> =
                 ArrayList(AppContainer.CurrentTransaction.cartLocked)
-            printReceipt(cartLocked, AppContainer.CurrentTransaction.currentDiscount)
+            printReceipt(
+                cartLocked,
+                AppContainer.CurrentTransaction.currentDiscount,
+                if (AppContainer.CurrentTransaction.paymentModeType != null) AppContainer.CurrentTransaction.paymentModeType!!.value else "N/A"
+            )
         }
 
         val message = getString(R.string.message_put_plate_on_the_tray)
@@ -2239,7 +2248,11 @@ class MagicPlateFragment : Fragment(),
 
     }
 
-    private fun printReceipt(cartLocked: MutableList<CartEntity>, currentDiscount: Float) {
+    private fun printReceipt(
+        cartLocked: MutableList<CartEntity>,
+        currentDiscount: Float,
+        paymentMode: String
+    ) {
         viewLifecycleOwner.lifecycleScope.launch {
             contentReceipt = ""
             val lastNumber = viewModel.getLastTransactionId()
@@ -2249,13 +2262,13 @@ class MagicPlateFragment : Fragment(),
 
             if (AppSettings.Options.Printer.Bluetooth) {
                 // Bluetooth
-                printReceiptBluetooth(cartLocked, currentDiscount)
+                printReceiptBluetooth(cartLocked, currentDiscount, paymentMode)
             } else {
                 if (AppSettings.Options.Printer.TCP) {
                     // TCP
-                    printReceiptTCP(cartLocked, currentDiscount)
+                    printReceiptTCP(cartLocked, currentDiscount, paymentMode)
                 } else {
-                    contentReceipt = formatReceipt(cartLocked, currentDiscount)
+                    contentReceipt = formatReceipt(cartLocked, currentDiscount, paymentMode)
                     Log.e("PRINTER", contentReceipt)
                     // USB
                     printReceiptUSB()
@@ -2264,16 +2277,24 @@ class MagicPlateFragment : Fragment(),
         }
     }
 
-    private fun printReceiptBluetooth(cartLocked: MutableList<CartEntity>, currentDiscount: Float) {
+    private fun printReceiptBluetooth(
+        cartLocked: MutableList<CartEntity>,
+        currentDiscount: Float,
+        paymentMode: String
+    ) {
 
         val device = BluetoothPrintersConnections.selectFirstPaired()
         val printer =
             EscPosPrinter(device, 203, /*AppSettings.ReceiptPrinter.WidthPaper.toFloat()*/48f, 32)
-        val content = formatReceipt(cartLocked, currentDiscount)
+        val content = formatReceipt(cartLocked, currentDiscount, paymentMode)
         printer.printFormattedTextAndCut(content)
     }
 
-    private fun printReceiptTCP(cartLocked: MutableList<CartEntity>, currentDiscount: Float) {
+    private fun printReceiptTCP(
+        cartLocked: MutableList<CartEntity>,
+        currentDiscount: Float,
+        paymentMode: String
+    ) {
         val ip = AppSettings.ReceiptPrinter.TCP
         if (ip.isNotEmpty()) {
             val printer = EscPosPrinter(
@@ -2282,7 +2303,7 @@ class MagicPlateFragment : Fragment(),
                 AppSettings.ReceiptPrinter.WidthPaper.toFloat(),
                 32
             )
-            val content = formatReceipt(cartLocked, currentDiscount)
+            val content = formatReceipt(cartLocked, currentDiscount, paymentMode)
             printer.printFormattedTextAndCut(content)
         } else {
             AlertDialogUtil.showError(
@@ -2349,9 +2370,13 @@ class MagicPlateFragment : Fragment(),
         }
     }
 
-    private fun formatReceipt(cartLocked: MutableList<CartEntity>, currentDiscount: Float): String {
+    private fun formatReceipt(
+        cartLocked: MutableList<CartEntity>,
+        currentDiscount: Float,
+        paymentMode: String
+    ): String {
         return formatHeader() +
-                formatContent(cartLocked, currentDiscount) +
+                formatContent(cartLocked, currentDiscount, paymentMode) +
                 formatFooter()
     }
 
@@ -2377,13 +2402,13 @@ class MagicPlateFragment : Fragment(),
                     "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
                     "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
                     "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
-                    "[L]<font size='tall'>Membership :</font>\n" +
-                    "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
-                    "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
-                    "[L]\n" +
+                    //"[L]<font size='tall'>Membership :</font>\n" +
+                    //"[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
+                    //"[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
+                    //"[L]\n" +
                     "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
                     //"[C]<qrcode size='20'>831254784551</qrcode>" +
-                    "[L]\n" +
+                    //"[L]\n" +
                     "[L]\n" +
                     "[L]\n"
         } else {
@@ -2398,31 +2423,40 @@ class MagicPlateFragment : Fragment(),
         }
     }
 
-    private fun formatContent(cartLocked: MutableList<CartEntity>, currentDiscount: Float): String {
+    private fun formatContent(
+        cartLocked: MutableList<CartEntity>,
+        currentDiscount: Float,
+        paymentMode: String
+    ): String {
         var total = 0F
+        var totalDiscount = 0F
         var items = ""
         cartLocked.forEach { cartEntity ->
-            var price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
             if (currentDiscount > 0) {
-                price = formatCurrency(cartEntity.salePrice.toFloat() * cartEntity.quantity)
-            }
-            val strItem = "[L]<b>${cartEntity.productName}</b>[C]${cartEntity.quantity}[R]$price\n"
-            items += strItem
-            total += if (currentDiscount > 0) {
-                (cartEntity.salePrice.toFloat() * cartEntity.quantity)
+                val discountItem = abs(cartEntity.price.toFloat() - cartEntity.salePrice.toFloat())
+                val price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+                val strItemPrice =
+                    "[L]<b>${cartEntity.productName}(-${formatCurrency(discountItem)})</b>[R]${cartEntity.quantity}[R]$price\n"
+                items += strItemPrice
+                total += (cartEntity.salePrice.toFloat() * cartEntity.quantity)
+                totalDiscount += discountItem
             } else {
-                (cartEntity.price.toFloat() * cartEntity.quantity)
+                val price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
+                val strItem =
+                    "[L]<b>${cartEntity.productName}</b>[R]${cartEntity.quantity}[R]$price\n"
+                items += strItem
+                total += (cartEntity.price.toFloat() * cartEntity.quantity)
             }
         }
         return "[L]\n" +
-                "[C]================================\n" +
-                "[L]\n" +
+                "[L]<b>Products</b>[R]<b>Qty</b>[R]<b>Price</b>\n" +
+                "[L]--------------------------------\n" +
                 items +
-                "[L]\n" +
-                "[C]--------------------------------\n" +
-                "[R]TOTAL PRICE :[R]${formatCurrency(total)}\n" +
-                "[L]\n" +
-                "[C]================================\n"
+                "[L]--------------------------------\n" +
+                "[L]TOTAL DISCOUNT :[R]${formatCurrency(totalDiscount)}\n" +
+                "[L]<b>TOTAL PRICE :[R]${formatCurrency(total)}</b>\n" +
+                "[L]PAYMENT MODE :[R]$paymentMode\n" +
+                "[L]--------------------------------\n"
     }
     // endregion
 
