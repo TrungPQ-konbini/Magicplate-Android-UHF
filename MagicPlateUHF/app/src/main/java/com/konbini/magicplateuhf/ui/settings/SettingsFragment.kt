@@ -279,7 +279,8 @@ class SettingsFragment : Fragment() {
     private fun bindReceipt() {
         binding.receiptPrinterIp.setText(AppSettings.ReceiptPrinter.TCP)
         binding.receiptWidthPaper.setText(AppSettings.ReceiptPrinter.WidthPaper.toString())
-        binding.receiptContent.setText(AppSettings.ReceiptPrinter.Content)
+        binding.receiptHeader.setText(AppSettings.ReceiptPrinter.Header)
+        binding.receiptFooter.setText(AppSettings.ReceiptPrinter.Footer)
     }
 
     private fun bindAlert() {
@@ -332,7 +333,8 @@ class SettingsFragment : Fragment() {
 
         val receiptPrinterIp = binding.receiptPrinterIp.text.toString().trim()
         val receiptWidthPaper = binding.receiptWidthPaper.text.toString().trim()
-        val receiptContent = binding.receiptContent.text.toString().trim()
+        val receiptHeader = binding.receiptHeader.text.toString().trim()
+        val receiptFooter = binding.receiptFooter.text.toString().trim()
 
         val alertTelegramUserName = binding.alertTelegramUserName.text.toString().trim()
         val alertTelegramToken = binding.alertTelegramToken.text.toString().trim()
@@ -421,7 +423,8 @@ class SettingsFragment : Fragment() {
         PrefUtil.setString("AppSettings.ReceiptPrinter.TCP", receiptPrinterIp)
         if (receiptWidthPaper.isNotEmpty())
             PrefUtil.setInt("AppSettings.ReceiptPrinter.WidthPaper", receiptWidthPaper.toInt())
-        PrefUtil.setString("AppSettings.ReceiptPrinter.Content", receiptContent)
+        PrefUtil.setString("AppSettings.ReceiptPrinter.Header", receiptHeader)
+        PrefUtil.setString("AppSettings.ReceiptPrinter.Footer", receiptFooter)
 
         PrefUtil.setString("AppSettings.Alert.Telegram.UserName", alertTelegramUserName)
         PrefUtil.setString("AppSettings.Alert.Telegram.Token", alertTelegramToken)

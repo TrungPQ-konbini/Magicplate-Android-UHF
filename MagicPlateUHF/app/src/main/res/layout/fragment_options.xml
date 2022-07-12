@@ -873,8 +873,8 @@
                             android:id="@+id/checkbox_discount_approval"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/title_admin_cash_payment_approval" />
+                            android:layout_weight="1"   
+                            android:text="@string/title_admin_discount_approval" />
 
                         <EditText
                             android:id="@+id/keyCodeDiscountApproval"

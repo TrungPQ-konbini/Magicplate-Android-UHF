@@ -36,9 +36,10 @@ android {
 
             applicationVariants.all { variant ->
                 variant.outputs.all {
+                    def buildType = variant.buildType.name
                     def versionName = variant.versionName
-                    def formattedDate = new Date().format('ddMMYYYY_HHmm')
-                    outputFileName = "MagicPlateUHF_${versionName}_${formattedDate}.apk"
+
+                    outputFileName = "MagicPlateUHF_${versionName}_${buildType}.apk"
                 }
             }
         }

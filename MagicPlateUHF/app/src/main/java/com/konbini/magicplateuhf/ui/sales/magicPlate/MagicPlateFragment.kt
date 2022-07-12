@@ -47,6 +47,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
@@ -127,9 +130,10 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                 }
                                 // cart with tags and barcodes
                                 else -> {
-                                    val cartWithTag = AppContainer.CurrentTransaction.cart.filter { cartEntity ->
-                                        cartEntity.strEPC.isNotEmpty()
-                                    }
+                                    val cartWithTag =
+                                        AppContainer.CurrentTransaction.cart.filter { cartEntity ->
+                                            cartEntity.strEPC.isNotEmpty()
+                                        }
                                     if (cartWithTag.isEmpty()) {
                                         val offset = current - timeAlarm
                                         if (offset > ALARM_DELAY) {
@@ -468,7 +472,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                         if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
                             // Print Receipt
                             LogUtils.logInfo("Start Print receipt")
-                            val cartLocked: MutableList<CartEntity> = ArrayList(AppContainer.CurrentTransaction.cartLocked)
+                            val cartLocked: MutableList<CartEntity> =
+                                ArrayList(AppContainer.CurrentTransaction.cartLocked)
                             printReceipt(cartLocked)
                         }
 
@@ -1023,7 +1028,7 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
      */
     private fun displayPaymentMode() {
         if (AppSettings.Options.NotAllowWalletNonRfid && AppContainer.CurrentTransaction.cart.find { cartEntity ->
-            cartEntity.strEPC.isEmpty()
+                cartEntity.strEPC.isEmpty()
             } != null)
             initRecyclerViewPayments(checkNonRFID = true)
     }
@@ -1214,7 +1219,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         if (AppSettings.Options.Printer.Bluetooth || AppSettings.Options.Printer.USB) {
             // Print Receipt
             LogUtils.logInfo("Start Print receipt")
-            val cartLocked: MutableList<CartEntity> = ArrayList(AppContainer.CurrentTransaction.cartLocked)
+            val cartLocked: MutableList<CartEntity> =
+                ArrayList(AppContainer.CurrentTransaction.cartLocked)
             printReceipt(cartLocked)
         }
 
@@ -1275,7 +1281,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                     timeout = AppSettings.Options.Payment.Timeout
 
                                     // MainApplication.mAudioManager.soundProcessingPayment()
-                                    AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                    AppContainer.CurrentTransaction.paymentState =
+                                        PaymentState.InProgress
                                 }
                             }
                             else -> { // IM30
@@ -1284,7 +1291,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                 timeout = AppSettings.Options.Payment.Timeout
 
                                 // MainApplication.mAudioManager.soundProcessingPayment()
-                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                AppContainer.CurrentTransaction.paymentState =
+                                    PaymentState.InProgress
                             }
                         }
 
@@ -1334,7 +1342,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                     timeout = AppSettings.Options.Payment.Timeout
 
                                     // MainApplication.mAudioManager.soundProcessingPayment()
-                                    AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                    AppContainer.CurrentTransaction.paymentState =
+                                        PaymentState.InProgress
                                 }
                             }
                             else -> { // IM30
@@ -1343,7 +1352,8 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
                                 timeout = AppSettings.Options.Payment.Timeout
 
                                 // MainApplication.mAudioManager.soundProcessingPayment()
-                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                AppContainer.CurrentTransaction.paymentState =
+                                    PaymentState.InProgress
                             }
                         }
 
@@ -1372,51 +1382,59 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
         val amount = (AppContainer.CurrentTransaction.totalPrice.toDouble() * 100).roundToInt()
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                IM30Interface.instance.mpqr(amount, IM30Interface.MpqrWalletLabel.DBSMAX_PAYNOW, { saleResponse ->
-                    // Success
-                    activity?.runOnUiThread {
-                        handlePaymentSuccess(saleResponse.cardType)
-                    }
-                }, { _message ->
-                    // Error
-                    activity?.runOnUiThread {
-                        handlePaymentError(_message)
-                    }
-                }, { _message ->
-                    // Callback
-                    activity?.runOnUiThread {
-                        when (AppSettings.Options.Payment.DeviceType) {
-                            PaymentDeviceType.IUC.value -> { // IUC
-                                if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                IM30Interface.instance.mpqr(
+                    amount,
+                    IM30Interface.MpqrWalletLabel.DBSMAX_PAYNOW,
+                    { saleResponse ->
+                        // Success
+                        activity?.runOnUiThread {
+                            handlePaymentSuccess(saleResponse.cardType)
+                        }
+                    },
+                    { _message ->
+                        // Error
+                        activity?.runOnUiThread {
+                            handlePaymentError(_message)
+                        }
+                    },
+                    { _message ->
+                        // Callback
+                        activity?.runOnUiThread {
+                            when (AppSettings.Options.Payment.DeviceType) {
+                                PaymentDeviceType.IUC.value -> { // IUC
+                                    if (_message.lowercase().contains("PLEASE WAIT".lowercase())) {
+                                        // Reset countdown timeout payment
+                                        timerTimeoutPayment.cancel()
+                                        timeout = AppSettings.Options.Payment.Timeout
+
+                                        // MainApplication.mAudioManager.soundProcessingPayment()
+                                        AppContainer.CurrentTransaction.paymentState =
+                                            PaymentState.InProgress
+                                    }
+                                }
+                                else -> { // IM30
                                     // Reset countdown timeout payment
                                     timerTimeoutPayment.cancel()
                                     timeout = AppSettings.Options.Payment.Timeout
 
                                     // MainApplication.mAudioManager.soundProcessingPayment()
-                                    AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
+                                    AppContainer.CurrentTransaction.paymentState =
+                                        PaymentState.InProgress
                                 }
                             }
-                            else -> { // IM30
-                                // Reset countdown timeout payment
-                                timerTimeoutPayment.cancel()
-                                timeout = AppSettings.Options.Payment.Timeout
 
-                                // MainApplication.mAudioManager.soundProcessingPayment()
-                                AppContainer.CurrentTransaction.paymentState = PaymentState.InProgress
-                            }
+                            Log.e(TAG, _message)
+                            LogUtils.logInfo(_message)
+                            displayMessage(_message)
                         }
-
-                        Log.e(TAG, _message)
-                        LogUtils.logInfo(_message)
-                        displayMessage(_message)
-                    }
-                }, {
-                    // Cancel
-                    activity?.runOnUiThread {
-                        LogUtils.logInfo("PayNow | Cancel payment")
-                        cancelPayment()
-                    }
-                })
+                    },
+                    {
+                        // Cancel
+                        activity?.runOnUiThread {
+                            LogUtils.logInfo("PayNow | Cancel payment")
+                            cancelPayment()
+                        }
+                    })
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
             }
@@ -1772,24 +1790,52 @@ class MagicPlateFragment : Fragment(), PaymentAdapter.ItemListener, CartAdapter.
     }
 
     private fun formatReceipt(cartLocked: MutableList<CartEntity>): String {
-        return "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
-                "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
-                "[C]<font size='tall'>Date: ${Date()}</font>\n" +
-                "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n" +
+        return formatHeader() +
                 formatContent(cartLocked) +
-                "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
-                "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
-                "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
-                "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
-                "[L]<font size='tall'>Membership :</font>\n" +
-                "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
-                "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
-                "[L]\n" +
-                "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
-                //"[C]<qrcode size='20'>831254784551</qrcode>" +
-                "[L]\n" +
-                "[L]\n" +
-                "[L]\n"
+                formatFooter()
+    }
+
+    private fun formatHeader(): String {
+        return if (AppSettings.ReceiptPrinter.Header.isEmpty()) {
+            "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
+            "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
+            "[C]<font size='tall'>Date: ${Date()}</font>\n" +
+            "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n"
+        } else {
+            val formatterTime = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+            AppSettings.ReceiptPrinter.Header
+                .replace("[Store]", AppSettings.Machine.Store)
+                .replace("[Terminal]", AppSettings.Machine.Terminal)
+                .replace("[Date]", formatterTime.format(Date()))
+                .replace("[OrderNumber]", "%06d".format(orderNumber))
+        }
+    }
+
+    private fun formatFooter(): String {
+        return if (AppSettings.ReceiptPrinter.Footer.isEmpty()) {
+            "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
+            "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
+            "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
+            "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
+            "[L]<font size='tall'>Membership :</font>\n" +
+            "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
+            "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
+            "[L]\n" +
+            "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
+            //"[C]<qrcode size='20'>831254784551</qrcode>" +
+            "[L]\n" +
+            "[L]\n" +
+            "[L]\n"
+        } else {
+            AppSettings.ReceiptPrinter.Footer
+                .replace("[Tel]", AppSettings.Company.Tel)
+                .replace("[Email]", AppSettings.Company.Email)
+                .replace("[Address]", AppSettings.Company.Address)
+                .replace("[Barcode]", "%012d".format(orderNumber))
+                .replace("[UserName]", if (displayName.isEmpty()) "N/A" else displayName)
+                .replace("[Balance]", if (balance == 0F) "N/A" else formatCurrency(balance))
+                .replace("[OrderNumber]", "%012d".format(orderNumber))
+        }
     }
 
     private fun formatContent(cartLocked: MutableList<CartEntity>): String {

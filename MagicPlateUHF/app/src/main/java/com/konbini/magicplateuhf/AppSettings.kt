@@ -140,7 +140,22 @@ object AppSettings {
     object ReceiptPrinter {
         var TCP = ""
         var USB = "N/A"
-        var Content = ""
+        var Header = "[C]<font size='tall'>Store: [Store]</font>\n" +
+                "[C]<font size='tall'>Terminal: [Terminal]</font>\n" +
+                "[C]<font size='tall'>Date: [Date]</font>\n" +
+                "[C]<font size='big'>RECEIPT #[OrderNumber]</font>\n"
+        var Footer = "[L]<font size='normal'>Tel: [Tel]</font>\n" +
+                "[L]<font size='normal'>Email: [Email]</font>\n" +
+                "[L]<font size='normal'>Address: [Address]</font>\n" +
+                "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
+                "[L]<font size='tall'>Membership :</font>\n" +
+                "[L]Display Name: [UserName]\n" +
+                "[L]Balance: [Balance]\n" +
+                "[L]\n" +
+                "[C]<barcode type='ean13' height='10'>[OrderNumber]</barcode>\n" +
+                "[L]\n" +
+                "[L]\n" +
+                "[L]\n"
         var WidthPaper = 50 // 50mm
     }
 
