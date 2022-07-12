@@ -58,7 +58,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 import com.konbini.magicplateuhf.AppContainer
-
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class MagicPlateFragment : Fragment(),
@@ -2358,9 +2358,9 @@ class MagicPlateFragment : Fragment(),
     private fun formatHeader(): String {
         return if (AppSettings.ReceiptPrinter.Header.isEmpty()) {
             "[C]<font size='tall'>Store: ${AppSettings.Machine.Store}</font>\n" +
-            "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
-            "[C]<font size='tall'>Date: ${Date()}</font>\n" +
-            "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n"
+                    "[C]<font size='tall'>Terminal: ${AppSettings.Machine.Terminal}</font>\n" +
+                    "[C]<font size='tall'>Date: ${Date()}</font>\n" +
+                    "[C]<font size='big'>RECEIPT #${"%06d".format(orderNumber)}</font>\n"
         } else {
             val formatterTime = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
             AppSettings.ReceiptPrinter.Header
@@ -2374,18 +2374,18 @@ class MagicPlateFragment : Fragment(),
     private fun formatFooter(): String {
         return if (AppSettings.ReceiptPrinter.Footer.isEmpty()) {
             "[L]<font size='normal'>Tel: ${AppSettings.Company.Tel}</font>\n" +
-            "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
-            "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
-            "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
-            "[L]<font size='tall'>Membership :</font>\n" +
-            "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
-            "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
-            "[L]\n" +
-            "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
-            //"[C]<qrcode size='20'>831254784551</qrcode>" +
-            "[L]\n" +
-            "[L]\n" +
-            "[L]\n"
+                    "[L]<font size='normal'>Email: ${AppSettings.Company.Email}</font>\n" +
+                    "[L]<font size='normal'>Address: ${AppSettings.Company.Address}</font>\n" +
+                    "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
+                    "[L]<font size='tall'>Membership :</font>\n" +
+                    "[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
+                    "[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
+                    "[L]\n" +
+                    "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
+                    //"[C]<qrcode size='20'>831254784551</qrcode>" +
+                    "[L]\n" +
+                    "[L]\n" +
+                    "[L]\n"
         } else {
             AppSettings.ReceiptPrinter.Footer
                 .replace("[Tel]", AppSettings.Company.Tel)
