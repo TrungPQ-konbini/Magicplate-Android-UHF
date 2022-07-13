@@ -761,13 +761,13 @@ class MagicPlateFragment : Fragment(),
 //                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.TOP_UP
 //                viewModel.credit("")
 //            } else {
-                val state = AppContainer.CurrentTransaction.paymentState
-                if (state == PaymentState.ReadyToPay) {
-                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
-                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
-
-                    handlePaymentSuccess(PaymentModeType.CASH.value)
-                }
+//                val state = AppContainer.CurrentTransaction.paymentState
+//                if (state == PaymentState.ReadyToPay) {
+//                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
+//                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
+//
+//                    handlePaymentSuccess(PaymentModeType.CASH.value)
+//                }
 //            }
         }
         // TODO: End TrungPQ add to test
