@@ -117,6 +117,7 @@ object AppContainer {
             listTagEntity.clear()
             cart.clear()
             cartLocked.clear()
+            paymentState = PaymentState.Init
             option = Option()
             refreshCart()
         }

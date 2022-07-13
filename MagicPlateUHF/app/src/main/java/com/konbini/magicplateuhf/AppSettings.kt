@@ -83,7 +83,7 @@ object AppSettings {
 
     object Hardware {
         object Comport {
-            var DelayTimeDetectTagsChange  = 500 // milliseconds
+            var DelayTimeDetectTagsChange = 500 // milliseconds
             var DelayTimeReadTags = 500 // milliseconds
             var ReaderUHF = "/dev/ttyS1"
             var RFOutputPower = 30 // dBm
@@ -142,22 +142,19 @@ object AppSettings {
     object ReceiptPrinter {
         var TCP = ""
         var USB = "N/A"
-        var Header = "[C]<font size='tall'>Store: [Store]</font>\n" +
-                "[C]<font size='tall'>Terminal: [Terminal]</font>\n" +
-                "[C]<font size='tall'>Date: [Date]</font>\n" +
-                "[C]<font size='big'>RECEIPT #[OrderNumber]</font>\n"
+        var Header = "[C]<font size='tall'>Store: [Store]</font>" +
+                "[C]<font size='tall'>Terminal: [Terminal]</font>" +
+                "[C]<font size='tall'>Date: [Date]</font>" +
+                "[C]<font size='big'>RECEIPT #[OrderNumber]</font>[L]" +
+                "[L]<b>Products</b>[R]<b>Qty</b>[R]<b>Price</b>"
         var Footer = "[L]<font size='normal'>Tel: [Tel]</font>\n" +
                 "[L]<font size='normal'>Email: [Email]</font>\n" +
                 "[L]<font size='normal'>Address: [Address]</font>\n" +
                 "[C]<font size='tall'><b>Thank you!!!</b></font>\n" +
-                "[L]<font size='tall'>Membership :</font>\n" +
-                "[L]Display Name: [UserName]\n" +
-                "[L]Balance: [Balance]\n" +
                 "[L]\n" +
                 "[C]<barcode type='ean13' height='10'>[OrderNumber]</barcode>\n" +
                 "[L]\n" +
-                "[L]\n" +
-                "[L]\n"
+                "[L]"
         var WidthPaper = 50 // 50mm
     }
 
@@ -171,7 +168,8 @@ object AppSettings {
 
         object Slack {
             var Activated = false
-            var Webhook = "https://hooks.slack.com/services/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"
+            var Webhook =
+                "https://hooks.slack.com/services/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"
         }
     }
 
@@ -183,6 +181,7 @@ object AppSettings {
         var ConnectHardware = false
         var AcsReader = AcsReaderType.WHITE.value
         var MachineTypeActivated = MachineType.MAGIC_PLATE_MODE.value
+
         object Payment {
             var Timeout = 60L
             var EzLink = true
@@ -203,11 +202,13 @@ object AppSettings {
             var pathImageTopUp = ""
             var DeviceType = PaymentDeviceType.IUC.value
         }
+
         object Printer {
             var Bluetooth = true
             var TCP = false
             var USB = false
         }
+
         object Discount {
             var NFC = false
             var Barcode = true
@@ -216,6 +217,7 @@ object AppSettings {
             var SuffixesFormat = ""
             var LengthFormat = 8
         }
+
         var DiscountList = ""
         var RolesList = "administrator"
         var ShowCancelPaymentButton = true
@@ -229,6 +231,7 @@ object AppSettings {
         var KeyCodeCancelPayment = ""
         var KeyCodeCashPaymentApproval = ""
         var KeyCodeDiscountApproval = ""
+
         object Sync {
             var SyncOrderRealtime = true
             var SyncOrderPeriodicPerTimePeriod = false
