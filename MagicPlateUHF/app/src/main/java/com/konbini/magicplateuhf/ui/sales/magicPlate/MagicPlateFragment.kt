@@ -15,6 +15,7 @@ import android.text.style.StrikethroughSpan
 import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -97,6 +98,13 @@ class MagicPlateFragment : Fragment(),
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                "INTERNET" -> {
+                    if (AppContainer.GlobalVariable.internetConnected) {
+                        binding.internetConnected.setBackgroundResource(R.drawable.ic_connected)
+                    } else {
+                        binding.internetConnected.setBackgroundResource(R.drawable.ic_disconnected)
+                    }
+                }
                 "REFRESH_READER_TAGS" -> {
                     // Add to Mask real-time reading tags
                     var content = String.format(
@@ -329,6 +337,7 @@ class MagicPlateFragment : Fragment(),
     override fun onStart() {
         super.onStart()
         val filterIntent = IntentFilter()
+        filterIntent.addAction("INTERNET")
         filterIntent.addAction("NEW_BARCODE")
         filterIntent.addAction("REFRESH_TAGS")
         filterIntent.addAction("REFRESH_READER_TAGS")
@@ -752,13 +761,13 @@ class MagicPlateFragment : Fragment(),
 //                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.TOP_UP
 //                viewModel.credit("")
 //            } else {
-//                val state = AppContainer.CurrentTransaction.paymentState
-//                if (state == PaymentState.ReadyToPay) {
-//                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
-//                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
-//
-//                    handlePaymentSuccess(PaymentModeType.CASH.value)
-//                }
+                val state = AppContainer.CurrentTransaction.paymentState
+                if (state == PaymentState.ReadyToPay) {
+                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
+                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
+
+                    handlePaymentSuccess(PaymentModeType.CASH.value)
+                }
 //            }
         }
         // TODO: End TrungPQ add to test

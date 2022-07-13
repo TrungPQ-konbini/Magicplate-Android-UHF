@@ -112,6 +112,8 @@ class SettingsFragment : Fragment() {
         bindAlert()
         bindDiscountFormat()
         bindShortcut()
+        // TODO: TrungPQ add to test
+        bindToTest()
     }
 
     private fun setupActions() {
@@ -200,6 +202,25 @@ class SettingsFragment : Fragment() {
     }
 
     // region Binding
+    private fun bindToTest() {
+        binding.machineMacAddress.setText("TrungPQ")
+        binding.machineSource.setText("TrungPQ")
+        binding.machineTerminal.setText("TrungPQ")
+        binding.machineStore.setText("TrungPQ")
+
+        binding.cloudHost.setText("https://yourbrighterfoodhall.whew.life")
+        binding.cloudConsumerKey.setText("ck_45aad49b5848880b08af254d4ce2be8d5f9be92c")
+        binding.cloudConsumerSecret.setText("cs_ed326ac24e60f00f71cf1b8d22afe9cdb317afd9")
+        binding.cloudClientId.setText("jlDNi2cP2HaEY8FjR8CfdkHX3OzELna3VhzzLiCf")
+        binding.cloudClientSecret.setText("LWd2tMqZ6mvBa71clGWAFPhBOwZ9tWjHBLru1mjC")
+
+        binding.walletHost.setText("https://yourbrighterfoodhall.whew.life")
+        binding.walletClientId.setText("jlDNi2cP2HaEY8FjR8CfdkHX3OzELna3VhzzLiCf")
+        binding.walletClientSecret.setText("LWd2tMqZ6mvBa71clGWAFPhBOwZ9tWjHBLru1mjC")
+
+        binding.mqttHost.setText("tcp://yourbrighterfoodhall.whew.life:1883")
+    }
+
     private fun bindCompany() {
         binding.companyLogo.setText(AppSettings.Company.Logo)
         binding.companyName.setText(AppSettings.Company.Name)

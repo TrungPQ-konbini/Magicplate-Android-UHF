@@ -178,25 +178,19 @@
                     android:background="@drawable/radius_bottom_mysterious_black_10"
                     android:orientation="horizontal"
                     android:padding="@dimen/dimen_4"
-                    android:weightSum="9"
+                    android:weightSum="12"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rfidProducts">
 
-                    <!--                    <LinearLayout-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="match_parent"-->
-                    <!--                        android:layout_weight="8"-->
-                    <!--                        android:gravity="start">-->
-
-                    <!--                        <ImageView-->
-                    <!--                            android:id="@+id/shutdown"-->
-                    <!--                            android:layout_width="40dp"-->
-                    <!--                            android:layout_height="40dp"-->
-                    <!--                            android:layout_gravity="center"-->
-                    <!--                            android:background="@drawable/ic_restart" />-->
-                    <!--                    </LinearLayout>-->
+                    <ImageView
+                        android:id="@+id/internetConnected"
+                        android:layout_width="200dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="5"
+                        android:background="@drawable/ic_connected" />
 
                     <TextView
                         android:id="@+id/rfidCurrentTimeBlock"
@@ -204,17 +198,17 @@
                         android:layout_height="match_parent"
                         android:layout_weight="2"
                         android:gravity="center"
-                        android:text="Lunch 10:00-23:59"
+                        android:text="N/A --:-- - --:--"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/dimen_16"
-                        android:textStyle="bold" />
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
 
                     <ImageView
                         android:id="@+id/rfidEmptyCart"
                         android:layout_width="200dp"
-                        android:layout_height="40dp"
+                        android:layout_height="35dp"
                         android:layout_gravity="center"
-                        android:layout_weight="7"
+                        android:layout_weight="5"
                         android:background="@drawable/ic_empty_cart" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -286,8 +280,8 @@
                         android:gravity="center"
                         android:text="@string/message_guide_top_up"
                         android:textAllCaps="false"
-                        android:textSize="24sp"
                         android:textColor="@color/red"
+                        android:textSize="24sp"
                         android:textStyle="bold" />
 
                     <LinearLayout

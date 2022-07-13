@@ -5,6 +5,8 @@ import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -23,13 +25,14 @@ import com.konbini.magicplateuhf.jobs.SyncMenuJobService
 import com.konbini.magicplateuhf.jobs.SyncTransactionJobService
 import com.konbini.magicplateuhf.ui.plateModel.PlateModelViewModel
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.getDateJob
+import com.konbini.magicplateuhf.utils.ConnectivityReceiver
 import com.konbini.magicplateuhf.utils.LogUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.*
 
 @AndroidEntryPoint
-class SalesActivity : AppCompatActivity() {
+class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
     companion object {
         const val TAG = "SalesActivity"
@@ -74,9 +77,15 @@ class SalesActivity : AppCompatActivity() {
             AppContainer.GlobalVariable.listPlatesModel =
                 viewModelPlateModel.getAll().toMutableList()
         }
+
+        registerReceiver(
+            ConnectivityReceiver(),
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )
     }
 
     override fun onResume() {
+        super.onResume()
         AppContainer.GlobalVariable.isBackend = false
         if (!AppSettings.Options.Sync.NoSyncOrder) {
             if (AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod || AppSettings.Options.Sync.SyncOrderRealtime) {
@@ -94,7 +103,7 @@ class SalesActivity : AppCompatActivity() {
         scheduleGetTokenJob()
         scheduleAutoSyncMenuJob()
         scheduleAutoSyncTransactionJob()
-        super.onResume()
+        ConnectivityReceiver.connectivityReceiverListener = this
     }
 
     override fun onDestroy() {
@@ -206,7 +215,8 @@ class SalesActivity : AppCompatActivity() {
                         val intent = Intent()
                         intent.action = "KEY_CODE"
                         intent.putExtra("pressedKey", pressedKey)
-                        LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext).sendBroadcast(intent)
+                        LocalBroadcastManager.getInstance(MainApplication.instance.applicationContext)
+                            .sendBroadcast(intent)
                     }
                 }
             }
@@ -316,5 +326,24 @@ class SalesActivity : AppCompatActivity() {
 
         val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
         LogUtils.logInfo("Job Scheduled Sync Transaction ${if (isJobScheduledSuccess) SUCCESS_KEY else FAILED_KEY}")
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        AppContainer.GlobalVariable.internetConnected = isConnected
+        if (isConnected) {
+            LogUtils.logInfo("INTERNET | connected")
+            LogUtils.logInfo("Start jobs service")
+            Log.e(TAG, "INTERNET | connected")
+            scheduleGetTokenJob()
+            scheduleAutoSyncMenuJob()
+            scheduleAutoSyncTransactionJob()
+        } else {
+            LogUtils.logInfo("INTERNET | disconnected")
+            Log.e(TAG, "INTERNET | disconnected")
+        }
+
+        val intent = Intent()
+        intent.action = "INTERNET"
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 }
