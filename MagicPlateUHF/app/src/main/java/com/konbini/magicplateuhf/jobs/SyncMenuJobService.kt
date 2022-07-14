@@ -58,18 +58,17 @@ class SyncMenuJobService : JobService() {
     private fun doBackgroundWork(params: JobParameters?) {
         Thread(Runnable {
             kotlin.run {
-                if (!AppSettings.Options.AllowAutoSyncMenu) {
-                    return@Runnable
-                }
-                serviceScope.launch {
-                    try {
-                        LogUtils.logInfo("Start Auto Sync Menu")
-                        Log.e(TAG, "Start Sync Menu")
+                if (AppSettings.Options.AllowAutoSyncMenu) {
+                    serviceScope.launch {
+                        try {
+                            LogUtils.logInfo("Start Auto Sync Menu")
+                            Log.e(TAG, "Start Sync Menu")
 
-                        settingsViewModel.syncAll()
+                            settingsViewModel.syncAll()
 
-                    } catch (ex: Exception) {
-                        LogUtils.logError(ex)
+                        } catch (ex: Exception) {
+                            LogUtils.logError(ex)
+                        }
                     }
                 }
                 Thread.sleep(AppSettings.Timer.PeriodicAutoSyncMenu.toLong() * 60 * 1000)

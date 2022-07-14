@@ -38,18 +38,17 @@ class SyncTransactionJobService : JobService() {
     private fun doBackgroundWork(params: JobParameters?) {
         Thread(Runnable {
             kotlin.run {
-                if (AppContainer.GlobalVariable.isSyncTransaction) {
-                    return@Runnable
-                }
-                serviceScope.launch {
-                    try {
-                        LogUtils.logInfo("Start Sync Transactions")
-                        Log.e(TAG, "Start Sync Transactions")
-                        AppContainer.GlobalVariable.isSyncTransaction = true
-                        offlineDataRepository.processOfflineData()
-                    } catch (ex: Exception) {
-                        LogUtils.logError(ex)
-                        AppContainer.GlobalVariable.isSyncTransaction = false
+                if (!AppContainer.GlobalVariable.isSyncTransaction) {
+                    serviceScope.launch {
+                        try {
+                            LogUtils.logInfo("Start Sync Transactions")
+                            Log.e(TAG, "Start Sync Transactions")
+                            AppContainer.GlobalVariable.isSyncTransaction = true
+                            offlineDataRepository.processOfflineData()
+                        } catch (ex: Exception) {
+                            LogUtils.logError(ex)
+                            AppContainer.GlobalVariable.isSyncTransaction = false
+                        }
                     }
                 }
                 Thread.sleep(15 * 60 * 1000)

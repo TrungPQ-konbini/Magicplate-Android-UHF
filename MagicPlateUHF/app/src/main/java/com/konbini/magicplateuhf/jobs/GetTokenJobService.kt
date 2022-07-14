@@ -41,49 +41,48 @@ class GetTokenJobService : JobService() {
     private fun doBackgroundWork(params: JobParameters?) {
         Thread(Runnable {
             kotlin.run {
-                if (AppContainer.GlobalVariable.isGettingToken) {
-                    return@Runnable
-                }
-                serviceScope.launch {
-                    try {
-                        LogUtils.logInfo("Call API: ${AppSettings.APIs.Oauth}")
-                        Log.e(TAG, "Call API: ${AppSettings.APIs.Oauth}")
-                        AppContainer.GlobalVariable.isGettingToken = true
+                if (!AppContainer.GlobalVariable.isGettingToken) {
+                    serviceScope.launch {
+                        try {
+                            LogUtils.logInfo("Call API: ${AppSettings.APIs.Oauth}")
+                            Log.e(TAG, "Call API: ${AppSettings.APIs.Oauth}")
+                            AppContainer.GlobalVariable.isGettingToken = true
 
-                        // Get token wallet
-                        val requestTokenWallet = WalletTokenRequest(
-                            "client_credentials",
-                            AppSettings.Cloud.ClientId,
-                            AppSettings.Cloud.ClientSecret
-                        )
-                        val tokenWallet =
-                            withContext(Dispatchers.Default) {
-                                walletRepository.getAccessToken(
-                                    AppSettings.Cloud.Host,
-                                    requestTokenWallet
-                                )
-                            }
-
-                        if (tokenWallet.status == Resource.Status.SUCCESS) {
-                            tokenWallet.data?.let { _walletTokenResponse ->
-                                _walletTokenResponse.access_token?.let { token ->
-                                    if (token.isNotEmpty()) {
-                                        AppContainer.GlobalVariable.currentToken = token
-                                        AppContainer.GlobalVariable.isGettingToken = false
-                                        AppContainer.GlobalVariable.currentTokenLifeTimes =
-                                            _walletTokenResponse.expires_in?.toLong() ?: 0L
-                                    }
+                            // Get token wallet
+                            val requestTokenWallet = WalletTokenRequest(
+                                "client_credentials",
+                                AppSettings.Cloud.ClientId,
+                                AppSettings.Cloud.ClientSecret
+                            )
+                            val tokenWallet =
+                                withContext(Dispatchers.Default) {
+                                    walletRepository.getAccessToken(
+                                        AppSettings.Cloud.Host,
+                                        requestTokenWallet
+                                    )
                                 }
-                                LogUtils.logInfo("[Token]: ${AppContainer.GlobalVariable.currentToken}")
-                                Log.e(TAG, "[Token]: ${AppContainer.GlobalVariable.currentToken}")
+
+                            if (tokenWallet.status == Resource.Status.SUCCESS) {
+                                tokenWallet.data?.let { _walletTokenResponse ->
+                                    _walletTokenResponse.access_token?.let { token ->
+                                        if (token.isNotEmpty()) {
+                                            AppContainer.GlobalVariable.currentToken = token
+                                            AppContainer.GlobalVariable.isGettingToken = false
+                                            AppContainer.GlobalVariable.currentTokenLifeTimes =
+                                                _walletTokenResponse.expires_in?.toLong() ?: 0L
+                                        }
+                                    }
+                                    LogUtils.logInfo("[Token]: ${AppContainer.GlobalVariable.currentToken}")
+                                    Log.e(TAG, "[Token]: ${AppContainer.GlobalVariable.currentToken}")
+                                }
+                            } else {
+                                AppContainer.GlobalVariable.isGettingToken = false
+                                LogUtils.logInfo("[Token]: Error ${Gson().toJson(tokenWallet.data ?: "Can't get Token!!!")}")
                             }
-                        } else {
+                        } catch (ex: Exception) {
+                            LogUtils.logError(ex)
                             AppContainer.GlobalVariable.isGettingToken = false
-                            LogUtils.logInfo("[Token]: Error ${Gson().toJson(tokenWallet.data ?: "Can't get Token!!!")}")
                         }
-                    } catch (ex: Exception) {
-                        LogUtils.logError(ex)
-                        AppContainer.GlobalVariable.isGettingToken = false
                     }
                 }
                 if (AppContainer.GlobalVariable.currentTokenLifeTimes > 0) {

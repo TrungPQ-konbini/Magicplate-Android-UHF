@@ -99,11 +99,7 @@ class MagicPlateFragment : Fragment(),
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "INTERNET" -> {
-                    if (AppContainer.GlobalVariable.internetConnected) {
-                        binding.internetConnected.setBackgroundResource(R.drawable.ic_connected)
-                    } else {
-                        binding.internetConnected.setBackgroundResource(R.drawable.ic_disconnected)
-                    }
+                    changeInternetIcon()
                 }
                 "REFRESH_READER_TAGS" -> {
                     // Add to Mask real-time reading tags
@@ -328,6 +324,7 @@ class MagicPlateFragment : Fragment(),
         setupObservers()
         setupActions()
         listenerAcsReader()
+        changeInternetIcon()
     }
 
     override fun onStart() {
@@ -757,13 +754,13 @@ class MagicPlateFragment : Fragment(),
 //                AppContainer.CurrentTransaction.paymentModeType = PaymentModeType.TOP_UP
 //                viewModel.credit("")
 //            } else {
-//                val state = AppContainer.CurrentTransaction.paymentState
-//                if (state == PaymentState.ReadyToPay) {
-//                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
-//                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
-//
-//                    handlePaymentSuccess(PaymentModeType.CASH.value)
-//                }
+                val state = AppContainer.CurrentTransaction.paymentState
+                if (state == PaymentState.ReadyToPay) {
+                    displayMessage(getString(R.string.message_cash_approved_payment_admin))
+                    LogUtils.logInfo(getString(R.string.message_cash_approved_payment_admin))
+
+                    handlePaymentSuccess(PaymentModeType.CASH.value)
+                }
 //            }
         }
         // TODO: End TrungPQ add to test
@@ -1738,7 +1735,13 @@ class MagicPlateFragment : Fragment(),
             )
         )
         MainApplication.mAudioManager.soundPaymentSuccess()
-        AppContainer.CurrentTransaction.paymentState = PaymentState.Success
+        if (AppContainer.CurrentTransaction.cartLocked.find { cartEntity ->
+                cartEntity.strEPC.isNotEmpty()
+        } != null) {
+            AppContainer.CurrentTransaction.paymentState = PaymentState.Success
+        } else {
+            AppContainer.CurrentTransaction.paymentState = PaymentState.Init
+        }
         //Log.e("EKRON", "PaymentState.Success")
         val calendar = Calendar.getInstance()
         val currentTime = calendar.timeInMillis
@@ -2521,6 +2524,14 @@ class MagicPlateFragment : Fragment(),
                     refreshCart()
                 }
             }
+        }
+    }
+
+    private fun changeInternetIcon() {
+        if (AppContainer.GlobalVariable.internetConnected) {
+            binding.internetConnected.setBackgroundResource(R.drawable.ic_connected)
+        } else {
+            binding.internetConnected.setBackgroundResource(R.drawable.ic_disconnected)
         }
     }
 // endregion

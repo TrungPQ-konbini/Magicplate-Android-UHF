@@ -225,7 +225,9 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
     }
 
     private fun syncTransactions() {
-        viewModel.syncTransactions()
+        if (AppContainer.GlobalVariable.internetConnected) {
+            viewModel.syncTransactions()
+        }
     }
 
     private fun jobStoreXDayLocalData(isNextDay: Boolean = false) {
@@ -340,6 +342,7 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
         } else {
             LogUtils.logInfo("INTERNET | disconnected")
             Log.e(TAG, "INTERNET | disconnected")
+            AppContainer.GlobalVariable.isSyncTransaction = false
         }
 
         val intent = Intent()
