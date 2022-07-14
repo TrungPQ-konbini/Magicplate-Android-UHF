@@ -77,6 +77,7 @@ class OptionsFragment : Fragment() {
                 )
                 binding.checkboxMagicPlateMode.isChecked = true
                 binding.checkboxSelfKioskMode.isChecked = false
+                binding.checkboxDiscount.isChecked = false
                 binding.checkboxDiscountMode.isChecked = false
 
                 // Reset
@@ -94,6 +95,7 @@ class OptionsFragment : Fragment() {
                 )
                 binding.checkboxMagicPlateMode.isChecked = false
                 binding.checkboxSelfKioskMode.isChecked = true
+                binding.checkboxDiscount.isChecked = false
                 binding.checkboxDiscountMode.isChecked = false
 
                 // Reset
@@ -111,6 +113,7 @@ class OptionsFragment : Fragment() {
                 )
                 binding.checkboxMagicPlateMode.isChecked = false
                 binding.checkboxSelfKioskMode.isChecked = false
+                binding.checkboxDiscount.isChecked = true
                 binding.checkboxDiscountMode.isChecked = true
 
                 // Reset
@@ -631,6 +634,12 @@ class OptionsFragment : Fragment() {
             LogUtils.logInfo("AppSettings.Options.AllowAdminCashPaymentApproval Options: $isChecked")
             showMessageSuccess()
         }
+
+        binding.checkboxDiscountApproval.setOnCheckedChangeListener { _, isChecked ->
+            PrefUtil.setBoolean("AppSettings.Options.AllowAdminDiscountApproval", isChecked)
+            LogUtils.logInfo("AppSettings.Options.AllowAdminDiscountApproval Options: $isChecked")
+            showMessageSuccess()
+        }
     }
 
     private fun initData() {
@@ -649,6 +658,7 @@ class OptionsFragment : Fragment() {
             MachineType.DISCOUNT_MODE.value -> {
                 binding.checkboxMagicPlateMode.isChecked = false
                 binding.checkboxSelfKioskMode.isChecked = false
+                binding.checkboxDiscount.isChecked = true
                 binding.checkboxDiscountMode.isChecked = true
             }
             MachineType.POS_MODE.value -> {

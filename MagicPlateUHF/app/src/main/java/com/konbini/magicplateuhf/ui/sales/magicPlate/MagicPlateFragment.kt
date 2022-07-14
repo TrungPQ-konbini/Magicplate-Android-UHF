@@ -2415,7 +2415,7 @@ class MagicPlateFragment : Fragment(),
                     //"[L]Display Name: ${if (displayName.isEmpty()) "N/A" else displayName}\n" +
                     //"[L]Balance: ${if (balance == 0F) "N/A" else formatCurrency(balance)}\n" +
                     //"[L]\n" +
-                    "[C]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
+                    "[L]<barcode type='ean13' height='10'>${"%012d".format(orderNumber)}</barcode>\n" +
                     //"[C]<qrcode size='20'>831254784551</qrcode>" +
                     //"[L]\n" +
                     "[L]\n" +
