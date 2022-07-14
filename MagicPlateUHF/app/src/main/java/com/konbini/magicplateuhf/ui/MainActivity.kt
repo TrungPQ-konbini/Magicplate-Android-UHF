@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                 KeyEvent.KEYCODE_NUMPAD_ENTER -> { pressedKey = "KEYCODE_NUMPAD_ENTER" }
                 KeyEvent.KEYCODE_NUMPAD_EQUALS -> { pressedKey = "KEYCODE_NUMPAD_EQUALS" }
             }
-            if (pressedKey != "��") {
+            if (pressedKey != "��" && e.keyCode != 124) {
                 val intent = Intent()
                 intent.action = "KEY_CODE"
                 intent.putExtra("pressedKey", pressedKey)
