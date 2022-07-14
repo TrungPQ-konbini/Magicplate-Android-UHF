@@ -226,46 +226,42 @@ class MagicPlateFragment : Fragment(),
                     Timer()
                 }
                 "KEY_CODE" -> {
-                    if (AppSettings.Options.AllowAdminCancelPayment) {
-                        val pressedKey: String = intent.getStringExtra("pressedKey").toString()
-                        LogUtils.logInfo("User pressed key | $pressedKey")
-                        if (pressedKey.isNotEmpty()) {
-                            adminCancelPayment(pressedKey)
-                        }
-                    } else {
-                        AlertDialogUtil.showError(
-                            getString(R.string.message_allow_admin_cancel_payment_unchecked),
-                            requireContext()
-                        )
-                    }
-
-                    if (AppContainer.CurrentTransaction.paymentModeType == PaymentModeType.CASH) {
-                        // Check Admin cash payment approval
-                        if (AppSettings.Options.AllowAdminCashPaymentApproval) {
-                            val pressedKey: String = intent.getStringExtra("pressedKey").toString()
-                            LogUtils.logInfo("User pressed key | $pressedKey")
-                            if (pressedKey.isNotEmpty()) {
-                                adminCashPaymentApproval(pressedKey)
+                    val pressedKey: String = intent.getStringExtra("pressedKey").toString()
+                    LogUtils.logInfo("User pressed key | $pressedKey")
+                    when (pressedKey) {
+                        AppSettings.Options.KeyCodeCancelPayment -> {
+                            // Check Admin cancel payment
+                            if (AppSettings.Options.AllowAdminCancelPayment) {
+                                adminCancelPayment(pressedKey)
+                            } else {
+                                AlertDialogUtil.showError(
+                                    getString(R.string.message_allow_admin_cancel_payment_unchecked),
+                                    requireContext()
+                                )
                             }
-                        } else {
-                            AlertDialogUtil.showError(
-                                getString(R.string.message_allow_admin_cash_payment_approval_unchecked),
-                                requireContext()
-                            )
                         }
-                    }
-
-                    if (AppSettings.Options.AllowAdminDiscountApproval) {
-                        val pressedKey: String = intent.getStringExtra("pressedKey").toString()
-                        LogUtils.logInfo("User pressed key | $pressedKey")
-                        if (pressedKey.isNotEmpty()) {
-                            adminDiscountApproval(pressedKey)
+                        AppSettings.Options.KeyCodeCashPaymentApproval -> {
+                            // Check Admin cash payment approval
+                            if (AppSettings.Options.AllowAdminCashPaymentApproval) {
+                                adminCashPaymentApproval(pressedKey)
+                            } else {
+                                AlertDialogUtil.showError(
+                                    getString(R.string.message_allow_admin_cash_payment_approval_unchecked),
+                                    requireContext()
+                                )
+                            }
                         }
-                    } else {
-                        AlertDialogUtil.showError(
-                            getString(R.string.message_allow_admin_discount_approved_unchecked),
-                            requireContext()
-                        )
+                        AppSettings.Options.KeyCodeDiscountApproval -> {
+                            // Check Admin Discount approval
+                            if (AppSettings.Options.AllowAdminDiscountApproval) {
+                                adminDiscountApproval(pressedKey)
+                            } else {
+                                AlertDialogUtil.showError(
+                                    getString(R.string.message_allow_admin_discount_approved_unchecked),
+                                    requireContext()
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -1495,7 +1491,7 @@ class MagicPlateFragment : Fragment(),
         resetMessage(message, 0)
     }
 
-    // region ================Handle UI================
+// region ================Handle UI================
     /**
      * Show hide loading
      *
@@ -1686,7 +1682,7 @@ class MagicPlateFragment : Fragment(),
             }
         }
     }
-    // endregion
+// endregion
 
     // region ================Listener Functions================
     private fun handleTopUpSuccess(message: String) {
@@ -2192,9 +2188,9 @@ class MagicPlateFragment : Fragment(),
             AppContainer.CurrentTransaction.ccwId1 == userEntity.ccwId1
         }
     }
-    // endregion
+// endregion
 
-    // region ================Validation Functions================
+// region ================Validation Functions================
     /**
      * Validate cart is empty
      *
@@ -2250,7 +2246,7 @@ class MagicPlateFragment : Fragment(),
         }
         return true
     }
-    // endregion
+// endregion
 
     // region ================Print Receipt================
     private fun printTopUpReceipt() {
@@ -2467,7 +2463,7 @@ class MagicPlateFragment : Fragment(),
                 "[L]PAYMENT MODE :[R]$paymentMode\n" +
                 "[L]--------------------------------\n"
     }
-    // endregion
+// endregion
 
     // region ================Admin control by keyboard================
     private fun adminCancelPayment(pressedKey: String) {
@@ -2526,5 +2522,5 @@ class MagicPlateFragment : Fragment(),
             }
         }
     }
-    // endregion
+// endregion
 }
