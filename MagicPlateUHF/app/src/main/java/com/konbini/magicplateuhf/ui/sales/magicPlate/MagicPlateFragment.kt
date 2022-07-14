@@ -2438,12 +2438,13 @@ class MagicPlateFragment : Fragment(),
         var items = ""
         cartLocked.forEach { cartEntity ->
             if (currentDiscount > 0) {
-                val discountItem = abs(cartEntity.price.toFloat() - cartEntity.salePrice.toFloat())
+                val salePrice = if (cartEntity.salePrice.isNullOrEmpty()) cartEntity.price.toFloat() else cartEntity.salePrice.toFloat()
+                val discountItem = abs(cartEntity.price.toFloat() - salePrice)
                 val price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
                 val strItemPrice =
                     "[L]<b>${cartEntity.productName}(-${formatCurrency(discountItem)})</b>[R]${cartEntity.quantity}[R]$price\n"
                 items += strItemPrice
-                total += (cartEntity.salePrice.toFloat() * cartEntity.quantity)
+                total += (salePrice * cartEntity.quantity)
                 totalDiscount += discountItem
             } else {
                 val price = formatCurrency(cartEntity.price.toFloat() * cartEntity.quantity)
