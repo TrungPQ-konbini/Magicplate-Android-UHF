@@ -142,11 +142,11 @@ object AppSettings {
     object ReceiptPrinter {
         var TCP = ""
         var USB = "N/A"
-        var Header = "[C]<font size='tall'>Store: [Store]</font>" +
-                "[C]<font size='tall'>Terminal: [Terminal]</font>" +
-                "[C]<font size='tall'>Date: [Date]</font>" +
-                "[C]<font size='big'>RECEIPT #[OrderNumber]</font>[L]" +
-                "[L]<b>Products</b>[R]<b>Qty</b>[R]<b>Price</b>"
+        var Header = "[C]<font size='tall'>Store: [Store]</font>\n" +
+                "[C]<font size='tall'>Terminal: [Terminal]</font>\n" +
+                "[C]<font size='tall'>Date: [Date]</font>\n" +
+                "[C]<font size='big'>RECEIPT #[OrderNumber]</font>[L]\n" +
+                "[L]<b>Products</b>[R]<b>Qty</b>[R]<b>Price</b>\n"
         var Footer = "[L]<font size='normal'>Tel: [Tel]</font>\n" +
                 "[L]<font size='normal'>Email: [Email]</font>\n" +
                 "[L]<font size='normal'>Address: [Address]</font>\n" +
