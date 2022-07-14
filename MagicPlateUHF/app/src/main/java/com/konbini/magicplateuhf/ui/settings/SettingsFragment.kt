@@ -113,7 +113,7 @@ class SettingsFragment : Fragment() {
         bindDiscountFormat()
         bindShortcut()
         // TODO: TrungPQ add to test
-        bindToTest()
+        //bindToTest()
     }
 
     private fun setupActions() {
