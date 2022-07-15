@@ -3,14 +3,21 @@ package com.konbini.magicplateuhf.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.konbini.magicplateuhf.AppContainer
 import com.konbini.magicplateuhf.AppSettings
+import com.konbini.magicplateuhf.data.remote.wallet.request.WalletTokenRequest
 import com.konbini.magicplateuhf.data.repository.MenuRepository
 import com.konbini.magicplateuhf.data.repository.OfflineDataRepository
 import com.konbini.magicplateuhf.data.repository.TransactionRepository
+import com.konbini.magicplateuhf.data.repository.WalletRepository
+import com.konbini.magicplateuhf.jobs.GetTokenJobService
 import com.konbini.magicplateuhf.utils.LogUtils
+import com.konbini.magicplateuhf.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -18,9 +25,15 @@ import javax.inject.Inject
 @HiltViewModel
 class SalesViewModel @Inject constructor(
     private val menuRepository: MenuRepository,
+    private val walletRepository: WalletRepository,
     private val offlineDataRepository: OfflineDataRepository,
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
+
+    companion object {
+        const val TAG = "SalesViewModel"
+    }
+
     fun syncTransactions() {
         if (AppContainer.GlobalVariable.isSyncTransaction) {
             return
@@ -79,6 +92,56 @@ class SalesViewModel @Inject constructor(
                 }
             } catch (ex: Exception) {
                 LogUtils.logError(ex)
+            }
+        }
+    }
+
+    fun getToken() {
+        viewModelScope.launch {
+            try {
+                try {
+                    LogUtils.logInfo("Call API: ${AppSettings.APIs.Oauth}")
+                    Log.e(TAG, "Call API: ${AppSettings.APIs.Oauth}")
+                    AppContainer.GlobalVariable.isGettingToken = true
+
+                    // Get token wallet
+                    val requestTokenWallet = WalletTokenRequest(
+                        "client_credentials",
+                        AppSettings.Cloud.ClientId,
+                        AppSettings.Cloud.ClientSecret
+                    )
+                    val tokenWallet =
+                        withContext(Dispatchers.Default) {
+                            walletRepository.getAccessToken(
+                                AppSettings.Cloud.Host,
+                                requestTokenWallet
+                            )
+                        }
+
+                    if (tokenWallet.status == Resource.Status.SUCCESS) {
+                        tokenWallet.data?.let { _walletTokenResponse ->
+                            _walletTokenResponse.access_token?.let { token ->
+                                if (token.isNotEmpty()) {
+                                    AppContainer.GlobalVariable.currentToken = token
+                                    AppContainer.GlobalVariable.isGettingToken = false
+                                    AppContainer.GlobalVariable.currentTokenLifeTimes =
+                                        _walletTokenResponse.expires_in?.toLong() ?: 0L
+                                }
+                            }
+                            LogUtils.logInfo("[Token]: ${AppContainer.GlobalVariable.currentToken}")
+                            Log.e(TAG, "[Token]: ${AppContainer.GlobalVariable.currentToken}")
+                        }
+                    } else {
+                        AppContainer.GlobalVariable.isGettingToken = false
+                        LogUtils.logInfo("[Token]: Error ${Gson().toJson(tokenWallet.data ?: "Can't get Token!!!")}")
+                    }
+                } catch (ex: Exception) {
+                    LogUtils.logError(ex)
+                    AppContainer.GlobalVariable.isGettingToken = false
+                }
+            } catch (ex: Exception) {
+                LogUtils.logError(ex)
+                AppContainer.GlobalVariable.isGettingToken = false
             }
         }
     }

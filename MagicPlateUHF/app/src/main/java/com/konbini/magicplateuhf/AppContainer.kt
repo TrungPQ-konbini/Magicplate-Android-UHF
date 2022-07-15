@@ -13,7 +13,7 @@ import java.util.*
 
 object AppContainer {
     object GlobalVariable {
-        var internetConnected = false
+        var internetConnected = true
         var actionRestartShutdown = ""
         var isBackend = false
         var listEPC: MutableList<String> = mutableListOf()

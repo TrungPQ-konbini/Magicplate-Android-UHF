@@ -24,6 +24,7 @@ import com.konbini.magicplateuhf.jobs.GetTokenJobService
 import com.konbini.magicplateuhf.jobs.SyncMenuJobService
 import com.konbini.magicplateuhf.jobs.SyncTransactionJobService
 import com.konbini.magicplateuhf.ui.plateModel.PlateModelViewModel
+import com.konbini.magicplateuhf.ui.settings.SettingsViewModel
 import com.konbini.magicplateuhf.utils.CommonUtil.Companion.getDateJob
 import com.konbini.magicplateuhf.utils.ConnectivityReceiver
 import com.konbini.magicplateuhf.utils.LogUtils
@@ -47,11 +48,10 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
     }
 
     private var barcode = ""
-    private lateinit var jobTimerTask: TimerTask
-    private lateinit var jobXDayTimerTask: TimerTask
 
     private lateinit var binding: ActivitySalesBinding
     private val viewModel: SalesViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
     private val viewModelPlateModel: PlateModelViewModel by viewModels()
 
     private val timer = object : CountDownTimer(
@@ -86,6 +86,12 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
 
     override fun onResume() {
         super.onResume()
+
+        jobStoreXDayLocalData()
+        scheduleGetTokenJob()
+        scheduleAutoSyncMenuJob()
+        scheduleAutoSyncTransactionJob()
+
         AppContainer.GlobalVariable.isBackend = false
         if (!AppSettings.Options.Sync.NoSyncOrder) {
             if (AppSettings.Options.Sync.SyncOrderPeriodicPerTimePeriod || AppSettings.Options.Sync.SyncOrderRealtime) {
@@ -99,10 +105,6 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
                 jobSyncOrderSpecifiedTime()
             }
         }
-        jobStoreXDayLocalData()
-        scheduleGetTokenJob()
-        scheduleAutoSyncMenuJob()
-        scheduleAutoSyncTransactionJob()
         ConnectivityReceiver.connectivityReceiverListener = this
     }
 
@@ -236,7 +238,7 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
         }
         val dateJob = getDateJob(isNextDay, 1, 1)
 
-        jobXDayTimerTask = object : TimerTask() {
+        val jobStoreXDayLocalDataTask = object : TimerTask() {
             override fun run() {
                 viewModel.processStoreXDayLocalData()
                 jobStoreXDayLocalData(isNextDay = true)
@@ -245,8 +247,8 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
         }
 
         Log.e(TAG, "Next schedule is $dateJob")
-        LogUtils.logOffline("[STORE_X_DAY_LOCAL_DATA] Next schedule is $dateJob")
-        Timer().schedule(jobXDayTimerTask, dateJob)
+        LogUtils.logOffline("[STORE_X_DAY_LOCAL_DATA] | Next schedule is $dateJob")
+        Timer().schedule(jobStoreXDayLocalDataTask, dateJob)
     }
 
     private fun jobSyncOrderSpecifiedTime(isNextDay: Boolean = false) {
@@ -256,7 +258,7 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
             AppSettings.Timer.SpecifiedTimeMinute
         )
 
-        jobTimerTask = object : TimerTask() {
+        val jobSyncOrderSpecifiedTimeTask = object : TimerTask() {
             override fun run() {
                 LogUtils.logOffline("Start Sync at $dateJob")
                 syncTransactions()
@@ -267,7 +269,7 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
 
         Log.e("OFFLINE_SYNC", "Next schedule is $dateJob")
         LogUtils.logOffline("Next schedule is $dateJob")
-        Timer().schedule(jobTimerTask, dateJob)
+        Timer().schedule(jobSyncOrderSpecifiedTimeTask, dateJob)
     }
 
     private fun scheduleGetTokenJob() {
@@ -275,59 +277,48 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
         if (AppContainer.GlobalVariable.currentTokenLifeTimes > 0) {
             periodicGetToken = AppContainer.GlobalVariable.currentTokenLifeTimes * 1000
         }
-        val componentName = ComponentName(this, GetTokenJobService::class.java)
-        val info = JobInfo.Builder(JOB_GET_TOKEN_ID, componentName)
-            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setRequiresDeviceIdle(false)
-            .setRequiresCharging(false)
-            .setPersisted(true)
-            .setPeriodic(periodicGetToken)
-            .build()
+        val scheduleGetTokenJobTask = object : TimerTask() {
+            override fun run() {
+                if (AppContainer.GlobalVariable.internetConnected && !AppContainer.GlobalVariable.isGettingToken) {
+                    LogUtils.logOffline("[Schedule][$periodicGetToken] | Start get token")
+                    Log.e(TAG, "[Schedule][$periodicGetToken] | Start get token")
+                    viewModel.getToken()
+                }
+            }
+        }
 
-        val jobScheduler: JobScheduler =
-            getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        val resultCode = jobScheduler.schedule(info)
-
-        val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
-        LogUtils.logInfo("Job Scheduled Get Token ${if (isJobScheduledSuccess) SUCCESS_KEY else FAILED_KEY}")
+        Timer().schedule(scheduleGetTokenJobTask, 0, periodicGetToken)
     }
 
     private fun scheduleAutoSyncMenuJob() {
         val periodicAutoSyncMenu: Long = AppSettings.Timer.PeriodicAutoSyncMenu.toLong() * 60 * 1000
-        val componentName = ComponentName(this, SyncMenuJobService::class.java)
-        val info = JobInfo.Builder(JOB_AUTO_SYNC_MENU, componentName)
-            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setRequiresDeviceIdle(false)
-            .setRequiresCharging(false)
-            .setPersisted(true)
-            .setPeriodic(periodicAutoSyncMenu)
-            .build()
+        val scheduleAutoSyncMenuJobTask = object : TimerTask() {
+            override fun run() {
+                if (AppContainer.GlobalVariable.internetConnected) {
+                    LogUtils.logInfo("[Schedule][$periodicAutoSyncMenu] | Start Auto Sync Menu")
+                    Log.e(TAG, "[Schedule][$periodicAutoSyncMenu] | Start Auto Sync Menu")
 
-        val jobScheduler: JobScheduler =
-            getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        val resultCode = jobScheduler.schedule(info)
+                    settingsViewModel.syncAll()
+                }
+            }
+        }
 
-        val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
-        LogUtils.logInfo("Job Scheduled Sync Menu ${if (isJobScheduledSuccess) SUCCESS_KEY else FAILED_KEY}")
+        Timer().schedule(scheduleAutoSyncMenuJobTask, 0, periodicAutoSyncMenu)
     }
 
     private fun scheduleAutoSyncTransactionJob() {
         val periodicAutoSyncTransaction: Long = 15 * 60 * 1000
-        val componentName = ComponentName(this, SyncTransactionJobService::class.java)
-        val info = JobInfo.Builder(JOB_AUTO_SYNC_TRANSACTION, componentName)
-            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setRequiresDeviceIdle(false)
-            .setRequiresCharging(false)
-            .setPersisted(true)
-            .setPeriodic(periodicAutoSyncTransaction)
-            .build()
+        val scheduleAutoSyncTransactionJobTask = object : TimerTask() {
+            override fun run() {
+                if (AppContainer.GlobalVariable.internetConnected) {
+                    LogUtils.logInfo("[Schedule][$periodicAutoSyncTransaction] | Start Sync Transactions")
+                    Log.e(TAG, "[Schedule][$periodicAutoSyncTransaction] | Start Sync Transactions")
+                    viewModel.syncTransactions()
+                }
+            }
+        }
 
-        val jobScheduler: JobScheduler =
-            getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        val resultCode = jobScheduler.schedule(info)
-
-        val isJobScheduledSuccess = resultCode == JobScheduler.RESULT_SUCCESS
-        LogUtils.logInfo("Job Scheduled Sync Transaction ${if (isJobScheduledSuccess) SUCCESS_KEY else FAILED_KEY}")
+        Timer().schedule(scheduleAutoSyncTransactionJobTask, 0, periodicAutoSyncTransaction)
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
@@ -336,9 +327,9 @@ class SalesActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRece
             LogUtils.logInfo("INTERNET | connected")
             LogUtils.logInfo("Start jobs service")
             Log.e(TAG, "INTERNET | connected")
-            scheduleGetTokenJob()
-            scheduleAutoSyncMenuJob()
-            scheduleAutoSyncTransactionJob()
+            viewModel.getToken()
+            settingsViewModel.syncAll()
+            viewModel.syncTransactions()
         } else {
             LogUtils.logInfo("INTERNET | disconnected")
             Log.e(TAG, "INTERNET | disconnected")
